@@ -19,7 +19,6 @@ import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
-import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
 
 class ParentZoneScreen extends ConsumerStatefulWidget {
   const ParentZoneScreen({super.key});
