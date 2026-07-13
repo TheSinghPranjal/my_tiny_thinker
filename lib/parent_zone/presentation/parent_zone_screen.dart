@@ -6,6 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/models/age_group.dart';
+import 'package:my_tiny_thinker/core/providers/onboarding_provider.dart';
+import 'package:my_tiny_thinker/core/models/player_profile.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/providers/game_stats_provider.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
@@ -25,9 +30,11 @@ class ParentZoneScreen extends ConsumerStatefulWidget {
 
 class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
   bool _unlocked = false;
-  late int _a;
-  late int _b;
+  int _a = 0;
+  int _b = 0;
+  int _expectedAnswer = 0;
   final _answerController = TextEditingController();
+  final _answerFocus = FocusNode();
 
   @override
   void initState() {
@@ -37,32 +44,41 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
 
   void _generateQuestion() {
     final random = math.Random();
-    _a = 2 + random.nextInt(8);
-    _b = 2 + random.nextInt(8);
+    setState(() {
+      _a = 2 + random.nextInt(8);
+      _b = 2 + random.nextInt(8);
+      _expectedAnswer = _a * _b;
+    });
+    _answerController.clear();
   }
 
   @override
   void dispose() {
     _answerController.dispose();
+    _answerFocus.dispose();
     super.dispose();
   }
 
   void _checkAnswer() {
-    final answer = int.tryParse(_answerController.text.trim());
-    if (answer == _a * _b) {
+    FocusScope.of(context).unfocus();
+    final raw = _answerController.text.trim();
+    final answer = int.tryParse(raw);
+    final expected = _expectedAnswer;
+
+    if (answer != null && answer == expected) {
       setState(() => _unlocked = true);
       HapticFeedback.mediumImpact();
-    } else {
-      TTDialog.show(
-        context: context,
-        title: 'Try Again',
-        emoji: '🔒',
-        message: 'That answer is not correct.',
-        primaryLabel: 'OK',
-      );
-      _generateQuestion();
-      _answerController.clear();
+      return;
     }
+
+    TTDialog.show(
+      context: context,
+      title: 'Try Again',
+      emoji: '🔒',
+      message: 'That answer is not correct.',
+      primaryLabel: 'OK',
+    );
+    _generateQuestion();
   }
 
   @override
@@ -78,6 +94,7 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
       showGrass: false,
       child: Scaffold(
         backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
@@ -85,76 +102,90 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
           ),
           title: const Text('Parent Zone'),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('🔒', style: TextStyle(fontSize: 64)),
-              const SizedBox(height: AppSpacing.lg),
-              Text(
-                'Parents Only',
-                style: context.textTheme.headlineLarge,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                'Solve this to enter:',
-                style: context.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.only(
+                  left: AppSpacing.xl,
+                  right: AppSpacing.xl,
+                  top: AppSpacing.lg,
+                  bottom: AppSpacing.xl + MediaQuery.viewInsetsOf(context).bottom,
                 ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              TTCard(
-                child: Column(
-                  children: [
-                    Text(
-                      'What is $_a × $_b?',
-                      style: context.textTheme.displaySmall,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    TextField(
-                      controller: _answerController,
-                      keyboardType: TextInputType.number,
-                      textAlign: TextAlign.center,
-                      style: context.textTheme.headlineMedium,
-                      decoration: InputDecoration(
-                        hintText: '?',
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusMd),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight - AppSpacing.lg),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('🔒', style: TextStyle(fontSize: 64)),
+                      const SizedBox(height: AppSpacing.lg),
+                      Text('Parents Only', style: context.textTheme.headlineLarge),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        'Solve this to enter:',
+                        style: context.textTheme.bodyLarge?.copyWith(
+                          color: AppColors.textSecondary,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    TTButton(
-                      label: 'Enter',
-                      expanded: true,
-                      onPressed: _checkAnswer,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              Text(
-                'Or long-press the lock for 3 seconds',
-                style: context.textTheme.bodySmall,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              GestureDetector(
-                onLongPress: () {
-                  HapticFeedback.heavyImpact();
-                  setState(() => _unlocked = true);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.5),
-                    shape: BoxShape.circle,
+                      const SizedBox(height: AppSpacing.xl),
+                      TTCard(
+                        child: Column(
+                          children: [
+                            Text(
+                              'What is $_a × $_b?',
+                              style: context.textTheme.displaySmall,
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            TextField(
+                              controller: _answerController,
+                              focusNode: _answerFocus,
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.done,
+                              textAlign: TextAlign.center,
+                              style: context.textTheme.headlineMedium,
+                              decoration: InputDecoration(
+                                hintText: '?',
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(AppSpacing.radiusMd),
+                                ),
+                              ),
+                              onSubmitted: (_) => _checkAnswer(),
+                            ),
+                            const SizedBox(height: AppSpacing.lg),
+                            TTButton(
+                              label: 'Enter',
+                              expanded: true,
+                              onPressed: _checkAnswer,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                      Text(
+                        'Or long-press the lock for 3 seconds',
+                        style: context.textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      GestureDetector(
+                        onLongPress: () {
+                          HapticFeedback.heavyImpact();
+                          setState(() => _unlocked = true);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          decoration: BoxDecoration(
+                            color: AppColors.white.withValues(alpha: 0.5),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.lock_open_rounded, size: 32),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: const Icon(Icons.lock_open_rounded, size: 32),
                 ),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -164,6 +195,8 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
   Widget _buildParentDashboard() {
     final profile = ref.watch(profileProvider);
     final memoryStats = ref.watch(memoryHubStatsProvider);
+    final gameStats = ref.watch(allGameStatsProvider);
+    final onboarding = ref.watch(onboardingProvider);
 
     return AnimatedSkyBackground(
       showGrass: false,
@@ -200,29 +233,61 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('Game Scores', style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  ...GameId.values.map((id) {
+                    final s = gameStats[id] ?? GameStats(gameId: id);
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                      child: Text(
+                        '${id.emoji} ${id.displayName}: best ${s.bestScore}, '
+                        'played ${s.timesPlayed}×, ⭐ ${s.starsEarned}',
+                        style: context.textTheme.bodySmall,
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('Memory Games', style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
                   _StatRow('Games Played', '${memoryStats.gamesPlayed}'),
                   _StatRow('Perfect Games', '${memoryStats.perfectGames}'),
                   _StatRow('Highest Combo', '${memoryStats.highestCombo}'),
-                  if (memoryStats.favoriteGame != null)
-                    _StatRow(
-                      'Favorite',
-                      memoryStats.favoriteGame!.displayName,
-                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Learning Path', style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.sm),
-                  ...MemoryMiniGameType.values.take(5).map((type) {
-                    final s = memoryStats.statsFor(type);
-                    return Padding(
-                      padding: const EdgeInsets.only(top: AppSpacing.xs),
-                      child: Text(
-                        '${type.emoji} ${type.displayName}: '
-                        '${(s.averageAccuracy * 100).round()}% accuracy, '
-                        'best ${s.bestScore}',
-                        style: context.textTheme.bodySmall,
-                      ),
-                    );
-                  }),
+                  Text(
+                    'Current: ${onboarding.ageGroup.emoji} '
+                    '${onboarding.ageGroup.title} (${onboarding.ageGroup.ageRange})',
+                    style: context.textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Wrap(
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    children: AgeGroup.values.map((group) {
+                      return ChoiceChip(
+                        label: Text('${group.emoji} ${group.title}'),
+                        selected: onboarding.ageGroup == group,
+                        onSelected: (_) => ref
+                            .read(onboardingProvider.notifier)
+                            .overrideAgeGroup(group),
+                      );
+                    }).toList(),
+                  ),
                 ],
               ),
             ),
@@ -267,7 +332,6 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
 
 class _StatRow extends StatelessWidget {
   const _StatRow(this.label, this.value);
-
   final String label;
   final String value;
 
