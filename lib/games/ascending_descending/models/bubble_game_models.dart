@@ -17,11 +17,13 @@ enum BubbleTheme {
 
 enum GamePhase { setup, countdown, playing, paused, gameOver, victory }
 
+enum BubbleTapResult { ignored, correct, wrong }
+
 class BubbleGameConfig extends Equatable {
   const BubbleGameConfig({
     this.sortMode = SortMode.ascending,
     this.difficulty = Difficulty.easy,
-    this.timerMode = TimerMode.relaxed,
+    this.timerMode = TimerMode.timed,
     this.timerSeconds = 60,
     this.bubbleCount = 10,
     this.minValue = 1,
@@ -29,6 +31,7 @@ class BubbleGameConfig extends Equatable {
     this.hintsEnabled = true,
     this.bubbleSpeed = 1.0,
     this.theme = BubbleTheme.defaultTheme,
+    this.toddlerMode = false,
   });
 
   final SortMode sortMode;
@@ -41,8 +44,23 @@ class BubbleGameConfig extends Equatable {
   final bool hintsEnabled;
   final double bubbleSpeed;
   final BubbleTheme theme;
+  final bool toddlerMode;
 
   bool get isValid => minValue <= maxValue;
+
+  /// Preset for ages 1–2: huge bubbles, slow motion, 60s timer, simple range.
+  factory BubbleGameConfig.toddler() => const BubbleGameConfig(
+        sortMode: SortMode.ascending,
+        difficulty: Difficulty.easy,
+        timerMode: TimerMode.timed,
+        timerSeconds: 60,
+        bubbleCount: 8,
+        minValue: 1,
+        maxValue: 10,
+        hintsEnabled: true,
+        bubbleSpeed: 0.35,
+        toddlerMode: true,
+      );
 
   BubbleGameConfig copyWith({
     SortMode? sortMode,
@@ -55,6 +73,7 @@ class BubbleGameConfig extends Equatable {
     bool? hintsEnabled,
     double? bubbleSpeed,
     BubbleTheme? theme,
+    bool? toddlerMode,
   }) =>
       BubbleGameConfig(
         sortMode: sortMode ?? this.sortMode,
@@ -67,6 +86,7 @@ class BubbleGameConfig extends Equatable {
         hintsEnabled: hintsEnabled ?? this.hintsEnabled,
         bubbleSpeed: bubbleSpeed ?? this.bubbleSpeed,
         theme: theme ?? this.theme,
+        toddlerMode: toddlerMode ?? this.toddlerMode,
       );
 
   @override
@@ -81,6 +101,7 @@ class BubbleGameConfig extends Equatable {
         hintsEnabled,
         bubbleSpeed,
         theme,
+        toddlerMode,
       ];
 }
 
@@ -174,6 +195,8 @@ class BubbleGameState extends Equatable {
     this.showHint = false,
     this.lastInteraction,
     this.countdown = 3,
+    this.feedbackMessage,
+    this.lastPointsEarned = 0,
   });
 
   final GamePhase phase;
@@ -190,6 +213,8 @@ class BubbleGameState extends Equatable {
   final bool showHint;
   final DateTime? lastInteraction;
   final int countdown;
+  final String? feedbackMessage;
+  final int lastPointsEarned;
 
   int? get targetNumber =>
       currentIndex < sortedNumbers.length ? sortedNumbers[currentIndex] : null;
@@ -219,6 +244,9 @@ class BubbleGameState extends Equatable {
     bool? showHint,
     DateTime? lastInteraction,
     int? countdown,
+    String? feedbackMessage,
+    int? lastPointsEarned,
+    bool clearFeedback = false,
   }) =>
       BubbleGameState(
         phase: phase ?? this.phase,
@@ -235,6 +263,9 @@ class BubbleGameState extends Equatable {
         showHint: showHint ?? this.showHint,
         lastInteraction: lastInteraction ?? this.lastInteraction,
         countdown: countdown ?? this.countdown,
+        feedbackMessage:
+            clearFeedback ? null : (feedbackMessage ?? this.feedbackMessage),
+        lastPointsEarned: lastPointsEarned ?? this.lastPointsEarned,
       );
 
   @override
@@ -253,6 +284,8 @@ class BubbleGameState extends Equatable {
         showHint,
         lastInteraction,
         countdown,
+        feedbackMessage,
+        lastPointsEarned,
       ];
 }
 
@@ -265,9 +298,11 @@ class BubbleGameResult extends Equatable {
     required this.accuracy,
     required this.mistakes,
     required this.elapsedSeconds,
+    required this.remainingSeconds,
     required this.longestCombo,
     required this.isPerfect,
     required this.isNewBest,
+    required this.isVictory,
   });
 
   final int score;
@@ -277,9 +312,11 @@ class BubbleGameResult extends Equatable {
   final double accuracy;
   final int mistakes;
   final int elapsedSeconds;
+  final int remainingSeconds;
   final int longestCombo;
   final bool isPerfect;
   final bool isNewBest;
+  final bool isVictory;
 
   @override
   List<Object?> get props => [
@@ -290,8 +327,10 @@ class BubbleGameResult extends Equatable {
         accuracy,
         mistakes,
         elapsedSeconds,
+        remainingSeconds,
         longestCombo,
         isPerfect,
         isNewBest,
+        isVictory,
       ];
 }
