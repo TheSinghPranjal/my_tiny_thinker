@@ -101,6 +101,9 @@ class ProfileNotifier extends StateNotifier<PlayerProfile> {
   Future<void> resetProgress() async {
     state = const PlayerProfile();
     await _save();
+    await _storage.clearAll();
+    state = const PlayerProfile();
+    await _save();
   }
 }
 
