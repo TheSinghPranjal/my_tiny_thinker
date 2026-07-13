@@ -11,8 +11,6 @@ import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/color_memory/controllers/color_memory_controller.dart';
 import 'package:my_tiny_thinker/games/color_memory/models/color_memory_models.dart';
