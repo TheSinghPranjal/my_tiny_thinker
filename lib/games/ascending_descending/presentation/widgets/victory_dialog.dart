@@ -58,7 +58,9 @@ class VictoryDialog extends StatelessWidget {
               children: [
                 const MascotWidget(size: 80, waving: true),
                 Text(
-                  result.isPerfect ? 'Perfect!' : 'Great Job!',
+                  result.isVictory
+                      ? (result.isPerfect ? 'Perfect!' : 'Level Complete!')
+                      : 'Time\'s Up!',
                   style: context.textTheme.displaySmall,
                 ),
                 if (result.isNewBest)
@@ -69,17 +71,17 @@ class VictoryDialog extends StatelessWidget {
                     ),
                   ),
                 const SizedBox(height: AppSpacing.lg),
-                _ResultRow('Score', '${result.score}'),
-                _ResultRow('Stars', '⭐' * result.stars),
-                _ResultRow('Coins', '+${result.coins}'),
+                _ResultRow('Score', '🏆 ${result.score}'),
+                _ResultRow('Stars', '⭐ ${result.stars}'),
+                _ResultRow('Coins', '🪙 +${result.coins}'),
                 _ResultRow('XP', '+${result.xp}'),
                 _ResultRow(
                   'Accuracy',
-                  '${(result.accuracy * 100).round()}%',
+                  '🎯 ${(result.accuracy * 100).round()}%',
                 ),
+                _ResultRow('Time Left', '⏱ ${_formatTime(result.remainingSeconds)}'),
+                _ResultRow('Best Combo', '🔥 ${result.longestCombo}'),
                 _ResultRow('Mistakes', '${result.mistakes}'),
-                _ResultRow('Time', '${result.elapsedSeconds}s'),
-                _ResultRow('Best Combo', '${result.longestCombo}'),
                 const SizedBox(height: AppSpacing.xl),
                 TTButton(
                   label: 'Play Again',
@@ -139,6 +141,12 @@ class _ResultRow extends StatelessWidget {
       ),
     );
   }
+}
+
+String _formatTime(int seconds) {
+  final m = (seconds ~/ 60).toString().padLeft(2, '0');
+  final s = (seconds % 60).toString().padLeft(2, '0');
+  return '$m:$s';
 }
 
 class BubbleGameSetupSheet extends StatelessWidget {
