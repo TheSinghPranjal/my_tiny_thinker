@@ -12,10 +12,14 @@ class TargetNumberCard extends StatelessWidget {
     super.key,
     required this.targetNumber,
     required this.sortMode,
+    this.toddlerMode = false,
+    this.large = false,
   });
 
   final int? targetNumber;
   final SortMode sortMode;
+  final bool toddlerMode;
+  final bool large;
 
   @override
   Widget build(BuildContext context) {
@@ -24,30 +28,38 @@ class TargetNumberCard extends StatelessWidget {
     return PulseAnimation(
       child: TTCard(
         gradient: AppGradients.bubbleBlue,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl,
-          vertical: AppSpacing.md,
+        padding: EdgeInsets.symmetric(
+          horizontal: large ? AppSpacing.xxl : AppSpacing.xl,
+          vertical: large ? AppSpacing.lg : AppSpacing.md,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              sortMode == SortMode.ascending
-                  ? Icons.arrow_upward_rounded
-                  : Icons.arrow_downward_rounded,
-              color: AppColors.white,
-            ),
-            const SizedBox(width: AppSpacing.sm),
+            if (!toddlerMode) ...[
+              Icon(
+                sortMode == SortMode.ascending
+                    ? Icons.arrow_upward_rounded
+                    : Icons.arrow_downward_rounded,
+                color: AppColors.white,
+              ),
+              const SizedBox(width: AppSpacing.sm),
+            ],
             Text(
               'Find:',
-              style: context.textTheme.titleMedium?.copyWith(
-                color: AppColors.white.withValues(alpha: 0.9),
+              style: (large
+                      ? context.textTheme.headlineSmall
+                      : context.textTheme.titleMedium)
+                  ?.copyWith(
+                color: AppColors.white.withValues(alpha: 0.95),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
             Text(
-              _formatNumber(targetNumber!),
-              style: context.textTheme.displaySmall?.copyWith(
+              targetNumber.toString(),
+              style: (large
+                      ? context.textTheme.displayMedium
+                      : context.textTheme.displaySmall)
+                  ?.copyWith(
                 color: AppColors.white,
                 fontWeight: FontWeight.w800,
               ),
@@ -57,8 +69,105 @@ class TargetNumberCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  String _formatNumber(int n) => n.toString();
+class GameTimerBadge extends StatelessWidget {
+  const GameTimerBadge({
+    super.key,
+    required this.seconds,
+    this.large = false,
+  });
+
+  final int seconds;
+  final bool large;
+
+  String get _formatted {
+    final m = (seconds ~/ 60).toString().padLeft(2, '0');
+    final s = (seconds % 60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final urgent = seconds <= 10;
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: EdgeInsets.symmetric(
+        horizontal: large ? AppSpacing.md : AppSpacing.sm,
+        vertical: large ? AppSpacing.sm : AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: urgent
+            ? AppColors.error
+            : AppColors.white.withValues(alpha: 0.92),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
+        boxShadow: [
+          BoxShadow(
+            color: (urgent ? AppColors.error : AppColors.skyBlue)
+                .withValues(alpha: 0.3),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.timer_rounded,
+            size: large ? 24 : 18,
+            color: urgent ? AppColors.white : AppColors.skyBlueDark,
+          ),
+          const SizedBox(width: AppSpacing.xxs),
+          Text(
+            _formatted,
+            style: (large
+                    ? context.textTheme.titleLarge
+                    : context.textTheme.labelLarge)
+                ?.copyWith(
+              color: urgent ? AppColors.white : AppColors.textPrimary,
+              fontWeight: FontWeight.w800,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FeedbackToast extends StatelessWidget {
+  const FeedbackToast({super.key, required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return PulseAnimation(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xl,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          gradient: AppGradients.rainbow,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.candyPink.withValues(alpha: 0.4),
+              blurRadius: 12,
+            ),
+          ],
+        ),
+        child: Text(
+          message,
+          style: context.textTheme.headlineSmall?.copyWith(
+            color: AppColors.white,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class ScoreWidget extends StatelessWidget {
@@ -67,11 +176,15 @@ class ScoreWidget extends StatelessWidget {
     required this.score,
     this.combo = 0,
     this.comboLabel,
+    this.large = false,
+    this.lastPointsEarned = 0,
   });
 
   final int score;
   final int combo;
   final String? comboLabel;
+  final bool large;
+  final int lastPointsEarned;
 
   @override
   Widget build(BuildContext context) {
@@ -79,9 +192,9 @@ class ScoreWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+          padding: EdgeInsets.symmetric(
+            horizontal: large ? AppSpacing.lg : AppSpacing.md,
+            vertical: large ? AppSpacing.md : AppSpacing.sm,
           ),
           decoration: BoxDecoration(
             color: AppColors.white.withValues(alpha: 0.9),
@@ -89,17 +202,26 @@ class ScoreWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.star_rounded, color: AppColors.sunYellow, size: 20),
+              Icon(
+                Icons.star_rounded,
+                color: AppColors.sunYellow,
+                size: large ? 28 : 20,
+              ),
               const SizedBox(width: AppSpacing.xs),
               Text(
                 '$score',
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+                style: (large
+                        ? context.textTheme.headlineSmall
+                        : context.textTheme.titleMedium)
+                    ?.copyWith(fontWeight: FontWeight.w800),
               ),
             ],
           ),
         ),
+        if (lastPointsEarned > 0) ...[
+          const SizedBox(width: AppSpacing.sm),
+          FloatingPointsBadge(points: lastPointsEarned),
+        ],
         if (combo >= 2 && comboLabel != null) ...[
           const SizedBox(width: AppSpacing.sm),
           Container(
@@ -124,6 +246,40 @@ class ScoreWidget extends StatelessWidget {
   }
 }
 
+class FloatingPointsBadge extends StatelessWidget {
+  const FloatingPointsBadge({super.key, required this.points});
+
+  final int points;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      key: ValueKey(points),
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 600),
+      builder: (context, t, child) {
+        return Transform.translate(
+          offset: Offset(0, -20 * t),
+          child: Opacity(
+            opacity: 1 - t,
+            child: child,
+          ),
+        );
+      },
+      child: Text(
+        '+$points',
+        style: context.textTheme.titleMedium?.copyWith(
+          color: AppColors.sunYellow,
+          fontWeight: FontWeight.w800,
+          shadows: const [
+            Shadow(color: AppColors.skyBlueDark, blurRadius: 4),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class GameHudBar extends StatelessWidget {
   const GameHudBar({
     super.key,
@@ -131,65 +287,37 @@ class GameHudBar extends StatelessWidget {
     required this.total,
     required this.score,
     required this.combo,
-    this.remainingSeconds,
-    this.timerMode = TimerMode.relaxed,
+    this.lastPointsEarned = 0,
+    this.toddlerMode = false,
   });
 
   final int current;
   final int total;
   final int score;
   final int combo;
-  final int? remainingSeconds;
-  final TimerMode timerMode;
+  final int lastPointsEarned;
+  final bool toddlerMode;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
-                child: LinearProgressIndicator(
-                  value: total > 0 ? current / total : 0,
-                  minHeight: 10,
-                  backgroundColor: AppColors.white.withValues(alpha: 0.3),
-                  valueColor:
-                      const AlwaysStoppedAnimation(AppColors.mintGreen),
-                ),
-              ),
-            ),
-            if (timerMode == TimerMode.timed && remainingSeconds != null) ...[
-              const SizedBox(width: AppSpacing.md),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: remainingSeconds! <= 10
-                      ? AppColors.error
-                      : AppColors.white.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
-                ),
-                child: Text(
-                  '${remainingSeconds}s',
-                  style: context.textTheme.labelMedium?.copyWith(
-                    color: remainingSeconds! <= 10
-                        ? AppColors.white
-                        : AppColors.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ],
+        ClipRRect(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
+          child: LinearProgressIndicator(
+            value: total > 0 ? current / total : 0,
+            minHeight: toddlerMode ? 16 : 10,
+            backgroundColor: AppColors.white.withValues(alpha: 0.3),
+            valueColor: const AlwaysStoppedAnimation(AppColors.mintGreen),
+          ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        SizedBox(height: toddlerMode ? AppSpacing.md : AppSpacing.sm),
         ScoreWidget(
           score: score,
           combo: combo,
           comboLabel: combo >= 2 ? _comboLabel(combo) : null,
+          large: toddlerMode,
+          lastPointsEarned: lastPointsEarned,
         ),
       ],
     );
