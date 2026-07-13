@@ -13,11 +13,13 @@ class BubbleWidget extends StatefulWidget {
     required this.bubble,
     required this.onTap,
     this.showHint = false,
+    this.toddlerMode = false,
   });
 
   final BubbleEntity bubble;
   final VoidCallback onTap;
   final bool showHint;
+  final bool toddlerMode;
 
   @override
   State<BubbleWidget> createState() => _BubbleWidgetState();
@@ -62,21 +64,26 @@ class _BubbleWidgetState extends State<BubbleWidget>
     final gradient = AppGradients.forIndex(bubble.colorIndex);
 
     Widget content = GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: bubble.isPopping ? null : widget.onTap,
       child: ShakeAnimation(
         trigger: bubble.isWrong,
-        child: CustomPaint(
-          size: Size(diameter, diameter),
-          painter: _BubblePainter(
-            gradient: gradient,
-            isWrong: bubble.isWrong,
-            showHint: widget.showHint,
-            rotation: bubble.rotation,
-          ),
-          child: Center(
-            child: _BubbleNumberText(
-              number: bubble.number,
-              radius: bubble.radius,
+        child: SizedBox(
+          width: diameter,
+          height: diameter,
+          child: CustomPaint(
+            painter: _BubblePainter(
+              gradient: gradient,
+              isWrong: bubble.isWrong,
+              showHint: widget.showHint,
+              rotation: bubble.rotation,
+            ),
+            child: Center(
+              child: _BubbleNumberText(
+                number: bubble.number,
+                radius: bubble.radius,
+                toddlerMode: widget.toddlerMode,
+              ),
             ),
           ),
         ),
@@ -89,28 +96,39 @@ class _BubbleWidgetState extends State<BubbleWidget>
       content = WiggleAnimation(child: content);
     }
 
+    // Positioned MUST be a direct child of Stack — never wrap it.
     return Positioned(
       left: bubble.x - bubble.radius,
       top: bubble.y - bubble.radius,
-      child: Semantics(
-        label: 'Bubble number ${bubble.number}',
-        button: true,
-        child: content,
+      width: diameter,
+      height: diameter,
+      child: RepaintBoundary(
+        child: Semantics(
+          label: 'Bubble number ${bubble.number}',
+          button: true,
+          child: content,
+        ),
       ),
     );
   }
 }
 
 class _BubbleNumberText extends StatelessWidget {
-  const _BubbleNumberText({required this.number, required this.radius});
+  const _BubbleNumberText({
+    required this.number,
+    required this.radius,
+    this.toddlerMode = false,
+  });
 
   final int number;
   final double radius;
+  final bool toddlerMode;
 
   @override
   Widget build(BuildContext context) {
     final text = number.toString();
-    final fontSize = (radius * 0.65).clamp(12.0, 36.0);
+    final fontSize =
+        (radius * (toddlerMode ? 0.75 : 0.65)).clamp(14.0, toddlerMode ? 48.0 : 36.0);
     if (text.length > 4) {
       return FittedBox(
         fit: BoxFit.scaleDown,
