@@ -20,6 +20,7 @@ class GameSelectionGrid extends ConsumerWidget {
   final bool largeLayout;
 
   static const _allGames = [
+    GameId.oceanFishAdventure,
     GameId.bubbleNumberPop,
     GameId.memoryGame,
     GameId.oddOneOut,
@@ -28,6 +29,7 @@ class GameSelectionGrid extends ConsumerWidget {
   ];
 
   static const _meta = {
+    GameId.oceanFishAdventure: ('🐠', 'Ocean Fish Adventure', 'Easy'),
     GameId.bubbleNumberPop: ('🔵', 'Bubble Number Pop', 'Easy'),
     GameId.memoryGame: ('🧠', 'Memory Game', 'Medium'),
     GameId.oddOneOut: ('👀', 'Odd One Out', 'Easy'),

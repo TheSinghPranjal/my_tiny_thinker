@@ -53,6 +53,7 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
   return switch (group) {
     AgeGroup.littleExplorers => [
         'bubble_number_pop',
+        'ocean_fish_adventure',
       ],
     AgeGroup.tinyLearners => [
         'bubble_number_pop',

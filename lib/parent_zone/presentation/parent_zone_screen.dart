@@ -19,6 +19,8 @@ import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
+import 'package:my_tiny_thinker/games/ocean_fish_adventure/models/ocean_fish_models.dart';
+import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
 
 class ParentZoneScreen extends ConsumerStatefulWidget {
   const ParentZoneScreen({super.key});
@@ -295,6 +297,17 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('🐠 Ocean Fish Adventure', style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _OceanFishParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('Controls', style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
                   ListTile(
@@ -345,6 +358,73 @@ class _StatRow extends StatelessWidget {
           Text(value, style: context.textTheme.titleMedium),
         ],
       ),
+    );
+  }
+}
+
+class _OceanFishParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(oceanFishSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Fish on screen: ${s.maxFishOnScreen}'),
+        Slider(
+          value: s.maxFishOnScreen.toDouble(),
+          min: 1,
+          max: 8,
+          divisions: 7,
+          label: '${s.maxFishOnScreen}',
+          onChanged: (v) => ref.read(oceanFishSettingsProvider.notifier).patch(
+                (x) => x.copyWith(maxFishOnScreen: v.round()),
+              ),
+        ),
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(oceanFishSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Swim speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: FishSwimSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.swimSpeed == speed,
+              onSelected: (_) => ref.read(oceanFishSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(swimSpeed: speed),
+                  ),
+            );
+          }).toList(),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Voice encouragement'),
+          value: s.voiceEnabled,
+          onChanged: (v) => ref.read(oceanFishSettingsProvider.notifier).patch(
+                (x) => x.copyWith(voiceEnabled: v),
+              ),
+        ),
+        Text('Fish size', style: context.textTheme.titleSmall),
+        Slider(
+          value: s.fishSizeScale,
+          min: 0.8,
+          max: 1.4,
+          divisions: 6,
+          label: s.fishSizeScale.toStringAsFixed(1),
+          onChanged: (v) => ref.read(oceanFishSettingsProvider.notifier).patch(
+                (x) => x.copyWith(fishSizeScale: v),
+              ),
+        ),
+      ],
     );
   }
 }

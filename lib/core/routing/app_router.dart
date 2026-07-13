@@ -19,6 +19,8 @@ import 'package:my_tiny_thinker/games/pattern_match/presentation/pattern_match_g
 import 'package:my_tiny_thinker/games/pattern_match/presentation/pattern_match_setup_screen.dart';
 import 'package:my_tiny_thinker/games/color_memory/presentation/color_memory_setup_screen.dart';
 import 'package:my_tiny_thinker/games/color_memory/presentation/color_memory_game_screen.dart';
+import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/ocean_fish_setup_screen.dart';
+import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/ocean_fish_game_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/welcome_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/age_selection_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/avatar_selection_screen.dart';
@@ -42,6 +44,8 @@ abstract final class AppRoutes {
   static const patternMatchGame = '/games/pattern-match/play';
   static const colorMemorySetup = '/games/color-memory/setup';
   static const colorMemoryGame = '/games/color-memory/play';
+  static const oceanFishSetup = '/games/ocean-fish/setup';
+  static const oceanFishGame = '/games/ocean-fish/play';
   static const welcome = '/welcome';
   static const ageSelection = '/onboarding/age';
   static const avatarSelection = '/onboarding/avatar';
@@ -162,6 +166,16 @@ final appRouter = GoRouter(
       path: AppRoutes.colorMemoryGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const ColorMemoryGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.oceanFishSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const OceanFishSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.oceanFishGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const OceanFishGameScreen()),
     ),
   ],
 );
