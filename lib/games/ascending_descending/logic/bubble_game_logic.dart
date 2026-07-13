@@ -96,8 +96,32 @@ abstract final class BubbleNumberGenerator {
 
 abstract final class BubbleScoring {
   static const int correctPoints = 10;
-  static const int comboBonus = 5;
+  static const int comboBonus = 10;
   static const int perfectBonus = 100;
+  static const int fastPopBonus = 5;
+
+  static const _encouragements = [
+    'Great Job!',
+    'Awesome!',
+    'Fantastic!',
+    'Super!',
+    'You did it!',
+    'Amazing!',
+  ];
+
+  static const _wrongMessages = [
+    'Oops!',
+    'Try Again!',
+    'Almost!',
+  ];
+
+  static String encouragementFor(int combo, int popIndex) {
+    if (combo >= 3) return comboLabel(combo);
+    return _encouragements[popIndex % _encouragements.length];
+  }
+
+  static String wrongMessage(int mistakes) =>
+      _wrongMessages[mistakes % _wrongMessages.length];
 
   static int comboMultiplier(int combo) {
     if (combo >= 10) return 4;
@@ -115,18 +139,14 @@ abstract final class BubbleScoring {
     return '';
   }
 
-  static int pointsForCorrect(int combo) {
-    return correctPoints + comboMultiplier(combo) * comboBonus;
+  static int pointsForCorrect(int combo, {bool fastPop = false}) {
+    var points = correctPoints;
+    if (combo >= 2) points += comboBonus;
+    if (fastPop) points += fastPopBonus;
+    return points;
   }
 
-  static int mistakePenalty(Difficulty difficulty) {
-    return switch (difficulty) {
-      Difficulty.easy => 0,
-      Difficulty.medium => 2,
-      Difficulty.hard => 5,
-      Difficulty.expert => 10,
-    };
-  }
+  static int mistakePenalty(Difficulty difficulty) => 0;
 
   static int speedBonus(int elapsedSeconds, int total) {
     if (total == 0) return 0;
@@ -165,9 +185,11 @@ abstract final class BubbleScoring {
       accuracy: state.accuracy,
       mistakes: state.mistakes,
       elapsedSeconds: state.elapsedSeconds,
+      remainingSeconds: state.remainingSeconds,
       longestCombo: state.longestCombo,
       isPerfect: isPerfect,
       isNewBest: finalScore > previousBest,
+      isVictory: state.phase == GamePhase.victory,
     );
   }
 }
