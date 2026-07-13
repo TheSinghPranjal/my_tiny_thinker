@@ -10,10 +10,10 @@ void navigateToGame(BuildContext context, GameId gameId) {
     case GameId.memoryGame:
       context.push(AppRoutes.memoryHub);
     case GameId.oddOneOut:
+      context.push(AppRoutes.oddOneOutSetup);
     case GameId.patternMatch:
+      context.push(AppRoutes.patternMatchSetup);
     case GameId.colorMemory:
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Coming soon!')),
-      );
+      context.push(AppRoutes.colorMemorySetup);
   }
 }

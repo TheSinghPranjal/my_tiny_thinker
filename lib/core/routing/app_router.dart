@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_tiny_thinker/core/widgets/loading_screen.dart';
+import 'package:my_tiny_thinker/core/widgets/app_loading_gate.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/memory_hub_screen.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/memory_play_screen.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
@@ -13,6 +13,15 @@ import 'package:my_tiny_thinker/parent_zone/presentation/parent_zone_screen.dart
 import 'package:my_tiny_thinker/profile/presentation/profile_screen.dart';
 import 'package:my_tiny_thinker/rewards/presentation/rewards_screen.dart';
 import 'package:my_tiny_thinker/settings/presentation/settings_screen.dart';
+import 'package:my_tiny_thinker/games/odd_one_out/presentation/odd_one_out_game_screen.dart';
+import 'package:my_tiny_thinker/games/odd_one_out/presentation/odd_one_out_setup_screen.dart';
+import 'package:my_tiny_thinker/games/pattern_match/presentation/pattern_match_game_screen.dart';
+import 'package:my_tiny_thinker/games/pattern_match/presentation/pattern_match_setup_screen.dart';
+import 'package:my_tiny_thinker/games/color_memory/presentation/color_memory_setup_screen.dart';
+import 'package:my_tiny_thinker/games/color_memory/presentation/color_memory_game_screen.dart';
+import 'package:my_tiny_thinker/onboarding/presentation/welcome_screen.dart';
+import 'package:my_tiny_thinker/onboarding/presentation/age_selection_screen.dart';
+import 'package:my_tiny_thinker/onboarding/presentation/avatar_selection_screen.dart';
 
 abstract final class AppRoutes {
   static const loading = '/';
@@ -27,6 +36,15 @@ abstract final class AppRoutes {
   static const bubbleGame = '/games/bubble-number-pop/play';
   static const memoryHub = '/games/memory-game';
   static const memoryPlay = '/games/memory-game/play';
+  static const oddOneOutSetup = '/games/odd-one-out/setup';
+  static const oddOneOutGame = '/games/odd-one-out/play';
+  static const patternMatchSetup = '/games/pattern-match/setup';
+  static const patternMatchGame = '/games/pattern-match/play';
+  static const colorMemorySetup = '/games/color-memory/setup';
+  static const colorMemoryGame = '/games/color-memory/play';
+  static const welcome = '/welcome';
+  static const ageSelection = '/onboarding/age';
+  static const avatarSelection = '/onboarding/avatar';
 }
 
 final appRouter = GoRouter(
@@ -36,11 +54,25 @@ final appRouter = GoRouter(
       path: AppRoutes.loading,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: LoadingScreen(onComplete: () => context.go(AppRoutes.home)),
+        child: const AppLoadingGate(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
       ),
+    ),
+    GoRoute(
+      path: AppRoutes.welcome,
+      pageBuilder: (context, state) => _fadePage(state, const WelcomeScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.ageSelection,
+      pageBuilder: (context, state) =>
+          _fadePage(state, const AgeSelectionScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.avatarSelection,
+      pageBuilder: (context, state) =>
+          _fadePage(state, const AvatarSelectionScreen()),
     ),
     ShellRoute(
       builder: (context, state, child) => MainShell(child: child),
@@ -100,6 +132,36 @@ final appRouter = GoRouter(
           initialConfig: state.extra as MemoryGameConfig?,
         ),
       ),
+    ),
+    GoRoute(
+      path: AppRoutes.oddOneOutSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const OddOneOutSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.oddOneOutGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const OddOneOutGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.patternMatchSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const PatternMatchSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.patternMatchGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const PatternMatchGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.colorMemorySetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ColorMemorySetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.colorMemoryGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ColorMemoryGameScreen()),
     ),
   ],
 );
