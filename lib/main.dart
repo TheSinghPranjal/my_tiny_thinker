@@ -16,6 +16,7 @@ Future<void> main() async {
     DeviceOrientation.landscapeRight,
   ]);
 
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
