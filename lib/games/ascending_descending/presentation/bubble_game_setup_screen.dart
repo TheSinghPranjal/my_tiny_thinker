@@ -3,28 +3,115 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/models/age_group.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/providers/onboarding_provider.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
+import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/controllers/bubble_game_controller.dart';
-import 'package:my_tiny_thinker/games/ascending_descending/logic/bubble_game_logic.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/models/bubble_game_models.dart';
-import 'package:my_tiny_thinker/games/ascending_descending/presentation/widgets/victory_dialog.dart';
 
-class BubbleGameSetupScreen extends ConsumerStatefulWidget {
+class BubbleGameSetupScreen extends ConsumerWidget {
   const BubbleGameSetupScreen({super.key});
 
   @override
-  ConsumerState<BubbleGameSetupScreen> createState() =>
-      _BubbleGameSetupScreenState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ageGroup = ref.watch(onboardingProvider).ageGroup;
+    final isToddler = ageGroup == AgeGroup.littleExplorers;
+
+    if (isToddler) {
+      return _ToddlerSetupView(
+        onPlay: () {
+          ref
+              .read(bubbleGameControllerProvider.notifier)
+              .updateConfig(BubbleGameConfig.toddler());
+          context.push(AppRoutes.bubbleGame);
+        },
+      );
+    }
+
+    return _StandardSetupView();
+  }
 }
 
-class _BubbleGameSetupScreenState extends ConsumerState<BubbleGameSetupScreen> {
+class _ToddlerSetupView extends StatelessWidget {
+  const _ToddlerSetupView({required this.onPlay});
+
+  final VoidCallback onPlay;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSkyBackground(
+      showElements: true,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.xl),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back_rounded, size: 32),
+                    onPressed: () => context.pop(),
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.white.withValues(alpha: 0.9),
+                    ),
+                  ),
+                ),
+                const Spacer(),
+                const MascotWidget(size: 120, waving: true),
+                const SizedBox(height: AppSpacing.xl),
+                Text(
+                  'Bubble Pop!',
+                  style: context.textTheme.displayMedium?.copyWith(
+                    color: AppColors.white,
+                    shadows: const [
+                      Shadow(color: AppColors.skyBlueDark, blurRadius: 6),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Text(
+                  'Tap the number you see!',
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.headlineSmall?.copyWith(
+                    color: AppColors.white,
+                  ),
+                ),
+                const Spacer(flex: 2),
+                TTButton(
+                  label: 'Play!',
+                  expanded: true,
+                  size: TTButtonSize.large,
+                  onPressed: onPlay,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StandardSetupView extends ConsumerStatefulWidget {
+  const _StandardSetupView();
+
+  @override
+  ConsumerState<_StandardSetupView> createState() =>
+      _StandardSetupViewState();
+}
+
+class _StandardSetupViewState extends ConsumerState<_StandardSetupView> {
   BubbleGameConfig? _config;
 
   static const _bubbleCounts = [5, 10, 15, 20, 25, 30, 40, 50];
@@ -43,13 +130,13 @@ class _BubbleGameSetupScreenState extends ConsumerState<BubbleGameSetupScreen> {
       (d) => d.name == settings.difficulty,
       orElse: () => Difficulty.easy,
     );
-    final range = BubbleNumberGenerator.defaultRangeForDifficulty(diff);
     setState(() {
       _config = config.copyWith(
         difficulty: diff,
-        minValue: range.$1,
-        maxValue: range.$2,
-        bubbleSpeed: BubbleNumberGenerator.speedForDifficulty(diff),
+        minValue: 1,
+        maxValue: 20,
+        timerMode: TimerMode.timed,
+        timerSeconds: 60,
         hintsEnabled: settings.hintsEnabled,
       );
     });
@@ -64,8 +151,10 @@ class _BubbleGameSetupScreenState extends ConsumerState<BubbleGameSetupScreen> {
       );
     }
     final config = _config!;
+
     return AnimatedSkyBackground(
       showGrass: false,
+      showElements: true,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -83,7 +172,7 @@ class _BubbleGameSetupScreenState extends ConsumerState<BubbleGameSetupScreen> {
               TTCard(
                 gradient: AppGradients.bubbleBlue,
                 child: Text(
-                  'Pop bubbles in the right order!',
+                  'Find and tap each number in order!',
                   style: context.textTheme.titleLarge?.copyWith(
                     color: AppColors.white,
                   ),
@@ -96,7 +185,8 @@ class _BubbleGameSetupScreenState extends ConsumerState<BubbleGameSetupScreen> {
                 selected: config.sortMode,
                 label: (m) =>
                     m == SortMode.ascending ? '↑ Ascending' : '↓ Descending',
-                onSelected: (m) => setState(() => _config = config.copyWith(sortMode: m)),
+                onSelected: (m) =>
+                    setState(() => _config = config.copyWith(sortMode: m)),
               ),
               _SectionTitle('Difficulty'),
               _ChipSelector<Difficulty>(
@@ -104,13 +194,11 @@ class _BubbleGameSetupScreenState extends ConsumerState<BubbleGameSetupScreen> {
                 selected: config.difficulty,
                 label: (d) => d.name.capitalize,
                 onSelected: (d) {
-                  final range = BubbleNumberGenerator.defaultRangeForDifficulty(d);
                   setState(() {
                     _config = config.copyWith(
                       difficulty: d,
-                      minValue: range.$1,
-                      maxValue: range.$2,
-                      bubbleSpeed: BubbleNumberGenerator.speedForDifficulty(d),
+                      minValue: d == Difficulty.easy ? 1 : -10,
+                      maxValue: d == Difficulty.easy ? 20 : 50,
                     );
                   });
                 },
@@ -123,56 +211,18 @@ class _BubbleGameSetupScreenState extends ConsumerState<BubbleGameSetupScreen> {
                 onSelected: (c) =>
                     setState(() => _config = config.copyWith(bubbleCount: c)),
               ),
-              _SectionTitle('Number Range'),
-              Row(
-                children: [
-                  Expanded(
-                    child: _NumberField(
-                      label: 'Min',
-                      value: config.minValue,
-                      onChanged: (v) =>
-                          setState(() => _config = config.copyWith(minValue: v)),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: _NumberField(
-                      label: 'Max',
-                      value: config.maxValue,
-                      onChanged: (v) =>
-                          setState(() => _config = config.copyWith(maxValue: v)),
-                    ),
-                  ),
-                ],
-              ),
-              if (!config.isValid)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.sm),
-                  child: Text(
-                    'Min cannot exceed Max',
-                    style: context.textTheme.bodySmall?.copyWith(
-                      color: AppColors.error,
-                    ),
-                  ),
-                ),
               _SectionTitle('Timer'),
-              _ChipSelector<TimerMode>(
-                values: TimerMode.values,
-                selected: config.timerMode,
-                label: (t) => t.name.capitalize,
-                onSelected: (t) =>
-                    setState(() => _config = config.copyWith(timerMode: t)),
-              ),
-              if (config.timerMode == TimerMode.timed) ...[
-                _ChipSelector<int>(
-                  values: _timerOptions,
-                  selected: config.timerSeconds,
-                  label: (s) => '${s}s',
-                  onSelected: (s) => setState(
-                    () => _config = config.copyWith(timerSeconds: s),
+              _ChipSelector<int>(
+                values: _timerOptions,
+                selected: config.timerSeconds,
+                label: (s) => '${s}s',
+                onSelected: (s) => setState(
+                  () => _config = config.copyWith(
+                    timerMode: TimerMode.timed,
+                    timerSeconds: s,
                   ),
                 ),
-              ],
+              ),
               const SizedBox(height: AppSpacing.xl),
               TTButton(
                 label: 'Start Game!',
@@ -185,17 +235,6 @@ class _BubbleGameSetupScreenState extends ConsumerState<BubbleGameSetupScreen> {
                       .updateConfig(config);
                   context.push(AppRoutes.bubbleGame);
                 },
-              ),
-              const SizedBox(height: AppSpacing.md),
-              TTButton(
-                label: 'Advanced Settings',
-                variant: TTButtonVariant.ghost,
-                expanded: true,
-                onPressed: () => BubbleGameSetupSheet.show(
-                  context,
-                  config: config,
-                  onConfigChanged: (c) => setState(() => _config = c),
-                ),
               ),
             ],
           ),
@@ -238,44 +277,13 @@ class _ChipSelector<T> extends StatelessWidget {
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: values.map((v) {
-        final isSelected = v == selected;
         return ChoiceChip(
           label: Text(label(v)),
-          selected: isSelected,
+          selected: v == selected,
           selectedColor: AppColors.skyBlueLight,
           onSelected: (_) => onSelected(v),
         );
       }).toList(),
-    );
-  }
-}
-
-class _NumberField extends StatelessWidget {
-  const _NumberField({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String label;
-  final int value;
-  final ValueChanged<int> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
-        ),
-      ),
-      keyboardType: const TextInputType.numberWithOptions(signed: true),
-      controller: TextEditingController(text: value.toString()),
-      onChanged: (text) {
-        final v = int.tryParse(text);
-        if (v != null) onChanged(v.clamp(-99999, 99999));
-      },
     );
   }
 }
