@@ -7,7 +7,8 @@ enum GameId {
   patternMatch('pattern_match', '🧩', 'Pattern Match'),
   colorMemory('color_memory', '🌈', 'Color Memory'),
   oceanFishAdventure('ocean_fish_adventure', '🐠', 'Ocean Fish Adventure'),
-  magicalFlowerGarden('magical_flower_garden', '🌸', 'Magical Flower Garden');
+  magicalFlowerGarden('magical_flower_garden', '🌸', 'Magical Flower Garden'),
+  cloudPopGarden('cloud_pop_garden', '☁️', 'Cloud Pop Garden');
 
   const GameId(this.id, this.emoji, this.displayName);
   final String id;

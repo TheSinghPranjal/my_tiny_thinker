@@ -21,6 +21,8 @@ import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/models/ocean_fish_models.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
+import 'package:my_tiny_thinker/games/cloud_pop_garden/models/cloud_pop_garden_models.dart';
+import 'package:my_tiny_thinker/games/cloud_pop_garden/repository/cloud_pop_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/models/flower_garden_models.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/repository/flower_garden_settings_repository.dart';
 
@@ -311,6 +313,18 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('☁️ Cloud Pop Garden',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _CloudPopGardenParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('🐠 Ocean Fish Adventure', style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
                   _OceanFishParentControls(),
@@ -488,6 +502,170 @@ class _FlowerGardenParentControls extends ConsumerWidget {
           value: s.reducedMotion,
           onChanged: (v) =>
               ref.read(flowerGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(reducedMotion: v),
+                  ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CloudPopGardenParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(cloudPopGardenSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(sessionSeconds: v.round()),
+                  ),
+        ),
+        Text('Cloud & flower pairs: ${s.pairCount}'),
+        Slider(
+          value: s.pairCount.toDouble(),
+          min: 1,
+          max: 5,
+          divisions: 4,
+          label: '${s.pairCount}',
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(pairCount: v.round()),
+                  ),
+        ),
+        Text('Cloud speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: CloudMoveSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.cloudMoveSpeed == speed,
+              onSelected: (_) =>
+                  ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(cloudMoveSpeed: speed),
+                      ),
+            );
+          }).toList(),
+        ),
+        Text('Bloom speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: BloomSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.bloomSpeed == speed,
+              onSelected: (_) =>
+                  ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(bloomSpeed: speed),
+                      ),
+            );
+          }).toList(),
+        ),
+        Text('Rains until rainbow: ${s.rainsForRainbow}'),
+        Slider(
+          value: s.rainsForRainbow.toDouble(),
+          min: 2,
+          max: 8,
+          divisions: 6,
+          label: '${s.rainsForRainbow}',
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rainsForRainbow: v.round()),
+                  ),
+        ),
+        Text('Reward multiplier'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: s.rewardMultiplier.toStringAsFixed(1),
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rewardMultiplier: v),
+                  ),
+        ),
+        Text('Animation intensity'),
+        Slider(
+          value: s.animationIntensity,
+          min: 0.5,
+          max: 1.5,
+          divisions: 4,
+          label: s.animationIntensity.toStringAsFixed(1),
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(animationIntensity: v),
+                  ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(soundEnabled: v),
+                  ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Rain sounds'),
+          value: s.rainSoundEnabled,
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rainSoundEnabled: v),
+                  ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(narrationEnabled: v),
+                  ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Music'),
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicEnabled: v),
+                  ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(hapticsEnabled: v),
+                  ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Lightning animations'),
+          value: s.lightningEnabled,
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(lightningEnabled: v),
+                  ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
                     (x) => x.copyWith(reducedMotion: v),
                   ),
         ),
