@@ -17,5 +17,7 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.colorMemorySetup);
     case GameId.oceanFishAdventure:
       context.push(AppRoutes.oceanFishSetup);
+    case GameId.magicalFlowerGarden:
+      context.push(AppRoutes.flowerGardenSetup);
   }
 }

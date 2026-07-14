@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_tiny_thinker/core/animations/bounce_animation.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
@@ -10,6 +9,7 @@ import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
+import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/color_memory/controllers/color_memory_controller.dart';
@@ -185,21 +185,6 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
                               style: context.textTheme.titleMedium),
                         ],
                       ),
-                      if (state.feedbackMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: AppSpacing.sm),
-                          child: PulseAnimation(
-                            child: Text(
-                              state.feedbackMessage!,
-                              style: context.textTheme.headlineSmall?.copyWith(
-                                color: AppColors.white,
-                                shadows: const [
-                                  Shadow(color: AppColors.skyBlueDark, blurRadius: 4),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
                       const SizedBox(height: AppSpacing.lg),
                       Expanded(
                         child: Center(
@@ -256,6 +241,11 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
                     ],
                   ),
                 ),
+              ),
+              GameFeedbackOverlay(
+                message: state.feedbackMessage,
+                plainMessage: true,
+                top: 72,
               ),
             ],
           ),
