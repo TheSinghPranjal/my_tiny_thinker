@@ -21,6 +21,10 @@ import 'package:my_tiny_thinker/games/color_memory/presentation/color_memory_set
 import 'package:my_tiny_thinker/games/color_memory/presentation/color_memory_game_screen.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/ocean_fish_setup_screen.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/ocean_fish_game_screen.dart';
+import 'package:my_tiny_thinker/games/shadow_match_adventure/presentation/shadow_match_setup_screen.dart';
+import 'package:my_tiny_thinker/games/shadow_match_adventure/presentation/shadow_match_game_screen.dart';
+import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_setup_screen.dart';
+import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_game_screen.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_setup_screen.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_game_screen.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/presentation/flower_garden_setup_screen.dart';
@@ -54,6 +58,10 @@ abstract final class AppRoutes {
   static const flowerGardenGame = '/games/flower-garden/play';
   static const cloudPopGardenSetup = '/games/cloud-pop-garden/setup';
   static const cloudPopGardenGame = '/games/cloud-pop-garden/play';
+  static const shadowMatchSetup = '/games/shadow-match/setup';
+  static const shadowMatchGame = '/games/shadow-match/play';
+  static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
+  static const alphabetQuizGame = '/games/alphabet-adventure/play';
   static const welcome = '/welcome';
   static const ageSelection = '/onboarding/age';
   static const avatarSelection = '/onboarding/avatar';
@@ -204,6 +212,26 @@ final appRouter = GoRouter(
       path: AppRoutes.cloudPopGardenGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const CloudPopGardenGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.shadowMatchSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ShadowMatchSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.shadowMatchGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ShadowMatchGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.alphabetQuizSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const AlphabetQuizSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.alphabetQuizGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const AlphabetQuizGameScreen()),
     ),
   ],
 );
