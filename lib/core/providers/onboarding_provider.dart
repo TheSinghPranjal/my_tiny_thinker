@@ -58,6 +58,8 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
         'ocean_fish_adventure',
       ],
     AgeGroup.tinyLearners => [
+        'shadow_match_adventure',
+        'alphabet_adventure_quiz',
         'bubble_number_pop',
         'color_memory',
         'memory_game',
