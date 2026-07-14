@@ -21,6 +21,8 @@ import 'package:my_tiny_thinker/games/color_memory/presentation/color_memory_set
 import 'package:my_tiny_thinker/games/color_memory/presentation/color_memory_game_screen.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/ocean_fish_setup_screen.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/ocean_fish_game_screen.dart';
+import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_setup_screen.dart';
+import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_game_screen.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/presentation/flower_garden_setup_screen.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/presentation/flower_garden_game_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/welcome_screen.dart';
@@ -50,6 +52,8 @@ abstract final class AppRoutes {
   static const oceanFishGame = '/games/ocean-fish/play';
   static const flowerGardenSetup = '/games/flower-garden/setup';
   static const flowerGardenGame = '/games/flower-garden/play';
+  static const cloudPopGardenSetup = '/games/cloud-pop-garden/setup';
+  static const cloudPopGardenGame = '/games/cloud-pop-garden/play';
   static const welcome = '/welcome';
   static const ageSelection = '/onboarding/age';
   static const avatarSelection = '/onboarding/avatar';
@@ -190,6 +194,16 @@ final appRouter = GoRouter(
       path: AppRoutes.flowerGardenGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const FlowerGardenGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.cloudPopGardenSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CloudPopGardenSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.cloudPopGardenGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CloudPopGardenGameScreen()),
     ),
   ],
 );

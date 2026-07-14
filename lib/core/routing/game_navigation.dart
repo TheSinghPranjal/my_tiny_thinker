@@ -19,5 +19,7 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.oceanFishSetup);
     case GameId.magicalFlowerGarden:
       context.push(AppRoutes.flowerGardenSetup);
+    case GameId.cloudPopGarden:
+      context.push(AppRoutes.cloudPopGardenSetup);
   }
 }
