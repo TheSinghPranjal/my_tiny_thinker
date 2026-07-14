@@ -31,6 +31,8 @@ import 'package:my_tiny_thinker/games/magical_flower_garden/models/flower_garden
 import 'package:my_tiny_thinker/games/magical_flower_garden/repository/flower_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/models/peek_a_boo_animal_friends_models.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/repository/peek_a_boo_animal_friends_settings_repository.dart';
+import 'package:my_tiny_thinker/games/frog_pond_adventure/models/frog_pond_models.dart';
+import 'package:my_tiny_thinker/games/frog_pond_adventure/repository/frog_pond_settings_repository.dart';
 
 class ParentZoneScreen extends ConsumerStatefulWidget {
   const ParentZoneScreen({super.key});
@@ -307,6 +309,18 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('🐸 Frog Pond Adventure',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _FrogPondParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('🐾 Peek-a-Boo Animal Friends',
                       style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
@@ -428,6 +442,191 @@ class _StatRow extends StatelessWidget {
           Text(value, style: context.textTheme.titleMedium),
         ],
       ),
+    );
+  }
+}
+
+class _FrogPondParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(frogPondSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: FrogPondDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text(d.name),
+              selected: s.difficulty == d,
+              onSelected: (_) =>
+                  ref.read(frogPondSettingsProvider.notifier).applyDifficulty(d),
+            );
+          }).toList(),
+        ),
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Lily pads: ${s.lilyPadCount}'),
+        Slider(
+          value: s.lilyPadCount.toDouble(),
+          min: 2,
+          max: 8,
+          divisions: 6,
+          label: '${s.lilyPadCount}',
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(lilyPadCount: v.round()),
+              ),
+        ),
+        Text('Frog movement speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: FrogMoveSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.frogMoveSpeed == speed,
+              onSelected: (_) =>
+                  ref.read(frogPondSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(frogMoveSpeed: speed),
+                      ),
+            );
+          }).toList(),
+        ),
+        Text(
+          'Replacement delay: ${s.replacementDelayMin.toStringAsFixed(1)}–${s.replacementDelayMax.toStringAsFixed(1)}s',
+        ),
+        RangeSlider(
+          values: RangeValues(
+            s.replacementDelayMin.clamp(1.0, 8.0),
+            s.replacementDelayMax.clamp(
+              s.replacementDelayMin.clamp(1.0, 8.0),
+              8.0,
+            ),
+          ),
+          min: 1,
+          max: 8,
+          divisions: 14,
+          labels: RangeLabels(
+            s.replacementDelayMin.toStringAsFixed(1),
+            s.replacementDelayMax.toStringAsFixed(1),
+          ),
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(
+                  replacementDelayMin: v.start,
+                  replacementDelayMax: v.end,
+                ),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('King Frog events'),
+          value: s.kingFrogEnabled,
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(kingFrogEnabled: v),
+              ),
+        ),
+        if (s.kingFrogEnabled) ...[
+          Text('King Frog interval: ${s.kingFrogInterval}s'),
+          Slider(
+            value: s.kingFrogInterval.toDouble(),
+            min: 15,
+            max: 60,
+            divisions: 3,
+            label: '${s.kingFrogInterval}s',
+            onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                  (x) => x.copyWith(kingFrogInterval: v.round()),
+                ),
+          ),
+        ],
+        Text('Reward multiplier'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: s.rewardMultiplier.toStringAsFixed(1),
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        Text('Animation intensity'),
+        Slider(
+          value: s.animationIntensity,
+          min: 0.5,
+          max: 1.5,
+          divisions: 4,
+          label: s.animationIntensity.toStringAsFixed(1),
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(animationIntensity: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Music'),
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('High contrast'),
+          value: s.highContrast,
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(highContrast: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Larger touch targets'),
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+      ],
     );
   }
 }
