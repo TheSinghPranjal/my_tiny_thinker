@@ -23,6 +23,8 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.cloudPopGardenSetup);
     case GameId.peekABooAnimalFriends:
       context.push(AppRoutes.peekABooSetup);
+    case GameId.frogPondAdventure:
+      context.push(AppRoutes.frogPondSetup);
     case GameId.shadowMatchAdventure:
       context.push(AppRoutes.shadowMatchSetup);
     case GameId.alphabetAdventureQuiz:

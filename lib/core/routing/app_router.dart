@@ -31,6 +31,8 @@ import 'package:my_tiny_thinker/games/magical_flower_garden/presentation/flower_
 import 'package:my_tiny_thinker/games/magical_flower_garden/presentation/flower_garden_game_screen.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/presentation/peek_a_boo_animal_friends_setup_screen.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/presentation/peek_a_boo_animal_friends_game_screen.dart';
+import 'package:my_tiny_thinker/games/frog_pond_adventure/presentation/frog_pond_setup_screen.dart';
+import 'package:my_tiny_thinker/games/frog_pond_adventure/presentation/frog_pond_game_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/welcome_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/age_selection_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/avatar_selection_screen.dart';
@@ -62,6 +64,8 @@ abstract final class AppRoutes {
   static const cloudPopGardenGame = '/games/cloud-pop-garden/play';
   static const peekABooSetup = '/games/peek-a-boo/setup';
   static const peekABooGame = '/games/peek-a-boo/play';
+  static const frogPondSetup = '/games/frog-pond/setup';
+  static const frogPondGame = '/games/frog-pond/play';
   static const shadowMatchSetup = '/games/shadow-match/setup';
   static const shadowMatchGame = '/games/shadow-match/play';
   static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
@@ -226,6 +230,16 @@ final appRouter = GoRouter(
       path: AppRoutes.peekABooGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const PeekABooGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.frogPondSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const FrogPondSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.frogPondGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const FrogPondGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.shadowMatchSetup,
