@@ -100,6 +100,7 @@ class TTGameCard extends StatelessWidget {
     required this.title,
     required this.color,
     this.difficulty,
+    this.subtitle,
     this.starsEarned = 0,
     this.bestScore = 0,
     this.onPlay,
@@ -110,6 +111,7 @@ class TTGameCard extends StatelessWidget {
   final String title;
   final Color color;
   final String? difficulty;
+  final String? subtitle;
   final int starsEarned;
   final int bestScore;
   final VoidCallback? onPlay;
@@ -161,6 +163,18 @@ class TTGameCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
+          if (subtitle != null) ...[
+            const SizedBox(height: AppSpacing.xxs),
+            Text(
+              subtitle!,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: AppColors.white.withValues(alpha: 0.9),
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
           if (difficulty != null) ...[
             const SizedBox(height: AppSpacing.xs),
             Text(

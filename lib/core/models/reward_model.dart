@@ -6,7 +6,8 @@ enum GameId {
   oddOneOut('odd_one_out', '👀', 'Odd One Out'),
   patternMatch('pattern_match', '🧩', 'Pattern Match'),
   colorMemory('color_memory', '🌈', 'Color Memory'),
-  oceanFishAdventure('ocean_fish_adventure', '🐠', 'Ocean Fish Adventure');
+  oceanFishAdventure('ocean_fish_adventure', '🐠', 'Ocean Fish Adventure'),
+  magicalFlowerGarden('magical_flower_garden', '🌸', 'Magical Flower Garden');
 
   const GameId(this.id, this.emoji, this.displayName);
   final String id;
