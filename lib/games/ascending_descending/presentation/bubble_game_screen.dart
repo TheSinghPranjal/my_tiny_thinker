@@ -9,6 +9,7 @@ import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
+import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
@@ -206,7 +207,6 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                       onPause: _onWillPop,
                     ),
                     const _GameHudSection(),
-                    if (toddlerMode) const _FeedbackBanner(),
                     Expanded(
                       child: _BubblePlayArea(
                         particleKey: _particleKey,
@@ -220,6 +220,14 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                       ),
                   ],
                 ),
+                if (toddlerMode)
+                  GameFeedbackOverlay(
+                    message: ref.watch(
+                      bubbleGameControllerProvider
+                          .select((s) => s.feedbackMessage),
+                    ),
+                    top: 96,
+                  ),
                 if (phase == GamePhase.countdown)
                   const Positioned.fill(child: _CountdownLayer()),
                 if (phase == GamePhase.paused)
@@ -333,22 +341,6 @@ class _GameHudSection extends ConsumerWidget {
         lastPointsEarned: lastPoints,
         toddlerMode: toddler,
       ),
-    );
-  }
-}
-
-class _FeedbackBanner extends ConsumerWidget {
-  const _FeedbackBanner();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final message = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.feedbackMessage),
-    );
-    if (message == null) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: FeedbackToast(message: message),
     );
   }
 }
