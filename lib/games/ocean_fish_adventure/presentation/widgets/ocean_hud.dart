@@ -13,18 +13,12 @@ class OceanFishHud extends StatelessWidget {
     required this.remainingSeconds,
     required this.fishTapped,
     required this.coinsEarned,
-    required this.feedbackMessage,
-    required this.rewardText,
-    required this.showMascot,
     required this.onPause,
   });
 
   final int remainingSeconds;
   final int fishTapped;
   final int coinsEarned;
-  final String? feedbackMessage;
-  final String? rewardText;
-  final bool showMascot;
   final VoidCallback onPause;
 
   String get _timer {
@@ -35,84 +29,42 @@ class OceanFishHud extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      child: Row(
+        children: [
+          _Pill(
+            icon: Icons.timer_rounded,
+            label: _timer,
+            color: remainingSeconds <= 10
+                ? AppColors.error
+                : AppColors.white,
           ),
-          child: Row(
-            children: [
-              _Pill(
-                icon: Icons.timer_rounded,
-                label: _timer,
-                color: remainingSeconds <= 10
-                    ? AppColors.error
-                    : AppColors.white,
-              ),
-              const Spacer(),
-              _Pill(
-                icon: Icons.set_meal_rounded,
-                label: '$fishTapped',
-                color: AppColors.white,
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              _Pill(
-                icon: Icons.monetization_on_rounded,
-                label: '+$coinsEarned',
-                color: AppColors.sunYellow,
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              IconButton(
-                icon: const Icon(Icons.home_rounded, size: 28),
-                onPressed: onPause,
-                style: IconButton.styleFrom(
-                  backgroundColor: AppColors.white.withValues(alpha: 0.9),
-                ),
-              ),
-            ],
+          const Spacer(),
+          _Pill(
+            icon: Icons.set_meal_rounded,
+            label: '$fishTapped',
+            color: AppColors.white,
           ),
-        ),
-        if (feedbackMessage != null)
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xl,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              gradient: AppGradients.rainbow,
-              borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
-            ),
-            child: Text(
-              feedbackMessage!,
-              style: context.textTheme.titleLarge?.copyWith(
-                color: AppColors.white,
-                fontWeight: FontWeight.w800,
-              ),
+          const SizedBox(width: AppSpacing.sm),
+          _Pill(
+            icon: Icons.monetization_on_rounded,
+            label: '+$coinsEarned',
+            color: AppColors.sunYellow,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          IconButton(
+            icon: const Icon(Icons.home_rounded, size: 28),
+            onPressed: onPause,
+            style: IconButton.styleFrom(
+              backgroundColor: AppColors.white.withValues(alpha: 0.9),
             ),
           ),
-        if (rewardText != null)
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.xs),
-            child: Text(
-              rewardText!,
-              style: context.textTheme.titleMedium?.copyWith(
-                color: AppColors.sunYellow,
-                fontWeight: FontWeight.w800,
-                shadows: const [
-                  Shadow(color: AppColors.skyBlueDark, blurRadius: 4),
-                ],
-              ),
-            ),
-          ),
-        if (showMascot)
-          const Padding(
-            padding: EdgeInsets.only(top: AppSpacing.xs),
-            child: MascotWidget(size: 48, waving: true),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
