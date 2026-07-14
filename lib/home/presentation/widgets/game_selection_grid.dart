@@ -20,6 +20,7 @@ class GameSelectionGrid extends ConsumerWidget {
   final bool largeLayout;
 
   static const _allGames = [
+    GameId.magicalFlowerGarden,
     GameId.oceanFishAdventure,
     GameId.bubbleNumberPop,
     GameId.memoryGame,
@@ -29,12 +30,18 @@ class GameSelectionGrid extends ConsumerWidget {
   ];
 
   static const _meta = {
-    GameId.oceanFishAdventure: ('🐠', 'Ocean Fish Adventure', 'Easy'),
-    GameId.bubbleNumberPop: ('🔵', 'Bubble Number Pop', 'Easy'),
-    GameId.memoryGame: ('🧠', 'Memory Game', 'Medium'),
-    GameId.oddOneOut: ('👀', 'Odd One Out', 'Easy'),
-    GameId.patternMatch: ('🧩', 'Pattern Match', 'Medium'),
-    GameId.colorMemory: ('🌈', 'Color Memory', 'Easy'),
+    GameId.magicalFlowerGarden: (
+      '🌸',
+      'Magical Flower Garden',
+      'Tap the flower and watch nature come alive!',
+      'Easy',
+    ),
+    GameId.oceanFishAdventure: ('🐠', 'Ocean Fish Adventure', null, 'Easy'),
+    GameId.bubbleNumberPop: ('🔵', 'Bubble Number Pop', null, 'Easy'),
+    GameId.memoryGame: ('🧠', 'Memory Game', null, 'Medium'),
+    GameId.oddOneOut: ('👀', 'Odd One Out', null, 'Easy'),
+    GameId.patternMatch: ('🧩', 'Pattern Match', null, 'Medium'),
+    GameId.colorMemory: ('🌈', 'Color Memory', null, 'Easy'),
   };
 
   List<GameId> get _visibleGames {
@@ -65,12 +72,13 @@ class GameSelectionGrid extends ConsumerWidget {
           );
         }
         final gameId = games[index];
-        final (emoji, title, difficulty) = _meta[gameId]!;
+        final (emoji, title, subtitle, difficulty) = _meta[gameId]!;
         final stats = allStats[gameId] ?? GameStats(gameId: gameId);
 
         return TTGameCard(
           emoji: emoji,
           title: title,
+          subtitle: subtitle,
           color: AppColors.gameCardColors[index % AppColors.gameCardColors.length],
           difficulty: largeLayout ? null : difficulty,
           starsEarned: largeLayout ? 0 : stats.starsEarned,

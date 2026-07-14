@@ -17,16 +17,12 @@ class MemoryHud extends StatelessWidget {
     required this.round,
     required this.totalRounds,
     required this.combo,
-    this.feedback,
-    this.isCorrect,
   });
 
   final int score;
   final int round;
   final int totalRounds;
   final int combo;
-  final String? feedback;
-  final bool? isCorrect;
 
   @override
   Widget build(BuildContext context) {
@@ -53,15 +49,6 @@ class MemoryHud extends StatelessWidget {
             ],
           ],
         ),
-        if (feedback != null) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            feedback!,
-            style: context.textTheme.titleMedium?.copyWith(
-              color: isCorrect == true ? AppColors.success : AppColors.error,
-            ),
-          ),
-        ],
       ],
     );
   }
