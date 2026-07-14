@@ -20,6 +20,7 @@ class GameSelectionGrid extends ConsumerWidget {
   final bool largeLayout;
 
   static const _allGames = [
+    GameId.cloudPopGarden,
     GameId.magicalFlowerGarden,
     GameId.oceanFishAdventure,
     GameId.bubbleNumberPop,
@@ -30,6 +31,12 @@ class GameSelectionGrid extends ConsumerWidget {
   ];
 
   static const _meta = {
+    GameId.cloudPopGarden: (
+      '☁️',
+      'Cloud Pop Garden',
+      'Tap rain clouds and watch flowers bloom!',
+      'Easy',
+    ),
     GameId.magicalFlowerGarden: (
       '🌸',
       'Magical Flower Garden',
