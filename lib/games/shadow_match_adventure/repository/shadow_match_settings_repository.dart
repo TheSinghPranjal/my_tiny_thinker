@@ -1,0 +1,34 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_tiny_thinker/core/services/storage_service.dart';
+import 'package:my_tiny_thinker/games/shadow_match_adventure/models/shadow_match_models.dart';
+
+const _settingsKey = 'shadow_match_settings';
+
+final shadowMatchSettingsProvider =
+    StateNotifierProvider<ShadowMatchSettingsNotifier, ShadowMatchSettings>(
+        (ref) {
+  return ShadowMatchSettingsNotifier(ref.watch(storageServiceProvider));
+});
+
+class ShadowMatchSettingsNotifier extends StateNotifier<ShadowMatchSettings> {
+  ShadowMatchSettingsNotifier(this._storage)
+      : super(const ShadowMatchSettings()) {
+    _load();
+  }
+
+  final StorageService _storage;
+
+  void _load() {
+    final json = _storage.getJson(_settingsKey);
+    if (json != null) state = ShadowMatchSettings.fromJson(json);
+  }
+
+  Future<void> _save() async {
+    await _storage.saveJson(_settingsKey, state.toJson());
+  }
+
+  Future<void> patch(ShadowMatchSettings Function(ShadowMatchSettings) fn) async {
+    state = fn(state);
+    await _save();
+  }
+}
