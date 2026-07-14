@@ -121,14 +121,26 @@ class _FlowerGardenGameScreenState extends ConsumerState<FlowerGardenGameScreen>
     if (settings.hapticsEnabled) {
       ref.read(hapticServiceProvider).trigger(HapticType.light);
     }
-    final flower = ref
-        .read(flowerGardenControllerProvider)
-        .flowers
-        .firstWhere((f) => f.id == flowerId);
-    _particleKey.currentState?.emit(origin: Offset(flower.x, flower.y));
+    final flower = ref.read(flowerGardenControllerProvider).flower;
+    if (flower != null) {
+      _particleKey.currentState?.emit(origin: Offset(flower.x, flower.y));
+    }
     if (settings.soundEnabled) {
       ref.read(audioServiceProvider).playSfx(SoundEffect.coin);
     }
+  }
+
+  void _onTapBird() {
+    final settings = ref.read(flowerGardenSettingsProvider);
+    final ok = ref.read(flowerGardenControllerProvider.notifier).tapBird();
+    if (!ok) return;
+    if (settings.soundEnabled) {
+      ref.read(audioServiceProvider).playSfx(SoundEffect.buttonTap);
+    }
+    if (settings.hapticsEnabled) {
+      ref.read(hapticServiceProvider).trigger(HapticType.light);
+    }
+    _particleKey.currentState?.emit();
   }
 
   @override
@@ -182,6 +194,7 @@ class _FlowerGardenGameScreenState extends ConsumerState<FlowerGardenGameScreen>
                       child: _GardenPlayArea(
                         particleKey: _particleKey,
                         onTapFlower: _onTapFlower,
+                        onTapBird: _onTapBird,
                       ),
                     ),
                   ],
@@ -249,18 +262,23 @@ class _GardenPlayArea extends ConsumerWidget {
   const _GardenPlayArea({
     required this.particleKey,
     required this.onTapFlower,
+    required this.onTapBird,
   });
 
   final GlobalKey<ParticleSystemState> particleKey;
   final void Function(String flowerId) onTapFlower;
+  final VoidCallback onTapBird;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final flowers = ref.watch(
-      flowerGardenControllerProvider.select((s) => s.flowers),
+    final flower = ref.watch(
+      flowerGardenControllerProvider.select((s) => s.flower),
     );
-    final bees = ref.watch(
-      flowerGardenControllerProvider.select((s) => s.bees),
+    final pollinators = ref.watch(
+      flowerGardenControllerProvider.select((s) => s.pollinators),
+    );
+    final bird = ref.watch(
+      flowerGardenControllerProvider.select((s) => s.bird),
     );
     final showSparkles = ref.watch(
       flowerGardenControllerProvider.select((s) => s.showSparkles),
@@ -275,7 +293,7 @@ class _GardenPlayArea extends ConsumerWidget {
         });
 
         final flowerSize =
-            math.min(constraints.maxWidth, constraints.maxHeight) * 0.26;
+            math.min(constraints.maxWidth, constraints.maxHeight) * 0.48;
 
         return ClipRect(
           child: Stack(
@@ -286,26 +304,27 @@ class _GardenPlayArea extends ConsumerWidget {
                   child: IgnorePointer(
                     child: ParticleSystem(
                       key: particleKey,
-                      particleCount: 28,
+                      particleCount: 32,
                       autoStart: false,
                     ),
                   ),
                 ),
-              ...bees
-                  .where((b) => b.phase != PollinatorPhase.gone)
-                  .map((b) => BeeWidget(bee: b)),
-              ...flowers.where((f) => f.isVisible).map(
-                    (f) => Positioned(
-                      left: f.x - flowerSize / 2,
-                      top: f.y - flowerSize / 2,
-                      child: FlowerWidget(
-                        flower: f,
-                        size: flowerSize,
-                        canTap: f.canTap,
-                        onTap: () => onTapFlower(f.id),
-                      ),
-                    ),
+              ...pollinators
+                  .where((p) => p.phase != PollinatorPhase.gone)
+                  .map((p) => PollinatorWidget(pollinator: p)),
+              if (bird != null && bird.phase != BirdPhase.gone)
+                BirdWidget(bird: bird, onTap: onTapBird),
+              if (flower != null && flower.isVisible)
+                Positioned(
+                  left: flower.x - flowerSize / 2,
+                  top: flower.y - flowerSize / 2,
+                  child: FlowerWidget(
+                    flower: flower,
+                    size: flowerSize,
+                    canTap: flower.canTap,
+                    onTap: () => onTapFlower(flower.id),
                   ),
+                ),
             ],
           ),
         );

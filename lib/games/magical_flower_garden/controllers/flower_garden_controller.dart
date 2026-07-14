@@ -22,15 +22,16 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
   Timer? _sessionTimer;
   Timer? _feedbackTimer;
   Size _playArea = Size.zero;
-  final _rewardedBeeIds = <String>{};
+  final _rewardedPollinatorIds = <String>{};
+  double _birdSpawnTimer = 18;
+  bool _pollinatorsSpawnedForBloom = false;
 
   void setPlayArea(Size size) {
     if (size.width <= 0 || size.height <= 0) return;
     _playArea = size;
-    if (!state.playAreaReady && state.flowers.isEmpty) {
-      final count = state.settings.maxFlowersOnScreen.clamp(4, 5);
+    if (!state.playAreaReady && state.flower == null) {
       state = state.copyWith(
-        flowers: FlowerGardenLogic.spawnFlowers(size, count),
+        flower: FlowerGardenLogic.spawnSingleFlower(size),
         playAreaReady: true,
       );
     }
@@ -38,16 +39,18 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
 
   void startGame(FlowerGardenSettings settings) {
     _sessionTimer?.cancel();
-    _rewardedBeeIds.clear();
-    final count = settings.maxFlowersOnScreen.clamp(4, 5);
-    final flowers = _playArea == Size.zero
-        ? <FlowerEntity>[]
-        : FlowerGardenLogic.spawnFlowers(_playArea, count);
+    _rewardedPollinatorIds.clear();
+    _birdSpawnTimer = 14 + FlowerGardenLogic.random.nextDouble() * 10;
+    _pollinatorsSpawnedForBloom = false;
+
+    final flower = _playArea == Size.zero
+        ? null
+        : FlowerGardenLogic.spawnSingleFlower(_playArea);
 
     state = FlowerGardenState(
       sessionPhase: GardenSessionPhase.playing,
       settings: settings,
-      flowers: flowers,
+      flower: flower,
       remainingSeconds: settings.sessionSeconds,
       playAreaReady: _playArea != Size.zero,
     );
@@ -60,7 +63,7 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
       if (state.sessionPhase != GardenSessionPhase.playing) return;
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
-        _endSession();
+        _endSession(reason: 'timer');
         return;
       }
       state = state.copyWith(remainingSeconds: rem);
@@ -69,14 +72,16 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
 
   void tick(double delta) {
     if (state.sessionPhase != GardenSessionPhase.playing ||
-        _playArea == Size.zero) {
+        _playArea == Size.zero ||
+        state.flower == null) {
       return;
     }
 
     final intensity = state.settings.animationIntensity;
     final moveMult = state.settings.flowerMoveMult;
-    var flowers = [...state.flowers];
-    var bees = [...state.bees];
+    var flower = state.flower!;
+    var pollinators = [...state.pollinators];
+    var bird = state.bird;
     var showRainbow = false;
     var showSunbeam = false;
     var showSparkles = false;
@@ -85,52 +90,48 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
     var starsEarned = state.starsEarned;
     String? rewardText = state.lastRewardText;
 
-    // Update flowers and spawn bees when bloom completes
-    flowers = flowers.asMap().entries.map((entry) {
-      var f = FlowerGardenLogic.updateFlower(
-        entry.value,
-        delta,
-        intensity,
-        moveMult,
-      );
+    final prevPhase = flower.phase;
+    flower = FlowerGardenLogic.updateFlower(
+      flower,
+      delta,
+      intensity,
+      moveMult,
+      _playArea,
+      state.settings,
+    );
 
-      if (entry.value.phase == FlowerPhase.blooming &&
-          f.phase == FlowerPhase.open) {
-        final hasActiveBee = bees.any(
-          (b) =>
-              b.flowerId == f.id &&
-              (b.phase == PollinatorPhase.entering ||
-                  b.phase == PollinatorPhase.collecting),
+    if (prevPhase == FlowerPhase.blooming && flower.phase == FlowerPhase.open) {
+      if (!_pollinatorsSpawnedForBloom) {
+        pollinators = FlowerGardenLogic.spawnPollinators(
+          _playArea,
+          flower.id,
+          flower.x,
+          flower.y,
         );
-        if (!hasActiveBee) {
-          bees.add(FlowerGardenLogic.spawnBee(_playArea, f.id, f.x, f.y));
-          showSparkles = true;
-          showSunbeam = true;
-        }
+        _pollinatorsSpawnedForBloom = true;
+        showSparkles = true;
+        showSunbeam = true;
       }
+    }
 
-      return f;
-    }).toList();
+    if (flower.phase == FlowerPhase.bud &&
+        prevPhase == FlowerPhase.relocating) {
+      _pollinatorsSpawnedForBloom = false;
+    }
 
-    // Update bees — apply rewards and cooldown in-place (no mid-tick state overwrite)
-    bees = bees.map((bee) {
-      if (bee.phase == PollinatorPhase.gone) return bee;
-
-      final flowerIdx = flowers.indexWhere((f) => f.id == bee.flowerId);
-      if (flowerIdx == -1) return bee;
-
-      final flower = flowers[flowerIdx];
-      return FlowerGardenLogic.updateBee(
-        bee: bee,
+    pollinators = pollinators.map((p) {
+      if (p.phase == PollinatorPhase.gone) return p;
+      return FlowerGardenLogic.updatePollinator(
+        p: p,
         flowerX: flower.x,
         flowerY: flower.y,
         delta: delta,
         intensity: intensity,
-        onNectarCollected: (collectedBee) {
-          if (_rewardedBeeIds.contains(collectedBee.id)) return;
-          _rewardedBeeIds.add(collectedBee.id);
+        onNectarCollected: (collected) {
+          if (_rewardedPollinatorIds.contains(collected.id)) return;
+          _rewardedPollinatorIds.add(collected.id);
 
-          final reward = FlowerGardenLogic.beeReward(
+          final reward = FlowerGardenLogic.pollinatorReward(
             state.settings,
             state.bloomsCount,
           );
@@ -140,39 +141,62 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
           rewardText =
               '+${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}';
           showSparkles = true;
-
-          if (flowers[flowerIdx].phase == FlowerPhase.open) {
-            flowers[flowerIdx] = flowers[flowerIdx].copyWith(
-              phase: FlowerPhase.cooldown,
-              phaseTimer: 0,
-            );
-          }
         },
       );
     }).toList();
 
-    bees = bees.where((b) => b.phase != PollinatorPhase.gone).toList();
+    pollinators =
+        pollinators.where((p) => p.phase != PollinatorPhase.gone).toList();
 
-    // Drop bees once a flower is ready to bloom again.
-    bees = bees.where((b) {
-      final flower = flowers.where((f) => f.id == b.flowerId).firstOrNull;
-      if (flower == null) return false;
-      if (flower.phase == FlowerPhase.bud) return false;
-      if (flower.phase == FlowerPhase.blooming) {
-        return b.phase == PollinatorPhase.entering ||
-            b.phase == PollinatorPhase.collecting;
+    if (flower.phase == FlowerPhase.open) {
+      final active = pollinators.where(
+        (p) =>
+            p.phase == PollinatorPhase.entering ||
+            p.phase == PollinatorPhase.collecting ||
+            p.phase == PollinatorPhase.leaving,
+      );
+      if (pollinators.isNotEmpty && active.isEmpty) {
+        flower = flower.copyWith(phase: FlowerPhase.cooldown, phaseTimer: 0);
+        pollinators = [];
+        _pollinatorsSpawnedForBloom = false;
       }
-      return b.phase == PollinatorPhase.entering ||
-          b.phase == PollinatorPhase.collecting;
-    }).toList();
+    }
 
-    showRainbow = flowers.any((f) => f.phase == FlowerPhase.open);
+    if (bird != null && bird.phase != BirdPhase.gone) {
+      bird = FlowerGardenLogic.updateBird(
+        bird: bird,
+        delta: delta,
+        speedMult: state.settings.birdSpeedMult,
+        intensity: intensity,
+      );
+      if (bird.phase == BirdPhase.landing) {
+        _endSession(reason: 'bird');
+        return;
+      }
+      if (bird.phase == BirdPhase.gone) {
+        bird = null;
+      }
+    }
+
+    if (bird == null && flower.phase == FlowerPhase.bud) {
+      _birdSpawnTimer -= delta;
+      if (_birdSpawnTimer <= 0) {
+        bird = FlowerGardenLogic.spawnBird(_playArea, flower.x, flower.y);
+        _birdSpawnTimer = 20 + FlowerGardenLogic.random.nextDouble() * 15;
+      }
+    }
+
+    showRainbow = flower.phase == FlowerPhase.open ||
+        flower.phase == FlowerPhase.blooming;
     showSparkles = showSparkles ||
-        flowers.any((f) => f.phase == FlowerPhase.blooming || f.phase == FlowerPhase.open);
+        flower.phase == FlowerPhase.blooming ||
+        flower.phase == FlowerPhase.open;
 
     state = state.copyWith(
-      flowers: flowers,
-      bees: bees,
+      flower: flower,
+      pollinators: pollinators,
+      bird: bird,
+      clearBird: bird == null,
       showRainbow: showRainbow,
       showSunbeam: showSunbeam,
       showSparkles: showSparkles,
@@ -185,32 +209,24 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
 
   bool tapFlower(String flowerId) {
     if (state.sessionPhase != GardenSessionPhase.playing) return false;
-
-    final idx = state.flowers.indexWhere((f) => f.id == flowerId);
-    if (idx == -1) return false;
-
-    final flower = state.flowers[idx];
-    if (!flower.canTap) return false;
+    final flower = state.flower;
+    if (flower == null || flower.id != flowerId || !flower.canTap) return false;
 
     final palette = FlowerGardenLogic.pickPalette(state.bloomsCount);
     final reward = FlowerGardenLogic.bloomReward(state.settings);
     final blooms = state.bloomsCount + 1;
     final msg = kGardenEncouragements[blooms % kGardenEncouragements.length];
 
-    final updated = [...state.flowers];
-    updated[idx] = flower.copyWith(
-      phase: FlowerPhase.blooming,
-      bloomProgress: 0,
-      paletteIndex: FlowerGardenLogic.paletteIndexFor(palette),
-      petalCount: 5 + FlowerGardenLogic.random.nextInt(4),
-      petalSpread: 0.85 + FlowerGardenLogic.random.nextDouble() * 0.35,
-    );
-
     state = state.copyWith(
-      flowers: updated,
-      bees: state.bees
-          .where((b) => b.flowerId != flowerId)
-          .toList(growable: false),
+      flower: flower.copyWith(
+        phase: FlowerPhase.blooming,
+        bloomProgress: 0,
+        paletteIndex: FlowerGardenLogic.paletteIndexFor(palette),
+        petalCount: 5 + FlowerGardenLogic.random.nextInt(4),
+        petalSpread: 0.85 + FlowerGardenLogic.random.nextDouble() * 0.35,
+      ),
+      pollinators: [],
+      clearBird: true,
       bloomsCount: blooms,
       coinsEarned: state.coinsEarned + reward.coins,
       xpEarned: state.xpEarned + reward.xp,
@@ -221,15 +237,37 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
       lastRewardText: '+${reward.coins} Coins  +${reward.xp} XP',
       showMascot: blooms % 3 == 0,
     );
+    _pollinatorsSpawnedForBloom = false;
+    _birdSpawnTimer = 16 + FlowerGardenLogic.random.nextDouble() * 12;
 
+    _scheduleFeedbackClear();
+    return true;
+  }
+
+  bool tapBird() {
+    if (state.sessionPhase != GardenSessionPhase.playing) return false;
+    final bird = state.bird;
+    if (bird == null || !bird.isTappable) return false;
+
+    state = state.copyWith(
+      bird: FlowerGardenLogic.scareBird(bird),
+      feedbackMessage:
+          kBirdScareMessages[FlowerGardenLogic.random.nextInt(kBirdScareMessages.length)],
+      showSparkles: true,
+      showMascot: true,
+    );
+    _birdSpawnTimer = 22 + FlowerGardenLogic.random.nextDouble() * 14;
+    _scheduleFeedbackClear();
+    return true;
+  }
+
+  void _scheduleFeedbackClear() {
     _feedbackTimer?.cancel();
     _feedbackTimer = Timer(const Duration(milliseconds: 1400), () {
       if (mounted) {
         state = state.copyWith(clearFeedback: true, showMascot: false);
       }
     });
-
-    return true;
   }
 
   void pause() {
@@ -246,14 +284,19 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
     }
   }
 
-  void _endSession() {
+  void _endSession({required String reason}) {
     _sessionTimer?.cancel();
+    final message = reason == 'bird'
+        ? kBirdLandMessages[
+            FlowerGardenLogic.random.nextInt(kBirdLandMessages.length)]
+        : 'Amazing Garden Adventure!';
     state = state.copyWith(
       sessionPhase: GardenSessionPhase.finished,
       showRainbow: true,
       showSparkles: true,
       showMascot: true,
-      feedbackMessage: 'Amazing Garden Adventure!',
+      feedbackMessage: message,
+      endReason: reason,
     );
   }
 
@@ -289,8 +332,9 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
   void reset() {
     _sessionTimer?.cancel();
     _feedbackTimer?.cancel();
-    _rewardedBeeIds.clear();
-    _playArea = Size.zero;
+    _rewardedPollinatorIds.clear();
+    _birdSpawnTimer = 18;
+    _pollinatorsSpawnedForBloom = false;
     state = const FlowerGardenState();
   }
 
