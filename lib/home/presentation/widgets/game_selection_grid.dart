@@ -20,6 +20,8 @@ class GameSelectionGrid extends ConsumerWidget {
   final bool largeLayout;
 
   static const _allGames = [
+    GameId.shadowMatchAdventure,
+    GameId.alphabetAdventureQuiz,
     GameId.cloudPopGarden,
     GameId.magicalFlowerGarden,
     GameId.oceanFishAdventure,
@@ -31,6 +33,18 @@ class GameSelectionGrid extends ConsumerWidget {
   ];
 
   static const _meta = {
+    GameId.shadowMatchAdventure: (
+      '🌗',
+      'Shadow Match Adventure',
+      'Drag pictures to their shadows!',
+      'Easy',
+    ),
+    GameId.alphabetAdventureQuiz: (
+      '🔤',
+      'Alphabet Adventure Quiz',
+      'Match letters with pictures!',
+      'Easy',
+    ),
     GameId.cloudPopGarden: (
       '☁️',
       'Cloud Pop Garden',

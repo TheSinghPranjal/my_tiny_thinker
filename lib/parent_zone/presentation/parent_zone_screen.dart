@@ -21,6 +21,10 @@ import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/models/ocean_fish_models.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
+import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/models/alphabet_quiz_models.dart';
+import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/repository/alphabet_quiz_settings_repository.dart';
+import 'package:my_tiny_thinker/games/shadow_match_adventure/models/shadow_match_models.dart';
+import 'package:my_tiny_thinker/games/shadow_match_adventure/repository/shadow_match_settings_repository.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/models/cloud_pop_garden_models.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/repository/cloud_pop_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/models/flower_garden_models.dart';
@@ -313,6 +317,30 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('🌗 Shadow Match Adventure',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _ShadowMatchParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🔤 Alphabet Adventure Quiz',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _AlphabetQuizParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('☁️ Cloud Pop Garden',
                       style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
@@ -506,6 +534,188 @@ class _FlowerGardenParentControls extends ConsumerWidget {
                   ),
         ),
       ],
+    );
+  }
+}
+
+class _ShadowMatchParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(shadowMatchSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          onChanged: (v) => ref.read(shadowMatchSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: ShadowDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text('${d.name} (${switch (d) {
+                    ShadowDifficulty.easy => 3,
+                    ShadowDifficulty.medium => 4,
+                    ShadowDifficulty.hard => 6,
+                  }} items)'),
+              selected: s.difficulty == d,
+              onSelected: (_) => ref.read(shadowMatchSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(difficulty: d),
+                  ),
+            );
+          }).toList(),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(shadowMatchSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Narration',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(shadowMatchSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(shadowMatchSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AlphabetQuizParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(alphabetQuizSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          onChanged: (v) => ref.read(alphabetQuizSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Alphabet order', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: AlphabetOrder.values.map((o) {
+            return ChoiceChip(
+              label: Text(o.name),
+              selected: s.alphabetOrder == o,
+              onSelected: (_) => ref.read(alphabetQuizSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(alphabetOrder: o),
+                  ),
+            );
+          }).toList(),
+        ),
+        Text('Letter case', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: LetterCaseMode.values.map((m) {
+            return ChoiceChip(
+              label: Text(m.name),
+              selected: s.letterCaseMode == m,
+              onSelected: (_) => ref.read(alphabetQuizSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(letterCaseMode: m),
+                  ),
+            );
+          }).toList(),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(alphabetQuizSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Narration',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(alphabetQuizSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(alphabetQuizSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ParentSlider extends StatelessWidget {
+  const _ParentSlider({
+    required this.label,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+  });
+
+  final String label;
+  final double value;
+  final double min;
+  final double max;
+  final ValueChanged<double> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        Slider(value: value, min: min, max: max, onChanged: onChanged),
+      ],
+    );
+  }
+}
+
+class _ParentSwitch extends StatelessWidget {
+  const _ParentSwitch({
+    required this.title,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String title;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SwitchListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(title),
+      value: value,
+      onChanged: onChanged,
     );
   }
 }
