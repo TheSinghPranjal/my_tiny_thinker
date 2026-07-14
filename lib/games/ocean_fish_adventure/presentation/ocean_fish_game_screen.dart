@@ -7,6 +7,7 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
+import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/controllers/ocean_fish_controller.dart';
@@ -146,18 +147,6 @@ class _OceanFishGameScreenState extends ConsumerState<OceanFishGameScreen>
                         oceanFishControllerProvider
                             .select((s) => s.coinsEarned),
                       ),
-                      feedbackMessage: ref.watch(
-                        oceanFishControllerProvider
-                            .select((s) => s.feedbackMessage),
-                      ),
-                      rewardText: ref.watch(
-                        oceanFishControllerProvider
-                            .select((s) => s.lastRewardText),
-                      ),
-                      showMascot: ref.watch(
-                        oceanFishControllerProvider
-                            .select((s) => s.showMascotCelebrate),
-                      ),
                       onPause: _showPauseMenu,
                     ),
                     Expanded(
@@ -168,6 +157,21 @@ class _OceanFishGameScreenState extends ConsumerState<OceanFishGameScreen>
                       ),
                     ),
                   ],
+                ),
+                GameFeedbackOverlay(
+                  message: ref.watch(
+                    oceanFishControllerProvider
+                        .select((s) => s.feedbackMessage),
+                  ),
+                  rewardText: ref.watch(
+                    oceanFishControllerProvider
+                        .select((s) => s.lastRewardText),
+                  ),
+                  showMascot: ref.watch(
+                    oceanFishControllerProvider
+                        .select((s) => s.showMascotCelebrate),
+                  ),
+                  rewardShadowColor: AppColors.skyBlueDark,
                 ),
                 if (phase == OceanFishPhase.paused)
                   const _PausedOverlay(),

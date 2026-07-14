@@ -7,8 +7,8 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
+import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
-import 'package:my_tiny_thinker/games/ascending_descending/presentation/widgets/game_hud_widgets.dart';
 import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
 import 'package:my_tiny_thinker/games/memory_game/logic/memory_game_logic.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
@@ -154,27 +154,39 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
             ],
           ),
           body: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: Column(
-                children: [
-                  MemoryHud(
-                    score: state.score,
-                    round: state.round,
-                    totalRounds: totalRounds,
-                    combo: state.combo,
-                    feedback: state.feedbackMessage,
-                    isCorrect: state.isCorrectFeedback,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Column(
+                    children: [
+                      MemoryHud(
+                        score: state.score,
+                        round: state.round,
+                        totalRounds: totalRounds,
+                        combo: state.combo,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      Expanded(
+                        child: MemoryMiniGameView(
+                          state: state,
+                          controller: ref.read(memorySessionProvider.notifier),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: AppSpacing.md),
-                  Expanded(
-                    child: MemoryMiniGameView(
-                      state: state,
-                      controller: ref.read(memorySessionProvider.notifier),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                GameFeedbackOverlay(
+                  message: state.feedbackMessage,
+                  plainMessage: true,
+                  messageColor: state.isCorrectFeedback == true
+                      ? AppColors.success
+                      : state.isCorrectFeedback == false
+                          ? AppColors.error
+                          : null,
+                  top: 56,
+                ),
+              ],
             ),
           ),
         ),
