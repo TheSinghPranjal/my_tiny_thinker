@@ -9,6 +9,7 @@ enum GameId {
   oceanFishAdventure('ocean_fish_adventure', '🐠', 'Ocean Fish Adventure'),
   magicalFlowerGarden('magical_flower_garden', '🌸', 'Magical Flower Garden'),
   cloudPopGarden('cloud_pop_garden', '☁️', 'Cloud Pop Garden'),
+  peekABooAnimalFriends('peek_a_boo_animal_friends', '🐾', 'Peek-a-Boo Animal Friends'),
   shadowMatchAdventure('shadow_match_adventure', '🌗', 'Shadow Match Adventure'),
   alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz');
 

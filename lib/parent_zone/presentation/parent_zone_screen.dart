@@ -29,6 +29,8 @@ import 'package:my_tiny_thinker/games/cloud_pop_garden/models/cloud_pop_garden_m
 import 'package:my_tiny_thinker/games/cloud_pop_garden/repository/cloud_pop_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/models/flower_garden_models.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/repository/flower_garden_settings_repository.dart';
+import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/models/peek_a_boo_animal_friends_models.dart';
+import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/repository/peek_a_boo_animal_friends_settings_repository.dart';
 
 class ParentZoneScreen extends ConsumerStatefulWidget {
   const ParentZoneScreen({super.key});
@@ -305,6 +307,18 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('🐾 Peek-a-Boo Animal Friends',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _PeekABooParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('🌸 Magical Flower Garden',
                       style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
@@ -414,6 +428,187 @@ class _StatRow extends StatelessWidget {
           Text(value, style: context.textTheme.titleMedium),
         ],
       ),
+    );
+  }
+}
+
+class _PeekABooParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(peekABooSettingsProvider);
+    final maxAnimals = PeekABooSettings.maxAnimalsForBushCount(s.bushCount);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Difficulty preset', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: PeekDifficultyPreset.values.map((preset) {
+            return ChoiceChip(
+              label: Text(preset.name),
+              selected: s.difficultyPreset == preset,
+              onSelected: (_) => ref
+                  .read(peekABooSettingsProvider.notifier)
+                  .applyPreset(preset),
+            );
+          }).toList(),
+        ),
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Bushes: ${s.bushCount}'),
+        Slider(
+          value: s.bushCount.toDouble(),
+          min: 2,
+          max: 10,
+          divisions: 8,
+          label: '${s.bushCount}',
+          onChanged: (v) {
+            final count = v.round();
+            final maxA = PeekABooSettings.maxAnimalsForBushCount(count);
+            ref.read(peekABooSettingsProvider.notifier).patch(
+                  (x) => x.copyWith(
+                    bushCount: count,
+                    hiddenAnimalCount: x.hiddenAnimalCount.clamp(1, maxA),
+                  ),
+                );
+          },
+        ),
+        Text('Hidden animals: ${s.hiddenAnimalCount} (max $maxAnimals)'),
+        Slider(
+          value: s.hiddenAnimalCount.toDouble(),
+          min: 1,
+          max: maxAnimals.toDouble(),
+          divisions: math.max(1, maxAnimals - 1),
+          label: '${s.hiddenAnimalCount}',
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hiddenAnimalCount: v.round()),
+              ),
+        ),
+        Text('Bush shake frequency', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: BushShakeFrequency.values.map((freq) {
+            return ChoiceChip(
+              label: Text(freq.name),
+              selected: s.shakeFrequency == freq,
+              onSelected: (_) =>
+                  ref.read(peekABooSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(shakeFrequency: freq),
+                      ),
+            );
+          }).toList(),
+        ),
+        Text('Animation speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: PeekAnimationSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.animationSpeed == speed,
+              onSelected: (_) =>
+                  ref.read(peekABooSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(animationSpeed: speed),
+                      ),
+            );
+          }).toList(),
+        ),
+        Text('Reward multiplier'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: s.rewardMultiplier.toStringAsFixed(1),
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        Text('Animation intensity'),
+        Slider(
+          value: s.animationIntensity,
+          min: 0.5,
+          max: 1.5,
+          divisions: 4,
+          label: s.animationIntensity.toStringAsFixed(1),
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(animationIntensity: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Animal sounds'),
+          value: s.animalSoundsEnabled,
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(animalSoundsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Music'),
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('High contrast'),
+          value: s.highContrast,
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(highContrast: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Larger fonts'),
+          value: s.largerFonts,
+          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerFonts: v),
+              ),
+        ),
+      ],
     );
   }
 }
