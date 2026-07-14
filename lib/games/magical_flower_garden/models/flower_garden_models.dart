@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 
 enum GardenSessionPhase { ready, playing, paused, finished }
 
-enum FlowerPhase { bud, blooming, open, cooldown }
+enum FlowerPhase { bud, blooming, open, cooldown, relocating }
 
 enum PollinatorPhase { entering, collecting, leaving, gone }
 
+enum PollinatorKind { bee, butterfly }
+
+enum BirdPhase { approaching, scared, landing, gone }
+
 enum FlowerMoveSpeed { verySlow, slow, normal }
+
+enum BirdSpeed { verySlow, slow, normal }
 
 class BloomPalette extends Equatable {
   const BloomPalette({
@@ -29,8 +35,9 @@ class BloomPalette extends Equatable {
 class FlowerGardenSettings extends Equatable {
   const FlowerGardenSettings({
     this.sessionSeconds = 60,
-    this.maxFlowersOnScreen = 4,
     this.flowerMoveSpeed = FlowerMoveSpeed.slow,
+    this.birdSpeed = BirdSpeed.verySlow,
+    this.maxMoveDistance = 0.22,
     this.rewardMultiplier = 1.0,
     this.animationIntensity = 1.0,
     this.soundEnabled = true,
@@ -41,8 +48,9 @@ class FlowerGardenSettings extends Equatable {
   });
 
   final int sessionSeconds;
-  final int maxFlowersOnScreen;
   final FlowerMoveSpeed flowerMoveSpeed;
+  final BirdSpeed birdSpeed;
+  final double maxMoveDistance;
   final double rewardMultiplier;
   final double animationIntensity;
   final bool soundEnabled;
@@ -57,10 +65,17 @@ class FlowerGardenSettings extends Equatable {
         FlowerMoveSpeed.normal => 1.15,
       };
 
+  double get birdSpeedMult => switch (birdSpeed) {
+        BirdSpeed.verySlow => 0.55,
+        BirdSpeed.slow => 0.8,
+        BirdSpeed.normal => 1.05,
+      };
+
   FlowerGardenSettings copyWith({
     int? sessionSeconds,
-    int? maxFlowersOnScreen,
     FlowerMoveSpeed? flowerMoveSpeed,
+    BirdSpeed? birdSpeed,
+    double? maxMoveDistance,
     double? rewardMultiplier,
     double? animationIntensity,
     bool? soundEnabled,
@@ -71,8 +86,9 @@ class FlowerGardenSettings extends Equatable {
   }) =>
       FlowerGardenSettings(
         sessionSeconds: sessionSeconds ?? this.sessionSeconds,
-        maxFlowersOnScreen: maxFlowersOnScreen ?? this.maxFlowersOnScreen,
         flowerMoveSpeed: flowerMoveSpeed ?? this.flowerMoveSpeed,
+        birdSpeed: birdSpeed ?? this.birdSpeed,
+        maxMoveDistance: maxMoveDistance ?? this.maxMoveDistance,
         rewardMultiplier: rewardMultiplier ?? this.rewardMultiplier,
         animationIntensity: animationIntensity ?? this.animationIntensity,
         soundEnabled: soundEnabled ?? this.soundEnabled,
@@ -84,8 +100,9 @@ class FlowerGardenSettings extends Equatable {
 
   Map<String, dynamic> toJson() => {
         'sessionSeconds': sessionSeconds,
-        'maxFlowersOnScreen': maxFlowersOnScreen,
         'flowerMoveSpeed': flowerMoveSpeed.name,
+        'birdSpeed': birdSpeed.name,
+        'maxMoveDistance': maxMoveDistance,
         'rewardMultiplier': rewardMultiplier,
         'animationIntensity': animationIntensity,
         'soundEnabled': soundEnabled,
@@ -98,12 +115,16 @@ class FlowerGardenSettings extends Equatable {
   factory FlowerGardenSettings.fromJson(Map<String, dynamic> json) {
     return FlowerGardenSettings(
       sessionSeconds: (json['sessionSeconds'] as int? ?? 60).clamp(60, 1800),
-      maxFlowersOnScreen:
-          (json['maxFlowersOnScreen'] as int? ?? 4).clamp(4, 5),
       flowerMoveSpeed: FlowerMoveSpeed.values.firstWhere(
         (s) => s.name == json['flowerMoveSpeed'],
         orElse: () => FlowerMoveSpeed.slow,
       ),
+      birdSpeed: BirdSpeed.values.firstWhere(
+        (s) => s.name == json['birdSpeed'],
+        orElse: () => BirdSpeed.verySlow,
+      ),
+      maxMoveDistance:
+          (json['maxMoveDistance'] as num? ?? 0.22).toDouble().clamp(0.12, 0.35),
       rewardMultiplier: (json['rewardMultiplier'] as num? ?? 1.0).toDouble(),
       animationIntensity:
           (json['animationIntensity'] as num? ?? 1.0).toDouble().clamp(0.5, 1.5),
@@ -118,8 +139,9 @@ class FlowerGardenSettings extends Equatable {
   @override
   List<Object?> get props => [
         sessionSeconds,
-        maxFlowersOnScreen,
         flowerMoveSpeed,
+        birdSpeed,
+        maxMoveDistance,
         rewardMultiplier,
         animationIntensity,
         soundEnabled,
@@ -137,6 +159,8 @@ class FlowerEntity extends Equatable {
     required this.anchorY,
     this.x = 0,
     this.y = 0,
+    this.targetAnchorX,
+    this.targetAnchorY,
     this.phase = FlowerPhase.bud,
     this.bloomProgress = 0,
     this.opacity = 1,
@@ -152,6 +176,8 @@ class FlowerEntity extends Equatable {
   final String id;
   final double anchorX;
   final double anchorY;
+  final double? targetAnchorX;
+  final double? targetAnchorY;
   final double x;
   final double y;
   final FlowerPhase phase;
@@ -172,6 +198,9 @@ class FlowerEntity extends Equatable {
   FlowerEntity copyWith({
     double? anchorX,
     double? anchorY,
+    double? targetAnchorX,
+    double? targetAnchorY,
+    bool clearTarget = false,
     double? x,
     double? y,
     FlowerPhase? phase,
@@ -189,6 +218,10 @@ class FlowerEntity extends Equatable {
         id: id,
         anchorX: anchorX ?? this.anchorX,
         anchorY: anchorY ?? this.anchorY,
+        targetAnchorX:
+            clearTarget ? null : (targetAnchorX ?? this.targetAnchorX),
+        targetAnchorY:
+            clearTarget ? null : (targetAnchorY ?? this.targetAnchorY),
         x: x ?? this.x,
         y: y ?? this.y,
         phase: phase ?? this.phase,
@@ -208,6 +241,8 @@ class FlowerEntity extends Equatable {
         id,
         anchorX,
         anchorY,
+        targetAnchorX,
+        targetAnchorY,
         x,
         y,
         phase,
@@ -223,10 +258,11 @@ class FlowerEntity extends Equatable {
       ];
 }
 
-class BeeEntity extends Equatable {
-  const BeeEntity({
+class PollinatorEntity extends Equatable {
+  const PollinatorEntity({
     required this.id,
     required this.flowerId,
+    required this.kind,
     required this.x,
     required this.y,
     required this.phase,
@@ -237,6 +273,7 @@ class BeeEntity extends Equatable {
 
   final String id;
   final String flowerId;
+  final PollinatorKind kind;
   final double x;
   final double y;
   final PollinatorPhase phase;
@@ -244,7 +281,7 @@ class BeeEntity extends Equatable {
   final double wingPhase;
   final double rotation;
 
-  BeeEntity copyWith({
+  PollinatorEntity copyWith({
     double? x,
     double? y,
     PollinatorPhase? phase,
@@ -252,9 +289,10 @@ class BeeEntity extends Equatable {
     double? wingPhase,
     double? rotation,
   }) =>
-      BeeEntity(
+      PollinatorEntity(
         id: id,
         flowerId: flowerId,
+        kind: kind,
         x: x ?? this.x,
         y: y ?? this.y,
         phase: phase ?? this.phase,
@@ -265,15 +303,66 @@ class BeeEntity extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, flowerId, x, y, phase, progress, wingPhase, rotation];
+      [id, flowerId, kind, x, y, phase, progress, wingPhase, rotation];
+}
+
+class BirdEntity extends Equatable {
+  const BirdEntity({
+    required this.id,
+    required this.x,
+    required this.y,
+    required this.targetX,
+    required this.targetY,
+    this.phase = BirdPhase.approaching,
+    this.wingPhase = 0,
+    this.rotation = 0,
+    this.scaredTimer = 0,
+  });
+
+  final String id;
+  final double x;
+  final double y;
+  final double targetX;
+  final double targetY;
+  final BirdPhase phase;
+  final double wingPhase;
+  final double rotation;
+  final double scaredTimer;
+
+  bool get isTappable => phase == BirdPhase.approaching;
+
+  BirdEntity copyWith({
+    double? x,
+    double? y,
+    BirdPhase? phase,
+    double? wingPhase,
+    double? rotation,
+    double? scaredTimer,
+  }) =>
+      BirdEntity(
+        id: id,
+        x: x ?? this.x,
+        y: y ?? this.y,
+        targetX: targetX,
+        targetY: targetY,
+        phase: phase ?? this.phase,
+        wingPhase: wingPhase ?? this.wingPhase,
+        rotation: rotation ?? this.rotation,
+        scaredTimer: scaredTimer ?? this.scaredTimer,
+      );
+
+  @override
+  List<Object?> get props =>
+      [id, x, y, targetX, targetY, phase, wingPhase, rotation, scaredTimer];
 }
 
 class FlowerGardenState extends Equatable {
   const FlowerGardenState({
     this.sessionPhase = GardenSessionPhase.ready,
     this.settings = const FlowerGardenSettings(),
-    this.flowers = const [],
-    this.bees = const [],
+    this.flower,
+    this.pollinators = const [],
+    this.bird,
     this.remainingSeconds = 60,
     this.bloomsCount = 0,
     this.coinsEarned = 0,
@@ -286,12 +375,14 @@ class FlowerGardenState extends Equatable {
     this.lastRewardText,
     this.showMascot = false,
     this.playAreaReady = false,
+    this.endReason,
   });
 
   final GardenSessionPhase sessionPhase;
   final FlowerGardenSettings settings;
-  final List<FlowerEntity> flowers;
-  final List<BeeEntity> bees;
+  final FlowerEntity? flower;
+  final List<PollinatorEntity> pollinators;
+  final BirdEntity? bird;
   final int remainingSeconds;
   final int bloomsCount;
   final int coinsEarned;
@@ -304,12 +395,15 @@ class FlowerGardenState extends Equatable {
   final String? lastRewardText;
   final bool showMascot;
   final bool playAreaReady;
+  final String? endReason;
 
   FlowerGardenState copyWith({
     GardenSessionPhase? sessionPhase,
     FlowerGardenSettings? settings,
-    List<FlowerEntity>? flowers,
-    List<BeeEntity>? bees,
+    FlowerEntity? flower,
+    List<PollinatorEntity>? pollinators,
+    BirdEntity? bird,
+    bool clearBird = false,
     int? remainingSeconds,
     int? bloomsCount,
     int? coinsEarned,
@@ -322,14 +416,16 @@ class FlowerGardenState extends Equatable {
     String? lastRewardText,
     bool? showMascot,
     bool? playAreaReady,
+    String? endReason,
     bool clearFeedback = false,
     bool clearReward = false,
   }) =>
       FlowerGardenState(
         sessionPhase: sessionPhase ?? this.sessionPhase,
         settings: settings ?? this.settings,
-        flowers: flowers ?? this.flowers,
-        bees: bees ?? this.bees,
+        flower: flower ?? this.flower,
+        pollinators: pollinators ?? this.pollinators,
+        bird: clearBird ? null : (bird ?? this.bird),
         remainingSeconds: remainingSeconds ?? this.remainingSeconds,
         bloomsCount: bloomsCount ?? this.bloomsCount,
         coinsEarned: coinsEarned ?? this.coinsEarned,
@@ -344,14 +440,16 @@ class FlowerGardenState extends Equatable {
             clearReward ? null : (lastRewardText ?? this.lastRewardText),
         showMascot: showMascot ?? this.showMascot,
         playAreaReady: playAreaReady ?? this.playAreaReady,
+        endReason: endReason ?? this.endReason,
       );
 
   @override
   List<Object?> get props => [
         sessionPhase,
         settings,
-        flowers,
-        bees,
+        flower,
+        pollinators,
+        bird,
         remainingSeconds,
         bloomsCount,
         coinsEarned,
@@ -364,6 +462,7 @@ class FlowerGardenState extends Equatable {
         lastRewardText,
         showMascot,
         playAreaReady,
+        endReason,
       ];
 }
 
@@ -374,6 +473,7 @@ class FlowerGardenResult extends Equatable {
     required this.xp,
     required this.stars,
     required this.sessionSeconds,
+    this.endReason,
   });
 
   final int bloomsCount;
@@ -381,9 +481,11 @@ class FlowerGardenResult extends Equatable {
   final int xp;
   final int stars;
   final int sessionSeconds;
+  final String? endReason;
 
   @override
-  List<Object?> get props => [bloomsCount, coins, xp, stars, sessionSeconds];
+  List<Object?> get props =>
+      [bloomsCount, coins, xp, stars, sessionSeconds, endReason];
 }
 
 const kBloomPalettes = [
@@ -451,6 +553,18 @@ const kGardenEncouragements = [
   'So Magical!',
   'Yay!',
   'Nature is Happy!',
+];
+
+const kBirdScareMessages = [
+  'Nice Save!',
+  'Bye Bye Birdie!',
+  'Great Tap!',
+];
+
+const kBirdLandMessages = [
+  'Let\'s Try Again!',
+  'Great Job! Let\'s Grow Another Flower!',
+  'What a Fun Garden!',
 ];
 
 const kGardenSkills = [

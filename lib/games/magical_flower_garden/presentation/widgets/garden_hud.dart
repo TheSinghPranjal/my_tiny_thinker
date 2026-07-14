@@ -124,6 +124,14 @@ class GardenVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBirdEnd = result.endReason == 'bird';
+    final title = isBirdEnd
+        ? "Let's Try Again!"
+        : 'Amazing Garden Adventure!';
+    final subtitle = isBirdEnd
+        ? 'Great job! Let\'s grow another flower!'
+        : 'You explored the magical garden!';
+
     return Container(
       color: const Color(0xFF2E7D32).withValues(alpha: 0.82),
       child: SafeArea(
@@ -136,11 +144,19 @@ class GardenVictoryOverlay extends StatelessWidget {
                 const Text('🎆🌈🦋', style: TextStyle(fontSize: 56)),
                 const MascotWidget(size: 96, waving: true),
                 Text(
-                  'Amazing Garden Adventure!',
+                  title,
                   textAlign: TextAlign.center,
                   style: context.textTheme.headlineMedium?.copyWith(
                     color: AppColors.white,
                     fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: AppColors.white.withValues(alpha: 0.92),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.lg),

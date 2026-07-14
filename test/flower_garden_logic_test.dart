@@ -10,45 +10,59 @@ void main() {
       const settings = FlowerGardenSettings(rewardMultiplier: 2.0);
       final reward = FlowerGardenLogic.bloomReward(settings);
       expect(reward.coins, greaterThanOrEqualTo(2));
-      expect(reward.xp, greaterThanOrEqualTo(2));
+      expect(reward.xp, greaterThanOrEqualTo(3));
     });
 
-    test('spawnFlowers creates requested count', () {
-      final flowers = FlowerGardenLogic.spawnFlowers(
+    test('spawnSingleFlower creates centered bud', () {
+      final flower = FlowerGardenLogic.spawnSingleFlower(
         const Size(360, 500),
-        4,
       );
-      expect(flowers.length, 4);
-      expect(flowers.every((f) => f.phase == FlowerPhase.bud), isTrue);
+      expect(flower.phase, FlowerPhase.bud);
+      expect(flower.anchorX, 180);
     });
 
-    test('cooldown returns to bud when petals close', () {
+    test('cooldown transitions to relocating', () {
       const flower = FlowerEntity(
         id: 'f1',
         anchorX: 100,
         anchorY: 200,
         phase: FlowerPhase.cooldown,
         bloomProgress: 0.5,
-        phaseTimer: 1.15,
+        phaseTimer: 1.35,
       );
       final updated = FlowerGardenLogic.updateFlower(
         flower,
         0.1,
         1,
         1,
+        const Size(360, 500),
+        const FlowerGardenSettings(),
       );
-      expect(updated.phase, FlowerPhase.bud);
+      expect(updated.phase, FlowerPhase.relocating);
       expect(updated.bloomProgress, 0);
     });
-    test('spawnBee creates bee for flower', () {
-      final bee = FlowerGardenLogic.spawnBee(
+
+    test('spawnPollinators creates bee or butterfly', () {
+      final pollinators = FlowerGardenLogic.spawnPollinators(
         const Size(360, 500),
         'flower_1',
         180,
         250,
       );
-      expect(bee.flowerId, 'flower_1');
-      expect(bee.phase, PollinatorPhase.entering);
+      expect(pollinators, isNotEmpty);
+      expect(pollinators.first.phase, PollinatorPhase.entering);
+    });
+
+    test('scareBird enters scared phase', () {
+      const bird = BirdEntity(
+        id: 'b1',
+        x: 50,
+        y: 50,
+        targetX: 180,
+        targetY: 200,
+      );
+      final scared = FlowerGardenLogic.scareBird(bird);
+      expect(scared.phase, BirdPhase.scared);
     });
   });
 }

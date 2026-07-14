@@ -438,16 +438,35 @@ class _FlowerGardenParentControls extends ConsumerWidget {
                     (x) => x.copyWith(sessionSeconds: v.round()),
                   ),
         ),
-        Text('Flowers on screen: ${s.maxFlowersOnScreen}'),
+        Text('Bird speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: BirdSpeed.values.map((speed) {
+            final label = switch (speed) {
+              BirdSpeed.verySlow => 'Very Slow',
+              BirdSpeed.slow => 'Slow',
+              BirdSpeed.normal => 'Normal',
+            };
+            return ChoiceChip(
+              label: Text(label),
+              selected: s.birdSpeed == speed,
+              onSelected: (_) =>
+                  ref.read(flowerGardenSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(birdSpeed: speed),
+                      ),
+            );
+          }).toList(),
+        ),
+        Text('Max flower move distance: ${(s.maxMoveDistance * 100).round()}%'),
         Slider(
-          value: s.maxFlowersOnScreen.toDouble(),
-          min: 4,
-          max: 5,
-          divisions: 1,
-          label: '${s.maxFlowersOnScreen}',
+          value: s.maxMoveDistance,
+          min: 0.12,
+          max: 0.35,
+          divisions: 23,
+          label: '${(s.maxMoveDistance * 100).round()}%',
           onChanged: (v) =>
               ref.read(flowerGardenSettingsProvider.notifier).patch(
-                    (x) => x.copyWith(maxFlowersOnScreen: v.round()),
+                    (x) => x.copyWith(maxMoveDistance: v),
                   ),
         ),
         Text('Flower float speed', style: context.textTheme.titleSmall),
