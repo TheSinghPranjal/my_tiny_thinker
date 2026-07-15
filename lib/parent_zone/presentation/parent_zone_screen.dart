@@ -31,6 +31,10 @@ import 'package:my_tiny_thinker/games/magical_flower_garden/models/flower_garden
 import 'package:my_tiny_thinker/games/magical_flower_garden/repository/flower_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/models/peek_a_boo_animal_friends_models.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/repository/peek_a_boo_animal_friends_settings_repository.dart';
+import 'package:my_tiny_thinker/games/feed_the_frog_adventure/models/feed_frog_models.dart';
+import 'package:my_tiny_thinker/games/feed_the_frog_adventure/repository/feed_frog_settings_repository.dart';
+import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/models/hungry_monkey_models.dart';
+import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/repository/hungry_monkey_settings_repository.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/models/frog_pond_models.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/repository/frog_pond_settings_repository.dart';
 
@@ -309,6 +313,30 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('🐵 Hungry Monkey Banana Adventure',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _HungryMonkeyParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🪰 Feed the Frog Adventure',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _FeedTheFrogParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('🐸 Frog Pond Adventure',
                       style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
@@ -442,6 +470,303 @@ class _StatRow extends StatelessWidget {
           Text(value, style: context.textTheme.titleMedium),
         ],
       ),
+    );
+  }
+}
+
+class _HungryMonkeyParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(hungryMonkeySettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: HungryMonkeyDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text(d.name),
+              selected: s.difficulty == d,
+              onSelected: (_) => ref
+                  .read(hungryMonkeySettingsProvider.notifier)
+                  .applyDifficulty(d),
+            );
+          }).toList(),
+        ),
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Bananas on tree: ${s.bananaCount}'),
+        Slider(
+          value: s.bananaCount.toDouble(),
+          min: 5,
+          max: 10,
+          divisions: 5,
+          label: '${s.bananaCount}',
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(bananaCount: v.round()),
+              ),
+        ),
+        Text(
+          'Apple spawn delay: ${s.appleSpawnMin.toStringAsFixed(1)}–${s.appleSpawnMax.toStringAsFixed(1)}s',
+        ),
+        RangeSlider(
+          values: RangeValues(
+            s.appleSpawnMin.clamp(2.0, 12.0),
+            s.appleSpawnMax.clamp(s.appleSpawnMin.clamp(2.0, 12.0), 15.0),
+          ),
+          min: 2,
+          max: 15,
+          divisions: 13,
+          labels: RangeLabels(
+            s.appleSpawnMin.toStringAsFixed(1),
+            s.appleSpawnMax.toStringAsFixed(1),
+          ),
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(
+                  appleSpawnMin: v.start,
+                  appleSpawnMax: v.end,
+                ),
+              ),
+        ),
+        Text('Max apples at once: ${s.maxApples}'),
+        Slider(
+          value: s.maxApples.toDouble(),
+          min: 0,
+          max: 4,
+          divisions: 4,
+          label: '${s.maxApples}',
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(maxApples: v.round()),
+              ),
+        ),
+        Text('Reward multiplier'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: s.rewardMultiplier.toStringAsFixed(1),
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        Text('Animation intensity'),
+        Slider(
+          value: s.animationIntensity,
+          min: 0.5,
+          max: 1.5,
+          divisions: 4,
+          label: s.animationIntensity.toStringAsFixed(1),
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(animationIntensity: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Background music'),
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('High contrast'),
+          value: s.highContrast,
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(highContrast: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Larger touch targets'),
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FeedTheFrogParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(feedFrogSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Flying insects: ${s.insectCount}'),
+        Slider(
+          value: s.insectCount.toDouble(),
+          min: 4,
+          max: 10,
+          divisions: 6,
+          label: '${s.insectCount}',
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(insectCount: v.round()),
+              ),
+        ),
+        Text('Flight speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: InsectFlightSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.flightSpeed == speed,
+              onSelected: (_) =>
+                  ref.read(feedFrogSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(flightSpeed: speed),
+                      ),
+            );
+          }).toList(),
+        ),
+        Text('Night starts at: ${s.dayNightStartSeconds}s'),
+        Slider(
+          value: s.dayNightStartSeconds.toDouble(),
+          min: 15,
+          max: 90,
+          divisions: 15,
+          label: '${s.dayNightStartSeconds}s',
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(dayNightStartSeconds: v.round()),
+              ),
+        ),
+        Text('Day-night cycle: ${s.dayNightCycleSeconds}s'),
+        Slider(
+          value: s.dayNightCycleSeconds.toDouble(),
+          min: 40,
+          max: 120,
+          divisions: 8,
+          label: '${s.dayNightCycleSeconds}s',
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(dayNightCycleSeconds: v.round()),
+              ),
+        ),
+        Text('Reward multiplier'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: s.rewardMultiplier.toStringAsFixed(1),
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Music'),
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('High contrast'),
+          value: s.highContrast,
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(highContrast: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Larger touch targets'),
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+      ],
     );
   }
 }
