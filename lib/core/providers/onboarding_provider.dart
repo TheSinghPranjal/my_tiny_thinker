@@ -52,8 +52,10 @@ class OnboardingNotifier extends StateNotifier<OnboardingState> {
 List<String> enabledGameIdsForAge(AgeGroup group) {
   return switch (group) {
     AgeGroup.littleExplorers => [
+        'hungry_monkey_banana_adventure',
         'peek_a_boo_animal_friends',
         'frog_pond_adventure',
+        'feed_the_frog_adventure',
         'cloud_pop_garden',
         'magical_flower_garden',
         'bubble_number_pop',
