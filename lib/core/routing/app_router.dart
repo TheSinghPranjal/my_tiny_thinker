@@ -33,6 +33,10 @@ import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/presentation/pee
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/presentation/peek_a_boo_animal_friends_game_screen.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/presentation/frog_pond_setup_screen.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/presentation/frog_pond_game_screen.dart';
+import 'package:my_tiny_thinker/games/feed_the_frog_adventure/presentation/feed_frog_setup_screen.dart';
+import 'package:my_tiny_thinker/games/feed_the_frog_adventure/presentation/feed_frog_game_screen.dart';
+import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/presentation/hungry_monkey_setup_screen.dart';
+import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/presentation/hungry_monkey_game_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/welcome_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/age_selection_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/avatar_selection_screen.dart';
@@ -66,6 +70,10 @@ abstract final class AppRoutes {
   static const peekABooGame = '/games/peek-a-boo/play';
   static const frogPondSetup = '/games/frog-pond/setup';
   static const frogPondGame = '/games/frog-pond/play';
+  static const feedTheFrogSetup = '/games/feed-the-frog/setup';
+  static const feedTheFrogGame = '/games/feed-the-frog/play';
+  static const hungryMonkeySetup = '/games/hungry-monkey/setup';
+  static const hungryMonkeyGame = '/games/hungry-monkey/play';
   static const shadowMatchSetup = '/games/shadow-match/setup';
   static const shadowMatchGame = '/games/shadow-match/play';
   static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
@@ -240,6 +248,26 @@ final appRouter = GoRouter(
       path: AppRoutes.frogPondGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const FrogPondGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.feedTheFrogSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const FeedFrogSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.feedTheFrogGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const FeedFrogGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.hungryMonkeySetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const HungryMonkeySetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.hungryMonkeyGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const HungryMonkeyGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.shadowMatchSetup,
