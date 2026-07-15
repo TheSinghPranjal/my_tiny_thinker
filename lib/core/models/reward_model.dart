@@ -11,6 +11,12 @@ enum GameId {
   cloudPopGarden('cloud_pop_garden', '☁️', 'Cloud Pop Garden'),
   peekABooAnimalFriends('peek_a_boo_animal_friends', '🐾', 'Peek-a-Boo Animal Friends'),
   frogPondAdventure('frog_pond_adventure', '🐸', 'Frog Pond Adventure'),
+  feedTheFrogAdventure('feed_the_frog_adventure', '🪰', 'Feed the Frog Adventure'),
+  hungryMonkeyBananaAdventure(
+    'hungry_monkey_banana_adventure',
+    '🐵',
+    'Hungry Monkey Banana Adventure',
+  ),
   shadowMatchAdventure('shadow_match_adventure', '🌗', 'Shadow Match Adventure'),
   alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz');
 
