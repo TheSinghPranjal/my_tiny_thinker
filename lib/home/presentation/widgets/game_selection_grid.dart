@@ -20,6 +20,8 @@ class GameSelectionGrid extends ConsumerWidget {
   final bool largeLayout;
 
   static const _allGames = [
+    GameId.hungryMonkeyBananaAdventure,
+    GameId.feedTheFrogAdventure,
     GameId.frogPondAdventure,
     GameId.peekABooAnimalFriends,
     GameId.shadowMatchAdventure,
@@ -45,6 +47,18 @@ class GameSelectionGrid extends ConsumerWidget {
       '🐸',
       'Frog Pond Adventure',
       'Tap the frogs and watch them splash!',
+      'Easy',
+    ),
+    GameId.feedTheFrogAdventure: (
+      '🪰',
+      'Feed the Frog Adventure',
+      'Tap the flying bugs and feed the happy frog!',
+      'Easy',
+    ),
+    GameId.hungryMonkeyBananaAdventure: (
+      '🐵',
+      'Hungry Monkey Banana Adventure',
+      'Tap bananas and feed the hungry monkey!',
       'Easy',
     ),
     GameId.shadowMatchAdventure: (
