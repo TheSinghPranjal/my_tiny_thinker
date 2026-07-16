@@ -292,8 +292,6 @@ class _PlayArea extends ConsumerWidget {
     final settings = ref.watch(hungryTeddySettingsProvider);
     final showSparkles = ref.watch(hungryTeddyControllerProvider.select((s) => s.showSparkles));
     final draggingId = ref.watch(hungryTeddyControllerProvider.select((s) => s.draggingCupcakeId));
-    final cupcakesFed = ref.watch(hungryTeddyControllerProvider.select((s) => s.cupcakesFed));
-    final inactivity = ref.watch(hungryTeddyControllerProvider.select((s) => s.inactivityTimer));
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -311,25 +309,10 @@ class _PlayArea extends ConsumerWidget {
             CupcakeTableWidget(eveningFactor: evening),
             if (isDragging)
               Positioned(
-                left: mouthX - 70,
-                top: mouthY - 70,
+                left: mouthX - 78,
+                top: mouthY - 78,
                 child: IgnorePointer(
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 140,
-                    height: 140,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFFF80AB).withValues(alpha: 0.75),
-                        width: 3,
-                      ),
-                      color: const Color(0xFFFFE082).withValues(alpha: 0.18),
-                    ),
-                    child: const Center(
-                      child: Text('🧸', style: TextStyle(fontSize: 36)),
-                    ),
-                  ),
+                  child: _FeedZoneGlow(),
                 ),
               ),
             ...visitors.map(
@@ -351,43 +334,15 @@ class _PlayArea extends ConsumerWidget {
                 ),
               ),
             ),
-            if (cupcakesFed == 0 && inactivity < 6 && draggingId == null)
+            if (draggingId == null &&
+                teddy.phase == TeddyPhase.idle &&
+                cupcakes.any((c) => c.canDrag))
               Positioned(
-                left: 16,
-                right: 16,
-                bottom: 24,
+                left: 12,
+                right: 12,
+                bottom: 18,
                 child: IgnorePointer(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('👆', style: TextStyle(fontSize: 22)),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Drag a cupcake to Teddy!',
-                          style: TextStyle(
-                            fontSize: settings.largerTouchTargets ? 18 : 16,
-                            fontWeight: FontWeight.w700,
-                            color: const Color(0xFF6A1B9A),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text('🧁', style: TextStyle(fontSize: 22)),
-                      ],
-                    ),
-                  ),
+                  child: _DragHint(larger: settings.largerTouchTargets),
                 ),
               ),
             ...cupcakes.map(
@@ -410,6 +365,149 @@ class _PlayArea extends ConsumerWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _FeedZoneGlow extends StatefulWidget {
+  @override
+  State<_FeedZoneGlow> createState() => _FeedZoneGlowState();
+}
+
+class _FeedZoneGlowState extends State<_FeedZoneGlow>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c;
+
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 800))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (context, _) {
+        final t = _c.value;
+        return Container(
+          width: 156,
+          height: 156,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Color.lerp(
+                const Color(0xFFFF80AB),
+                const Color(0xFFFFEB3B),
+                t,
+              )!.withValues(alpha: 0.85),
+              width: 4,
+            ),
+            gradient: RadialGradient(
+              colors: [
+                const Color(0xFFFFE082).withValues(alpha: 0.35 + t * 0.15),
+                const Color(0xFFFF80AB).withValues(alpha: 0.12),
+                Colors.transparent,
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF80AB).withValues(alpha: 0.35 + t * 0.2),
+                blurRadius: 18,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: const Center(
+            child: Text('😋', style: TextStyle(fontSize: 40)),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DragHint extends StatefulWidget {
+  const _DragHint({required this.larger});
+
+  final bool larger;
+
+  @override
+  State<_DragHint> createState() => _DragHintState();
+}
+
+class _DragHintState extends State<_DragHint> with SingleTickerProviderStateMixin {
+  late final AnimationController _c;
+
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (context, child) {
+        final t = _c.value;
+        return Transform.scale(
+          scale: 0.98 + t * 0.06,
+          child: child,
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFFF80AB), Color(0xFFEA80FC), Color(0xFF82B1FF)],
+          ),
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: Colors.white, width: 3),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFEC407A).withValues(alpha: 0.45),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('👆', style: TextStyle(fontSize: 26)),
+            const SizedBox(width: 10),
+            Flexible(
+              child: Text(
+                'Drag a cupcake to Teddy!',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: widget.larger ? 20 : 18,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text('🧁🧸', style: TextStyle(fontSize: 24)),
+          ],
+        ),
+      ),
     );
   }
 }

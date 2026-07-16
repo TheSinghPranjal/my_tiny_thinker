@@ -25,84 +25,129 @@ class _TablePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final tableLeft = size.width * 0.04;
-    final tableWidth = size.width * 0.52;
-    final tableTop = size.height * 0.46;
-    final tableDepth = size.height * 0.34;
-    final wood = Color.lerp(const Color(0xFF8D6E63), const Color(0xFF5D4037), eveningFactor * 0.3)!;
-    final cloth = Color.lerp(const Color(0xFFFCE4EC), const Color(0xFFF8BBD0), eveningFactor * 0.2)!;
+    final tableLeft = size.width * 0.03;
+    final tableWidth = size.width * 0.50;
+    final tableTop = size.height * 0.42;
+    final tableDepth = size.height * 0.36;
+    final wood = Color.lerp(const Color(0xFFA1887F), const Color(0xFF5D4037), eveningFactor * 0.3)!;
+    final cloth = Color.lerp(const Color(0xFFFCE4EC), const Color(0xFFF48FB1), eveningFactor * 0.15)!;
 
-    // Teddy rug
+    // Teddy party rug
+    final rugCenter = Offset(size.width * 0.74, size.height * 0.72);
     canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.74, size.height * 0.68),
-        width: size.width * 0.28,
-        height: size.height * 0.12,
-      ),
+      Rect.fromCenter(center: rugCenter, width: size.width * 0.34, height: size.height * 0.14),
       Paint()
         ..shader = RadialGradient(
           colors: [
-            const Color(0xFFCE93D8).withValues(alpha: 0.5),
-            const Color(0xFFAB47BC).withValues(alpha: 0.2),
+            const Color(0xFFF48FB1).withValues(alpha: 0.7),
+            const Color(0xFFCE93D8).withValues(alpha: 0.45),
+            const Color(0xFFAB47BC).withValues(alpha: 0.15),
           ],
-        ).createShader(Rect.fromCircle(
-          center: Offset(size.width * 0.74, size.height * 0.68),
-          radius: size.width * 0.14,
-        )),
+        ).createShader(Rect.fromCircle(center: rugCenter, radius: size.width * 0.17)),
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: rugCenter, width: size.width * 0.28, height: size.height * 0.1),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.25)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
     );
 
-    // Table legs
-    for (var i = 0; i < 3; i++) {
-      final lx = tableLeft + tableWidth * (0.15 + i * 0.35);
+    // Table legs (thicker, rounded)
+    for (var i = 0; i < 4; i++) {
+      final lx = tableLeft + tableWidth * (0.12 + i * 0.26);
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromCenter(
-            center: Offset(lx, tableTop + tableDepth + 28),
-            width: 16,
-            height: 56,
+            center: Offset(lx, tableTop + tableDepth + 32),
+            width: 18,
+            height: 64,
           ),
-          const Radius.circular(6),
+          const Radius.circular(8),
         ),
-        Paint()..color = const Color(0xFF6D4C41),
+        Paint()
+          ..shader = const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFF8D6E63), Color(0xFF5D4037)],
+          ).createShader(Rect.fromLTWH(lx - 9, tableTop + tableDepth, 18, 64)),
       );
     }
 
-    // Table body
+    // Table body with depth
+    final bodyRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(tableLeft, tableTop + 14, tableWidth, tableDepth),
+      const Radius.circular(14),
+    );
     canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(tableLeft, tableTop + 8, tableWidth, tableDepth),
-        const Radius.circular(10),
-      ),
-      Paint()..color = wood,
+      bodyRect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [wood, Color.lerp(wood, Colors.black, 0.2)!],
+        ).createShader(bodyRect.outerRect),
     );
 
-    // Tablecloth
+    // Front edge highlight
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(tableLeft + 6, tableTop + 18, tableWidth - 12, 10),
+        const Radius.circular(6),
+      ),
+      Paint()..color = Colors.white.withValues(alpha: 0.12),
+    );
+
+    // Party tablecloth draped over top
     final clothRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(tableLeft - 4, tableTop, tableWidth + 8, 28),
-      const Radius.circular(14),
+      Rect.fromLTWH(tableLeft - 8, tableTop, tableWidth + 16, 36),
+      const Radius.circular(16),
     );
     canvas.drawRRect(clothRect, Paint()..color = cloth);
     canvas.drawRRect(
       clothRect,
       Paint()
-        ..color = const Color(0xFFF48FB1).withValues(alpha: 0.35)
+        ..color = const Color(0xFFEC407A).withValues(alpha: 0.45)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
+        ..strokeWidth = 2.5,
     );
 
-    // Cloth scallops
-    for (var i = 0; i < 7; i++) {
-      final sx = tableLeft + i * (tableWidth / 6);
+    // Scalloped hem
+    for (var i = 0; i < 9; i++) {
+      final sx = tableLeft + i * (tableWidth / 8);
       canvas.drawArc(
-        Rect.fromCenter(center: Offset(sx, tableTop + 26), width: 18, height: 12),
+        Rect.fromCenter(center: Offset(sx, tableTop + 34), width: 20, height: 14),
         0,
         math.pi,
         false,
-        Paint()..color = cloth.withValues(alpha: 0.9),
+        Paint()..color = cloth,
+      );
+      canvas.drawCircle(
+        Offset(sx, tableTop + 18),
+        3,
+        Paint()..color = const Color(0xFFFF80AB).withValues(alpha: 0.7),
       );
     }
 
-    // Plate spots removed — cupcakes fill the grid slots directly.
+    // Soft slot guides (subtle circles where cupcakes sit)
+    const slots = [
+      (0.12, 0.55),
+      (0.22, 0.55),
+      (0.32, 0.55),
+      (0.12, 0.67),
+      (0.22, 0.67),
+      (0.32, 0.67),
+    ];
+    for (final (nx, ny) in slots) {
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: Offset(size.width * nx, size.height * ny + 18),
+          width: 44,
+          height: 12,
+        ),
+        Paint()..color = const Color(0xFF5D4037).withValues(alpha: 0.08),
+      );
+    }
   }
 
   @override
@@ -127,12 +172,16 @@ class CupcakeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (cupcake.phase == CupcakePhase.gone) return const SizedBox.shrink();
+
     final def = CupcakeVarieties.byIndex(cupcake.varietyIndex, isGolden: cupcake.isGolden);
-    final size = (largerTouch ? 92.0 : 82.0) * cupcake.scale;
-    final touchPad = size * 1.15;
+    final size = (largerTouch ? 100.0 : 90.0) * cupcake.scale;
+    final touchPad = size * 1.2;
     final isDragging = cupcake.phase == CupcakePhase.dragging;
-    final displayX = isDragging ? cupcake.dragX : cupcake.x;
-    final displayY = isDragging ? cupcake.dragY : cupcake.y;
+    final isSnapping = cupcake.phase == CupcakePhase.snapping;
+    final displayX = isDragging || isSnapping ? (isDragging ? cupcake.dragX : cupcake.x) : cupcake.x;
+    final displayY = isDragging || isSnapping ? (isDragging ? cupcake.dragY : cupcake.y) : cupcake.y;
+    final snapScale = isSnapping ? (1.0 - cupcake.snapProgress * 0.55) : 1.0;
 
     return Positioned(
       left: displayX - touchPad / 2,
@@ -140,24 +189,29 @@ class CupcakeWidget extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onPanStart: cupcake.canDrag ? onDragStart : null,
-        onPanUpdate: cupcake.phase == CupcakePhase.dragging ? onDragUpdate : null,
-        onPanEnd: cupcake.phase == CupcakePhase.dragging ? onDragEnd : null,
+        onPanUpdate: isDragging ? onDragUpdate : null,
+        onPanEnd: isDragging ? onDragEnd : null,
         child: SizedBox(
           width: touchPad,
           height: touchPad,
           child: Center(
             child: Transform.scale(
-              scale: isDragging ? 1.15 : cupcake.scale,
-              child: SizedBox(
-                width: size,
-                height: size,
-                child: CustomPaint(
-                  painter: _CupcakePainter(
-                    def: def,
-                    isGolden: cupcake.isGolden,
-                    glow: cupcake.glow,
-                    sparklePhase: cupcake.sparklePhase,
-                    baking: cupcake.phase == CupcakePhase.baking,
+              scale: (isDragging ? 1.2 : cupcake.scale) * snapScale,
+              child: Transform.rotate(
+                angle: isDragging ? math.sin(cupcake.sparklePhase) * 0.08 : 0,
+                child: SizedBox(
+                  width: size,
+                  height: size,
+                  child: CustomPaint(
+                    painter: _CupcakePainter(
+                      def: def,
+                      isGolden: cupcake.isGolden,
+                      glow: cupcake.glow,
+                      sparklePhase: cupcake.sparklePhase,
+                      baking: cupcake.phase == CupcakePhase.baking,
+                      dragging: isDragging,
+                      snapProgress: isSnapping ? cupcake.snapProgress : 0,
+                    ),
                   ),
                 ),
               ),
@@ -176,6 +230,8 @@ class _CupcakePainter extends CustomPainter {
     required this.glow,
     required this.sparklePhase,
     required this.baking,
+    required this.dragging,
+    required this.snapProgress,
   });
 
   final CupcakeDef def;
@@ -183,34 +239,48 @@ class _CupcakePainter extends CustomPainter {
   final double glow;
   final double sparklePhase;
   final bool baking;
+  final bool dragging;
+  final double snapProgress;
 
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
-    final cy = size.height / 2 + 6;
+    final cy = size.height / 2 + 4;
+    final alpha = (1.0 - snapProgress * 0.4).clamp(0.3, 1.0);
+
+    canvas.saveLayer(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      Paint()..color = Colors.white.withValues(alpha: alpha),
+    );
 
     // Shadow
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, cy + 28), width: 40, height: 10),
-      Paint()..color = Colors.black.withValues(alpha: 0.12),
+      Rect.fromCenter(
+        center: Offset(cx, cy + 32 + (dragging ? 4 : 0)),
+        width: dragging ? 48 : 40,
+        height: dragging ? 14 : 10,
+      ),
+      Paint()..color = Colors.black.withValues(alpha: dragging ? 0.22 : 0.14),
     );
 
-    if (glow > 0 || isGolden) {
+    if (glow > 0 || isGolden || dragging) {
       canvas.drawCircle(
-        Offset(cx, cy),
-        size.width * 0.46,
+        Offset(cx, cy - 4),
+        size.width * 0.48,
         Paint()
-          ..color = (isGolden ? const Color(0xFFFFD54F) : const Color(0xFFF48FB1))
-              .withValues(alpha: 0.2 + glow * 0.35),
+          ..color = (isGolden ? const Color(0xFFFFD54F) : const Color(0xFFFF80AB))
+              .withValues(alpha: 0.22 + glow * 0.4),
       );
     }
 
-    // Cup liner
+    // Wrapper (cup)
+    final frosting = Color(def.frostingColor);
+    final wrapper = Color(def.wrapperColor);
     final liner = Path()
-      ..moveTo(cx - 20, cy + 6)
-      ..lineTo(cx - 24, cy + 30)
-      ..lineTo(cx + 24, cy + 30)
-      ..lineTo(cx + 20, cy + 6)
+      ..moveTo(cx - 22, cy + 4)
+      ..lineTo(cx - 28, cy + 34)
+      ..quadraticBezierTo(cx, cy + 40, cx + 28, cy + 34)
+      ..lineTo(cx + 22, cy + 4)
       ..close();
     canvas.drawPath(
       liner,
@@ -218,125 +288,178 @@ class _CupcakePainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(def.wrapperColor), Color.lerp(Color(def.wrapperColor), Colors.black, 0.15)!],
-        ).createShader(Rect.fromLTWH(cx - 24, cy + 6, 48, 24)),
+          colors: [
+            Color.lerp(wrapper, Colors.white, 0.2)!,
+            wrapper,
+            Color.lerp(wrapper, Colors.black, 0.18)!,
+          ],
+        ).createShader(Rect.fromLTWH(cx - 28, cy + 4, 56, 36)),
     );
 
-    // Pleats
-    for (var i = -2; i <= 2; i++) {
+    // Wrapper pleats
+    for (var i = -3; i <= 3; i++) {
       canvas.drawLine(
-        Offset(cx + i * 8, cy + 10),
-        Offset(cx + i * 8 - 2, cy + 28),
-        Paint()..color = Colors.white.withValues(alpha: 0.35)..strokeWidth = 1.2,
+        Offset(cx + i * 7, cy + 8),
+        Offset(cx + i * 7.5 - 1, cy + 32),
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.4)
+          ..strokeWidth = 1.4
+          ..strokeCap = StrokeCap.round,
       );
     }
 
-    // Frosting mound
+    // Frosting base mound
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, cy + 2), width: 52, height: 28),
+      Paint()..color = frosting,
+    );
+
+    // Layered frosting swirls
     canvas.drawCircle(
-      Offset(cx, cy - 2),
-      24,
+      Offset(cx, cy - 8),
+      22,
       Paint()
         ..shader = RadialGradient(
           colors: [
-            Color.lerp(Color(def.frostingColor), Colors.white, 0.25)!,
-            Color(def.frostingColor),
+            Color.lerp(frosting, Colors.white, 0.35)!,
+            frosting,
+            Color.lerp(frosting, Colors.black, 0.12)!,
           ],
-        ).createShader(Rect.fromCircle(center: Offset(cx, cy - 2), radius: 24)),
+        ).createShader(Rect.fromCircle(center: Offset(cx, cy - 8), radius: 22)),
+    );
+    canvas.drawCircle(
+      Offset(cx - 2, cy - 18),
+      14,
+      Paint()..color = Color.lerp(frosting, Colors.white, 0.25)!,
+    );
+    canvas.drawCircle(
+      Offset(cx + 4, cy - 26),
+      9,
+      Paint()..color = Color.lerp(frosting, Colors.white, 0.4)!,
     );
 
-    // Frosting swirl
+    // Swirl highlight
     canvas.drawArc(
-      Rect.fromCenter(center: Offset(cx, cy - 4), width: 18, height: 14),
-      -0.5,
-      2.8,
+      Rect.fromCenter(center: Offset(cx, cy - 10), width: 28, height: 20),
+      -0.8,
+      2.2,
       false,
       Paint()
-        ..color = Colors.white.withValues(alpha: 0.45)
+        ..color = Colors.white.withValues(alpha: 0.5)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 3
+        ..strokeWidth = 3.5
         ..strokeCap = StrokeCap.round,
     );
 
-    _drawTopping(canvas, cx, cy - 10, def.topping, def.accentColor);
+    _drawTopping(canvas, cx, cy - 18, def.topping, def.accentColor);
 
     if (baking) {
       canvas.drawCircle(
-        Offset(cx, cy - 8),
-        28,
+        Offset(cx, cy - 10),
+        32,
         Paint()
-          ..color = const Color(0xFFFFF176).withValues(alpha: 0.25 + math.sin(sparklePhase * 4) * 0.1),
+          ..color = const Color(0xFFFFF176)
+              .withValues(alpha: 0.28 + math.sin(sparklePhase * 4) * 0.12),
       );
     }
 
-    if (isGolden) {
-      for (var i = 0; i < 5; i++) {
-        final a = sparklePhase * 4 + i * 1.2;
+    if (isGolden || dragging) {
+      for (var i = 0; i < 6; i++) {
+        final a = sparklePhase * 4 + i * 1.05;
         canvas.drawCircle(
-          Offset(cx + math.cos(a) * 26, cy - 8 + math.sin(a) * 20),
-          2.5,
-          Paint()..color = const Color(0xFFFFF8E1).withValues(alpha: 0.9),
+          Offset(cx + math.cos(a) * 30, cy - 10 + math.sin(a) * 24),
+          2.8,
+          Paint()..color = const Color(0xFFFFF8E1).withValues(alpha: 0.95),
         );
       }
     }
+
+    // Bite crumbs while snapping into mouth
+    if (snapProgress > 0.4) {
+      for (var i = 0; i < 4; i++) {
+        canvas.drawCircle(
+          Offset(cx - 10 + i * 7, cy + 8 + snapProgress * 10),
+          2,
+          Paint()..color = frosting.withValues(alpha: 0.7),
+        );
+      }
+    }
+
+    canvas.restore();
   }
 
   void _drawTopping(Canvas canvas, double cx, double cy, CupcakeTopping t, int accent) {
     switch (t) {
       case CupcakeTopping.cherry:
-        canvas.drawCircle(Offset(cx, cy - 10), 7, Paint()..color = const Color(0xFFE53935));
+        canvas.drawCircle(Offset(cx, cy - 8), 8, Paint()..color = const Color(0xFFE53935));
+        canvas.drawCircle(Offset(cx - 2, cy - 10), 2.5, Paint()..color = Colors.white.withValues(alpha: 0.5));
         canvas.drawLine(
-          Offset(cx, cy - 17),
-          Offset(cx + 5, cy - 24),
-          Paint()..color = const Color(0xFF66BB6A)..strokeWidth = 2.5,
+          Offset(cx, cy - 16),
+          Offset(cx + 6, cy - 26),
+          Paint()
+            ..color = const Color(0xFF66BB6A)
+            ..strokeWidth = 2.8
+            ..strokeCap = StrokeCap.round,
         );
       case CupcakeTopping.strawberry:
         canvas.drawOval(
-          Rect.fromCenter(center: Offset(cx, cy - 8), width: 16, height: 18),
+          Rect.fromCenter(center: Offset(cx, cy - 6), width: 18, height: 20),
           Paint()..color = Color(accent),
         );
+        canvas.drawCircle(Offset(cx, cy - 16), 4, Paint()..color = const Color(0xFF66BB6A));
       case CupcakeTopping.star:
-        _drawStar(canvas, Offset(cx, cy - 10), 9, const Color(0xFFFFEB3B));
+        _drawStar(canvas, Offset(cx, cy - 8), 11, const Color(0xFFFFEB3B));
       case CupcakeTopping.heart:
-        canvas.drawCircle(Offset(cx - 5, cy - 10), 5.5, Paint()..color = const Color(0xFFE91E63));
-        canvas.drawCircle(Offset(cx + 5, cy - 10), 5.5, Paint()..color = const Color(0xFFE91E63));
+        canvas.drawCircle(Offset(cx - 6, cy - 8), 6.5, Paint()..color = const Color(0xFFE91E63));
+        canvas.drawCircle(Offset(cx + 6, cy - 8), 6.5, Paint()..color = const Color(0xFFE91E63));
+        canvas.drawPath(
+          Path()
+            ..moveTo(cx - 12, cy - 5)
+            ..lineTo(cx, cy + 8)
+            ..lineTo(cx + 12, cy - 5),
+          Paint()..color = const Color(0xFFE91E63),
+        );
       case CupcakeTopping.sprinkles:
-        for (var i = 0; i < 6; i++) {
+        for (var i = 0; i < 8; i++) {
+          canvas.save();
+          canvas.translate(cx - 12 + i * 3.5, cy - 2 - (i % 3) * 5);
+          canvas.rotate(i * 0.5);
           canvas.drawRRect(
             RRect.fromRectAndRadius(
-              Rect.fromCenter(
-                center: Offset(cx - 10 + i * 4, cy - 4 - (i % 2) * 4),
-                width: 3,
-                height: 7,
-              ),
-              const Radius.circular(1),
+              Rect.fromCenter(center: Offset.zero, width: 3.5, height: 9),
+              const Radius.circular(1.5),
             ),
-            Paint()..color = Color([0xFFFF7043, 0xFF42A5F5, 0xFFAB47BC, 0xFFFFEE58][i % 4]),
+            Paint()
+              ..color = Color([0xFFFF7043, 0xFF42A5F5, 0xFFAB47BC, 0xFFFFEE58, 0xFF66BB6A][i % 5]),
           );
+          canvas.restore();
         }
       case CupcakeTopping.chocolateChip:
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < 5; i++) {
           canvas.drawCircle(
-            Offset(cx - 8 + i * 5, cy - 2 - (i % 2) * 5),
-            3.5,
+            Offset(cx - 10 + i * 5, cy - (i % 2) * 6),
+            4,
             Paint()..color = const Color(0xFF5D4037),
           );
         }
       case CupcakeTopping.whipped:
-        canvas.drawCircle(Offset(cx, cy - 12), 11, Paint()..color = Colors.white);
-        canvas.drawCircle(Offset(cx - 9, cy - 6), 8, Paint()..color = Colors.white);
-        canvas.drawCircle(Offset(cx + 9, cy - 6), 8, Paint()..color = Colors.white);
+        canvas.drawCircle(Offset(cx, cy - 10), 12, Paint()..color = Colors.white);
+        canvas.drawCircle(Offset(cx - 10, cy - 2), 9, Paint()..color = Colors.white);
+        canvas.drawCircle(Offset(cx + 10, cy - 2), 9, Paint()..color = Colors.white);
+        canvas.drawCircle(Offset(cx, cy - 18), 7, Paint()..color = Colors.white);
       case CupcakeTopping.rainbow:
         const colors = [0xFFE53935, 0xFFFF9800, 0xFFFFEB3B, 0xFF66BB6A, 0xFF42A5F5, 0xFFAB47BC];
         for (var i = 0; i < colors.length; i++) {
           canvas.drawArc(
-            Rect.fromCenter(center: Offset(cx, cy - 4), width: 30, height: 22),
+            Rect.fromCenter(center: Offset(cx, cy), width: 34, height: 26),
             math.pi + i * 0.28,
-            0.25,
+            0.24,
             false,
             Paint()
               ..color = Color(colors[i])
               ..style = PaintingStyle.stroke
-              ..strokeWidth = 3,
+              ..strokeWidth = 3.5
+              ..strokeCap = StrokeCap.round,
           );
         }
     }
@@ -355,9 +478,20 @@ class _CupcakePainter extends CustomPainter {
     }
     path.close();
     canvas.drawPath(path, Paint()..color = color);
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = const Color(0xFFFFA000).withValues(alpha: 0.5)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2,
+    );
   }
 
   @override
   bool shouldRepaint(covariant _CupcakePainter old) =>
-      old.glow != glow || old.sparklePhase != sparklePhase || old.baking != baking;
+      old.glow != glow ||
+      old.sparklePhase != sparklePhase ||
+      old.baking != baking ||
+      old.dragging != dragging ||
+      old.snapProgress != snapProgress;
 }

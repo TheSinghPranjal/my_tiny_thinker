@@ -199,9 +199,16 @@ abstract final class HungryTeddyLogic {
         snapProgress: 1,
         x: mx,
         y: my,
+        scale: 0.35,
       );
     }
-    return c.copyWith(snapProgress: snap, x: x, y: y, glow: 1);
+    return c.copyWith(
+      snapProgress: snap,
+      x: x,
+      y: y,
+      glow: 1,
+      scale: 1.1 - snap * 0.7,
+    );
   }
 
   static CupcakeEntity _updateBaking(CupcakeEntity c, double delta, double speed) {
