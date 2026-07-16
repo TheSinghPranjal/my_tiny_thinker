@@ -17,6 +17,26 @@ enum GameId {
     '🐵',
     'Hungry Monkey Banana Adventure',
   ),
+  catchTheButterflyGarden(
+    'catch_the_butterfly_garden',
+    '🦋',
+    'Catch the Butterfly Garden',
+  ),
+  hungryDuckPondAdventure(
+    'hungry_duck_pond_adventure',
+    '🦆',
+    'Hungry Duck Pond Adventure',
+  ),
+  hungryTeddyCupcakeParty(
+    'hungry_teddy_cupcake_party',
+    '🧸',
+    'Hungry Teddy Cupcake Party',
+  ),
+  bunnyHopAdventure(
+    'bunny_hop_adventure',
+    '🐰',
+    'Bunny Hop Adventure',
+  ),
   shadowMatchAdventure('shadow_match_adventure', '🌗', 'Shadow Match Adventure'),
   alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz');
 

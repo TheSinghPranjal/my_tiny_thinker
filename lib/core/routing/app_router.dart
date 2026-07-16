@@ -37,6 +37,14 @@ import 'package:my_tiny_thinker/games/feed_the_frog_adventure/presentation/feed_
 import 'package:my_tiny_thinker/games/feed_the_frog_adventure/presentation/feed_frog_game_screen.dart';
 import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/presentation/hungry_monkey_setup_screen.dart';
 import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/presentation/hungry_monkey_game_screen.dart';
+import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/presentation/butterfly_garden_setup_screen.dart';
+import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/presentation/butterfly_garden_game_screen.dart';
+import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/presentation/hungry_duck_setup_screen.dart';
+import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/presentation/hungry_duck_game_screen.dart';
+import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/presentation/hungry_teddy_setup_screen.dart';
+import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/presentation/hungry_teddy_game_screen.dart';
+import 'package:my_tiny_thinker/games/bunny_hop_adventure/presentation/bunny_hop_setup_screen.dart';
+import 'package:my_tiny_thinker/games/bunny_hop_adventure/presentation/bunny_hop_game_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/welcome_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/age_selection_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/avatar_selection_screen.dart';
@@ -74,6 +82,14 @@ abstract final class AppRoutes {
   static const feedTheFrogGame = '/games/feed-the-frog/play';
   static const hungryMonkeySetup = '/games/hungry-monkey/setup';
   static const hungryMonkeyGame = '/games/hungry-monkey/play';
+  static const butterflyGardenSetup = '/games/butterfly-garden/setup';
+  static const butterflyGardenGame = '/games/butterfly-garden/play';
+  static const hungryDuckSetup = '/games/hungry-duck/setup';
+  static const hungryDuckGame = '/games/hungry-duck/play';
+  static const hungryTeddySetup = '/games/hungry-teddy/setup';
+  static const hungryTeddyGame = '/games/hungry-teddy/play';
+  static const bunnyHopSetup = '/games/bunny-hop/setup';
+  static const bunnyHopGame = '/games/bunny-hop/play';
   static const shadowMatchSetup = '/games/shadow-match/setup';
   static const shadowMatchGame = '/games/shadow-match/play';
   static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
@@ -268,6 +284,46 @@ final appRouter = GoRouter(
       path: AppRoutes.hungryMonkeyGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const HungryMonkeyGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.butterflyGardenSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ButterflyGardenSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.butterflyGardenGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ButterflyGardenGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.hungryDuckSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const HungryDuckSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.hungryDuckGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const HungryDuckGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.hungryTeddySetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const HungryTeddySetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.hungryTeddyGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const HungryTeddyGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.bunnyHopSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const BunnyHopSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.bunnyHopGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const BunnyHopGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.shadowMatchSetup,

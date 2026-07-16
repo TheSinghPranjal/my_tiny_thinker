@@ -29,6 +29,14 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.feedTheFrogSetup);
     case GameId.hungryMonkeyBananaAdventure:
       context.push(AppRoutes.hungryMonkeySetup);
+    case GameId.catchTheButterflyGarden:
+      context.push(AppRoutes.butterflyGardenSetup);
+    case GameId.hungryDuckPondAdventure:
+      context.push(AppRoutes.hungryDuckSetup);
+    case GameId.hungryTeddyCupcakeParty:
+      context.push(AppRoutes.hungryTeddySetup);
+    case GameId.bunnyHopAdventure:
+      context.push(AppRoutes.bunnyHopSetup);
     case GameId.shadowMatchAdventure:
       context.push(AppRoutes.shadowMatchSetup);
     case GameId.alphabetAdventureQuiz:

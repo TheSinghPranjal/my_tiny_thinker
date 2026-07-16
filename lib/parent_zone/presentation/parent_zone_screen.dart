@@ -35,6 +35,15 @@ import 'package:my_tiny_thinker/games/feed_the_frog_adventure/models/feed_frog_m
 import 'package:my_tiny_thinker/games/feed_the_frog_adventure/repository/feed_frog_settings_repository.dart';
 import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/models/hungry_monkey_models.dart';
 import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/repository/hungry_monkey_settings_repository.dart';
+import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/models/butterfly_garden_models.dart';
+import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/repository/butterfly_garden_settings_repository.dart';
+import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/models/hungry_duck_models.dart';
+import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/repository/hungry_duck_settings_repository.dart';
+import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/models/hungry_teddy_models.dart';
+import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/repository/hungry_teddy_settings_repository.dart';
+import 'package:my_tiny_thinker/games/bunny_hop_adventure/models/bunny_hop_models.dart';
+import 'package:my_tiny_thinker/games/bunny_hop_adventure/logic/bunny_hop_logic.dart';
+import 'package:my_tiny_thinker/games/bunny_hop_adventure/repository/bunny_hop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/models/frog_pond_models.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/repository/frog_pond_settings_repository.dart';
 
@@ -313,6 +322,54 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('🐰 Bunny Hop Adventure',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _BunnyHopParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🧸 Hungry Teddy Cupcake Party',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _HungryTeddyParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🦆 Hungry Duck Pond Adventure',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _HungryDuckParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🦋 Catch the Butterfly Garden',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _ButterflyGardenParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('🐵 Hungry Monkey Banana Adventure',
                       style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
@@ -470,6 +527,576 @@ class _StatRow extends StatelessWidget {
           Text(value, style: context.textTheme.titleMedium),
         ],
       ),
+    );
+  }
+}
+
+class _BunnyHopParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(bunnyHopSettingsProvider);
+    final cracked = BunnyHopLogic.crackedPadCount(s.effectiveLilyPadCount);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: BunnyHopDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text(d.name),
+              selected: s.difficulty == d,
+              onSelected: (_) =>
+                  ref.read(bunnyHopSettingsProvider.notifier).applyDifficulty(d),
+            );
+          }).toList(),
+        ),
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Lily pads: ${s.lilyPadCount} (cracked: $cracked)'),
+        Slider(
+          value: s.lilyPadCount.toDouble(),
+          min: 5,
+          max: 18,
+          divisions: 13,
+          label: '${s.lilyPadCount}',
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(lilyPadCount: v.round()),
+              ),
+        ),
+        Text('Hop speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: BunnyHopSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.hopSpeed == speed,
+              onSelected: (_) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(hopSpeed: speed),
+                  ),
+            );
+          }).toList(),
+        ),
+        Text('Cracked pad sink delay: ${s.crackedSinkDelay.toStringAsFixed(1)}s'),
+        Slider(
+          value: s.crackedSinkDelay,
+          min: 3,
+          max: 10,
+          divisions: 14,
+          label: '${s.crackedSinkDelay.toStringAsFixed(1)}s',
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(crackedSinkDelay: v),
+              ),
+        ),
+        Text('Reward multiplier: ${s.rewardMultiplier.toStringAsFixed(1)}x'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: '${s.rewardMultiplier.toStringAsFixed(1)}x',
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Background music'),
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('High contrast'),
+          value: s.highContrast,
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(highContrast: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Larger touch targets'),
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HungryTeddyParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(hungryTeddySettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: HungryTeddyDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text(d.name),
+              selected: s.difficulty == d,
+              onSelected: (_) =>
+                  ref.read(hungryTeddySettingsProvider.notifier).applyDifficulty(d),
+            );
+          }).toList(),
+        ),
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Cupcakes on table: ${s.cupcakeCount}'),
+        Slider(
+          value: s.cupcakeCount.toDouble(),
+          min: 4,
+          max: 10,
+          divisions: 6,
+          label: '${s.cupcakeCount}',
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(cupcakeCount: v.round()),
+              ),
+        ),
+        Text('Drag sensitivity', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: TeddyDragSensitivity.values.map((level) {
+            return ChoiceChip(
+              label: Text(level.name),
+              selected: s.dragSensitivity == level,
+              onSelected: (_) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                    (x) => x.copyWith(dragSensitivity: level),
+                  ),
+            );
+          }).toList(),
+        ),
+        Text('Golden cupcake every: ${s.goldenInterval}s'),
+        Slider(
+          value: s.goldenInterval.toDouble(),
+          min: 10,
+          max: 60,
+          divisions: 10,
+          label: '${s.goldenInterval}s',
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(goldenInterval: v.round()),
+              ),
+        ),
+        Text('Reward multiplier: ${s.rewardMultiplier.toStringAsFixed(1)}x'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: '${s.rewardMultiplier.toStringAsFixed(1)}x',
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Background music'),
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('High contrast'),
+          value: s.highContrast,
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(highContrast: v),
+              ),
+        ),
+        SwitchListTile(
+          title: const Text('Larger touch targets'),
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HungryDuckParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(hungryDuckSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: HungryDuckDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text(d.name),
+              selected: s.difficulty == d,
+              onSelected: (_) =>
+                  ref.read(hungryDuckSettingsProvider.notifier).applyDifficulty(d),
+            );
+          }).toList(),
+        ),
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Fish in pond: ${s.fishCount}'),
+        Slider(
+          value: s.fishCount.toDouble(),
+          min: 4,
+          max: 10,
+          divisions: 6,
+          label: '${s.fishCount}',
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(fishCount: v.round()),
+              ),
+        ),
+        Text('Fish speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: PondFishSwimSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.fishSpeed == speed,
+              onSelected: (_) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(fishSpeed: speed),
+                  ),
+            );
+          }).toList(),
+        ),
+        Text('Duck speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: DuckSwimSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.duckSpeed == speed,
+              onSelected: (_) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(duckSpeed: speed),
+                  ),
+            );
+          }).toList(),
+        ),
+        Text('Golden fish every: ${s.goldenInterval}s'),
+        Slider(
+          value: s.goldenInterval.toDouble(),
+          min: 10,
+          max: 60,
+          divisions: 10,
+          label: '${s.goldenInterval}s',
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(goldenInterval: v.round()),
+              ),
+        ),
+        Text('Reward multiplier'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: s.rewardMultiplier.toStringAsFixed(1),
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Background music'),
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('High contrast'),
+          value: s.highContrast,
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(highContrast: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Larger touch targets'),
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ButterflyGardenParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(butterflyGardenSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: ButterflyGardenDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text(d.name),
+              selected: s.difficulty == d,
+              onSelected: (_) => ref
+                  .read(butterflyGardenSettingsProvider.notifier)
+                  .applyDifficulty(d),
+            );
+          }).toList(),
+        ),
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          label: '${s.sessionSeconds}s',
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        Text('Butterflies in garden: ${s.butterflyCount}'),
+        Slider(
+          value: s.butterflyCount.toDouble(),
+          min: 3,
+          max: 10,
+          divisions: 7,
+          label: '${s.butterflyCount}',
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(butterflyCount: v.round()),
+              ),
+        ),
+        Text('Flight speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: ButterflyFlightSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.flightSpeed == speed,
+              onSelected: (_) =>
+                  ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(flightSpeed: speed),
+                      ),
+            );
+          }).toList(),
+        ),
+        Text('Golden butterfly every: ${s.goldenInterval}s'),
+        Slider(
+          value: s.goldenInterval.toDouble(),
+          min: 10,
+          max: 60,
+          divisions: 10,
+          label: '${s.goldenInterval}s',
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(goldenInterval: v.round()),
+              ),
+        ),
+        Text(
+          'Bee spawn delay: ${s.beeSpawnMin.toStringAsFixed(1)}–${s.beeSpawnMax.toStringAsFixed(1)}s',
+        ),
+        RangeSlider(
+          values: RangeValues(
+            s.beeSpawnMin.clamp(3.0, 15.0),
+            s.beeSpawnMax.clamp(s.beeSpawnMin.clamp(3.0, 15.0), 20.0),
+          ),
+          min: 3,
+          max: 20,
+          divisions: 17,
+          labels: RangeLabels(
+            s.beeSpawnMin.toStringAsFixed(1),
+            s.beeSpawnMax.toStringAsFixed(1),
+          ),
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(beeSpawnMin: v.start, beeSpawnMax: v.end),
+              ),
+        ),
+        Text('Reward multiplier'),
+        Slider(
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          divisions: 6,
+          label: s.rewardMultiplier.toStringAsFixed(1),
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Sound effects'),
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Narration'),
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Background music'),
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Haptic feedback'),
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Reduced motion'),
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('High contrast'),
+          value: s.highContrast,
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(highContrast: v),
+              ),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Larger touch targets'),
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+      ],
     );
   }
 }
