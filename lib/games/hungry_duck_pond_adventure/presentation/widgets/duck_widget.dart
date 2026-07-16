@@ -10,15 +10,17 @@ class DuckWidget extends StatelessWidget {
   final bool largerTouch;
 
   /// Visual size of the duck sprite; [duck.x]/[duck.y] is the center point.
-  static double layoutSize(bool largerTouch) => largerTouch ? 118.0 : 108.0;
+  static double layoutSize(bool largerTouch) => largerTouch ? 128.0 : 116.0;
 
   @override
   Widget build(BuildContext context) {
     final size = layoutSize(largerTouch);
     final blink = (duck.blinkTimer % 3.5) < 0.12;
     final bob = duck.phase == DuckPhase.idleSwim
-        ? math.sin(duck.animPhase * 2) * 3
-        : 0.0;
+        ? math.sin(duck.animPhase * 2) * 3.5
+        : duck.phase == DuckPhase.celebrating
+            ? math.sin(duck.animPhase * 8) * 4
+            : 0.0;
 
     return IgnorePointer(
       child: Transform.translate(
@@ -44,179 +46,250 @@ class _DuckPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
-    // Center the body in the canvas with a little extra room above for the head.
-    final cy = size.height * 0.54;
+    final cy = size.height * 0.56;
     final eating = duck.phase == DuckPhase.eating;
     final celebrating = duck.phase == DuckPhase.celebrating;
     final chasing = duck.phase == DuckPhase.chasing;
-    final flap = math.sin(duck.wingFlap) * (chasing ? 0.35 : 0.18);
+    final flap = math.sin(duck.wingFlap) * (chasing ? 0.55 : celebrating ? 0.4 : 0.22);
 
     _drawRipples(canvas, cx, cy);
+    _drawTail(canvas, cx, cy);
     _drawBody(canvas, cx, cy);
-    _drawWing(canvas, cx - 20, cy + 2, -0.45 + flap, isNear: true);
-    _drawWing(canvas, cx + 18, cy + 4, 0.35 - flap, isNear: false);
-    _drawNeckAndHead(canvas, cx, cy, eating, celebrating);
-    _drawTail(canvas, cx - 28, cy + 10);
+    _drawFarWing(canvas, cx, cy, flap);
+    _drawNearWing(canvas, cx, cy, flap);
+    _drawHead(canvas, cx, cy, eating, celebrating);
     _drawBeak(canvas, cx, cy, eating, celebrating);
     _drawEye(canvas, cx, cy, blink);
+    _drawCheek(canvas, cx, cy);
   }
 
   void _drawRipples(Canvas canvas, double cx, double cy) {
-    for (var i = 0; i < 2; i++) {
-      final phase = duck.ripplePhase + i * 0.8;
-      final alpha = (0.22 - i * 0.07).clamp(0.08, 0.22);
+    for (var i = 0; i < 3; i++) {
+      final phase = duck.ripplePhase + i * 0.9;
       canvas.drawOval(
         Rect.fromCenter(
-          center: Offset(cx, cy + 30),
-          width: 34 + math.sin(phase) * 6 + i * 8,
-          height: 10 + i * 2,
+          center: Offset(cx, cy + 34 + i * 2),
+          width: 40 + math.sin(phase) * 8 + i * 10,
+          height: 11 + i * 2,
         ),
         Paint()
-          ..color = Colors.white.withValues(alpha: alpha)
+          ..color = Colors.white.withValues(alpha: 0.22 - i * 0.05)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5,
+          ..strokeWidth = 2,
       );
     }
   }
 
   void _drawBody(Canvas canvas, double cx, double cy) {
-    final bodyRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: Offset(cx, cy + 10), width: 52, height: 34),
-      const Radius.circular(18),
-    );
-    canvas.drawRRect(
+    final bodyRect = Rect.fromCenter(center: Offset(cx + 2, cy + 8), width: 58, height: 40);
+    canvas.drawOval(
       bodyRect,
       Paint()
         ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFFFF176), Color(0xFFFFCA28), Color(0xFFFFB300)],
-        ).createShader(bodyRect.outerRect),
+          colors: [Color(0xFFFFF59D), Color(0xFFFFEB3B), Color(0xFFFFC107)],
+        ).createShader(bodyRect),
     );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(cx, cy + 16), width: 38, height: 16),
-        const Radius.circular(10),
-      ),
-      Paint()..color = Colors.white.withValues(alpha: 0.18),
+    // Soft belly
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx + 4, cy + 16), width: 40, height: 20),
+      Paint()..color = Colors.white.withValues(alpha: 0.35),
     );
   }
 
-  void _drawWing(Canvas canvas, double x, double y, double angle, {required bool isNear}) {
+  void _drawFarWing(Canvas canvas, double cx, double cy, double flap) {
     canvas.save();
-    canvas.translate(x, y);
-    canvas.rotate(angle);
+    canvas.translate(cx - 6, cy + 2);
+    canvas.rotate(-0.55 - flap * 0.5);
     final wing = Path()
       ..moveTo(0, 0)
-      ..quadraticBezierTo(8, -10, 22, -4)
-      ..quadraticBezierTo(10, 2, 0, 0)
+      ..quadraticBezierTo(-6, -14, 8, -22)
+      ..quadraticBezierTo(22, -14, 18, -2)
+      ..quadraticBezierTo(10, 4, 0, 0)
       ..close();
+    canvas.drawPath(wing, Paint()..color = const Color(0xFFFFD54F).withValues(alpha: 0.85));
     canvas.drawPath(
       wing,
       Paint()
-        ..color = Color(isNear ? 0xFFFFEE58 : 0xFFFFD54F).withValues(alpha: isNear ? 0.95 : 0.75),
-    );
-    canvas.drawPath(
-      wing,
-      Paint()
-        ..color = const Color(0xFFFFB300).withValues(alpha: 0.25)
+        ..color = const Color(0xFFFFB300).withValues(alpha: 0.4)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1,
+        ..strokeWidth = 1.2,
     );
+    // Feather lines
+    for (var i = 0; i < 3; i++) {
+      canvas.drawLine(
+        Offset(4.0 + i * 4, -4),
+        Offset(2.0 + i * 3, -14 - i.toDouble()),
+        Paint()
+          ..color = const Color(0xFFFFB300).withValues(alpha: 0.45)
+          ..strokeWidth = 1.2
+          ..strokeCap = StrokeCap.round,
+      );
+    }
     canvas.restore();
   }
 
-  void _drawNeckAndHead(Canvas canvas, double cx, double cy, bool eating, bool celebrating) {
+  void _drawNearWing(Canvas canvas, double cx, double cy, double flap) {
+    canvas.save();
+    canvas.translate(cx + 10, cy + 4);
+    canvas.rotate(0.25 + flap);
+    final wing = Path()
+      ..moveTo(0, 0)
+      ..quadraticBezierTo(4, -16, 20, -20)
+      ..quadraticBezierTo(32, -10, 26, 2)
+      ..quadraticBezierTo(14, 8, 0, 0)
+      ..close();
+    canvas.drawPath(
+      wing,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFFF176), Color(0xFFFFCA28)],
+        ).createShader(const Rect.fromLTWH(0, -22, 32, 30)),
+    );
+    canvas.drawPath(
+      wing,
+      Paint()
+        ..color = const Color(0xFFFFB300).withValues(alpha: 0.5)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.4,
+    );
+    for (var i = 0; i < 4; i++) {
+      canvas.drawLine(
+        Offset(6.0 + i * 4, -2),
+        Offset(8.0 + i * 4, -14 - i * 1.5),
+        Paint()
+          ..color = const Color(0xFFFFA000).withValues(alpha: 0.55)
+          ..strokeWidth = 1.3
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+    canvas.restore();
+  }
+
+  void _drawTail(Canvas canvas, double cx, double cy) {
+    // Fan of three feathers
+    for (var i = 0; i < 3; i++) {
+      final angle = -0.55 + i * 0.35;
+      canvas.save();
+      canvas.translate(cx - 26, cy + 6);
+      canvas.rotate(angle);
+      final feather = Path()
+        ..moveTo(0, 0)
+        ..quadraticBezierTo(-10, -8, -22, -4)
+        ..quadraticBezierTo(-12, 4, 0, 4)
+        ..close();
+      canvas.drawPath(
+        feather,
+        Paint()..color = Color.lerp(const Color(0xFFFFCA28), const Color(0xFFFFA000), i / 3)!,
+      );
+      canvas.restore();
+    }
+  }
+
+  void _drawHead(Canvas canvas, double cx, double cy, bool eating, bool celebrating) {
+    // Neck
     canvas.drawPath(
       Path()
-        ..moveTo(cx - 4, cy - 2)
-        ..quadraticBezierTo(cx + 2, cy - 14, cx + 10, cy - 18),
+        ..moveTo(cx + 2, cy - 4)
+        ..quadraticBezierTo(cx + 8, cy - 16, cx + 16, cy - 22),
       Paint()
         ..color = const Color(0xFFFFEB3B)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 10
+        ..strokeWidth = 14
         ..strokeCap = StrokeCap.round,
     );
+
+    final headCenter = Offset(cx + 18, cy - 26);
     canvas.drawCircle(
-      Offset(cx + 14, cy - 20),
-      15,
+      headCenter,
+      18,
       Paint()
         ..shader = const RadialGradient(
-          colors: [Color(0xFFFFF176), Color(0xFFFFCA28)],
-        ).createShader(Rect.fromCircle(center: Offset(cx + 14, cy - 20), radius: 15)),
+          colors: [Color(0xFFFFF59D), Color(0xFFFFEB3B), Color(0xFFFFC107)],
+          stops: [0.0, 0.55, 1.0],
+        ).createShader(Rect.fromCircle(center: headCenter, radius: 18)),
     );
+
+    // Tiny tuft on head
+    canvas.drawPath(
+      Path()
+        ..moveTo(headCenter.dx - 2, headCenter.dy - 16)
+        ..quadraticBezierTo(headCenter.dx, headCenter.dy - 26, headCenter.dx + 6, headCenter.dy - 16),
+      Paint()
+        ..color = const Color(0xFFFFCA28)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3
+        ..strokeCap = StrokeCap.round,
+    );
+
     if (eating || celebrating) {
       canvas.drawArc(
-        Rect.fromCenter(center: Offset(cx + 14, cy - 16), width: 10, height: 6),
-        0.1,
-        math.pi - 0.2,
+        Rect.fromCenter(center: Offset(headCenter.dx, headCenter.dy + 6), width: 12, height: 8),
+        0.15,
+        math.pi - 0.3,
         false,
         Paint()
-          ..color = const Color(0xFFE65100).withValues(alpha: 0.35)
+          ..color = const Color(0xFFE65100).withValues(alpha: 0.4)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5,
+          ..strokeWidth = 1.8,
       );
     }
-  }
-
-  void _drawTail(Canvas canvas, double x, double y) {
-    final tail = Path()
-      ..moveTo(x, y)
-      ..quadraticBezierTo(x - 10, y - 8, x - 16, y - 2)
-      ..quadraticBezierTo(x - 10, y + 4, x, y + 2)
-      ..close();
-    canvas.drawPath(tail, Paint()..color = const Color(0xFFFFD54F));
-    canvas.drawPath(
-      tail,
-      Paint()
-        ..color = const Color(0xFFFFB300).withValues(alpha: 0.35)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1,
-    );
   }
 
   void _drawBeak(Canvas canvas, double cx, double cy, bool eating, bool celebrating) {
-    final beak = Path()
-      ..moveTo(cx + 26, cy - 20)
-      ..lineTo(cx + 40, cy - 17)
-      ..lineTo(cx + 26, cy - 14)
+    final open = eating || celebrating ? 3.0 : 0.0;
+    // Upper beak
+    final upper = Path()
+      ..moveTo(cx + 30, cy - 28)
+      ..lineTo(cx + 48, cy - 26)
+      ..lineTo(cx + 30, cy - 22)
       ..close();
-    canvas.drawPath(beak, Paint()..color = const Color(0xFFFF9800));
+    canvas.drawPath(upper, Paint()..color = const Color(0xFFFF9800));
     canvas.drawPath(
-      beak,
+      upper,
       Paint()
-        ..color = const Color(0xFFE65100).withValues(alpha: 0.45)
+        ..color = const Color(0xFFE65100).withValues(alpha: 0.5)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1,
+        ..strokeWidth = 1.2,
     );
-    if (eating || celebrating) {
-      canvas.drawArc(
-        Rect.fromCenter(center: Offset(cx + 30, cy - 17), width: 8, height: 5),
-        0,
-        math.pi,
-        false,
-        Paint()
-          ..color = const Color(0xFFBF360C)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5,
-      );
-    }
+    // Lower beak
+    final lower = Path()
+      ..moveTo(cx + 30, cy - 22 + open)
+      ..lineTo(cx + 44, cy - 20 + open)
+      ..lineTo(cx + 30, cy - 18 + open)
+      ..close();
+    canvas.drawPath(lower, Paint()..color = const Color(0xFFFF6D00));
+    // Nostril
+    canvas.drawCircle(Offset(cx + 36, cy - 26), 1.4, Paint()..color = const Color(0xFFE65100));
   }
 
   void _drawEye(Canvas canvas, double cx, double cy, bool blink) {
+    final eye = Offset(cx + 14, cy - 30);
     if (blink) {
       canvas.drawLine(
-        Offset(cx + 8, cy - 24),
-        Offset(cx + 16, cy - 24),
+        Offset(eye.dx - 5, eye.dy),
+        Offset(eye.dx + 5, eye.dy),
         Paint()
-          ..color = Colors.black87
-          ..strokeWidth = 2
+          ..color = const Color(0xFF3E2723)
+          ..strokeWidth = 2.5
           ..strokeCap = StrokeCap.round,
       );
       return;
     }
-    canvas.drawCircle(Offset(cx + 12, cy - 24), 3.5, Paint()..color = Colors.black87);
-    canvas.drawCircle(Offset(cx + 13, cy - 25), 1.2, Paint()..color = Colors.white);
+    canvas.drawCircle(eye, 5.5, Paint()..color = Colors.white);
+    canvas.drawCircle(Offset(eye.dx + 1.2, eye.dy), 3.4, Paint()..color = const Color(0xFF3E2723));
+    canvas.drawCircle(Offset(eye.dx + 2.2, eye.dy - 1.4), 1.4, Paint()..color = Colors.white);
+  }
+
+  void _drawCheek(Canvas canvas, double cx, double cy) {
+    canvas.drawCircle(
+      Offset(cx + 22, cy - 20),
+      4,
+      Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.55),
+    );
   }
 
   @override

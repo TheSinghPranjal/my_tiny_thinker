@@ -118,6 +118,7 @@ class _HungryDuckGameScreenState extends ConsumerState<HungryDuckGameScreen>
     if (!ok) return;
     if (settings.hapticsEnabled) ref.read(hapticServiceProvider).trigger(HapticType.light);
     if (settings.soundEnabled) ref.read(audioServiceProvider).playSfx(SoundEffect.buttonTap);
+    _particleKey.currentState?.emit();
   }
 
   void _onTapVisitor(String id) {
@@ -260,8 +261,8 @@ class _PondPlayArea extends ConsumerWidget {
               ),
               ...fish.map(
                 (f) => Positioned(
-                  left: f.x - (largerTouch ? 38 : 34),
-                  top: f.y - (largerTouch ? 26 : 22),
+                  left: f.x - (largerTouch ? 48 : 42),
+                  top: f.y - (largerTouch ? 32 : 28),
                   child: RepaintBoundary(
                     child: PondFishWidget(
                       fish: f,
@@ -291,10 +292,79 @@ class _PondPlayArea extends ConsumerWidget {
                   child: DuckWidget(duck: duck, largerTouch: largerTouch),
                 ),
               ),
+              if (fish.any((f) => f.canTap) &&
+                  duck.phase == DuckPhase.idleSwim)
+                const Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 20,
+                  child: _TapFishHint(),
+                ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _TapFishHint extends StatefulWidget {
+  const _TapFishHint();
+
+  @override
+  State<_TapFishHint> createState() => _TapFishHintState();
+}
+
+class _TapFishHintState extends State<_TapFishHint>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c;
+
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: FadeTransition(
+        opacity: Tween(begin: 0.75, end: 1.0).animate(_c),
+        child: ScaleTransition(
+          scale: Tween(begin: 0.96, end: 1.04).animate(_c),
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.92),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF0288D1).withValues(alpha: 0.25),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Text(
+                'Tap a fish! 🐟',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF0277BD),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
