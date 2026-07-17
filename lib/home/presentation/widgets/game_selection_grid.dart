@@ -28,6 +28,7 @@ class GameSelectionGrid extends ConsumerWidget {
     GameId.feedTheFrogAdventure,
     GameId.frogPondAdventure,
     GameId.peekABooAnimalFriends,
+    GameId.shapeDropAdventure,
     GameId.shadowMatchAdventure,
     GameId.alphabetAdventureQuiz,
     GameId.cloudPopGarden,
@@ -87,6 +88,12 @@ class GameSelectionGrid extends ConsumerWidget {
       '🐰',
       'Bunny Hop Adventure',
       'Tap to hop across lily pads to the carrot!',
+      'Easy',
+    ),
+    GameId.shapeDropAdventure: (
+      '🔷',
+      'Shape Drop Adventure',
+      'Drag shapes into the dotted outline!',
       'Easy',
     ),
     GameId.shadowMatchAdventure: (
