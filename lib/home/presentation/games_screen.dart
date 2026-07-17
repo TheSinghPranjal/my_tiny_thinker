@@ -13,6 +13,7 @@ class GamesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSkyBackground(
+      showGrass: false,
       child: SafeArea(
         child: ResponsivePadding(
           child: Column(
