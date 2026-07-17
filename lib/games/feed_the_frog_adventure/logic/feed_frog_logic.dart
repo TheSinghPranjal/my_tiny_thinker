@@ -163,7 +163,7 @@ abstract final class FeedFrogLogic {
     double progress,
   ) {
     final mouthX = frogX;
-    final mouthY = frogY - 28;
+    final mouthY = frogY - 12;
     final ctrlX = (frogX + insectX) / 2 + (insectY - frogY) * 0.15;
     final ctrlY = (frogY + insectY) / 2 - 40;
     final t = progress.clamp(0.0, 1.0);
