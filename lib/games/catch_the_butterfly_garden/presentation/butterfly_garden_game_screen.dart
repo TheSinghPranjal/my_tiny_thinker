@@ -316,39 +316,116 @@ class _GardenPlayArea extends ConsumerWidget {
                 ),
               ),
               ...butterflies.map(
-                (b) => Positioned(
-                  left: b.x - (largerTouch ? 38 : 34) * b.sizeScale,
-                  top: b.y - (largerTouch ? 38 : 34) * b.sizeScale,
-                  child: GardenButterflyWidget(
-                    butterfly: b,
-                    largerTouch: largerTouch,
-                    onTap: () => onTapButterfly(b.id),
-                  ),
-                ),
+                (b) {
+                  final half = GardenButterflyWidget.layoutSize(largerTouch, b.sizeScale) / 2;
+                  return Positioned(
+                    left: b.x - half - 8,
+                    top: b.y - half - 8,
+                    child: GardenButterflyWidget(
+                      butterfly: b,
+                      largerTouch: largerTouch,
+                      onTap: () => onTapButterfly(b.id),
+                    ),
+                  );
+                },
               ),
               ...bees.map(
-                (bee) => Positioned(
-                  left: bee.x - (largerTouch ? 30 : 26),
-                  top: bee.y - (largerTouch ? 30 : 26),
-                  child: GardenBeeWidget(
-                    bee: bee,
-                    largerTouch: largerTouch,
-                    onTap: () => onTapBee(bee.id),
-                  ),
-                ),
+                (bee) {
+                  final half = GardenBeeWidget.layoutSize(largerTouch) / 2;
+                  return Positioned(
+                    left: bee.x - half,
+                    top: bee.y - half,
+                    child: GardenBeeWidget(
+                      bee: bee,
+                      largerTouch: largerTouch,
+                      onTap: () => onTapBee(bee.id),
+                    ),
+                  );
+                },
               ),
               Positioned(
-                left: basket.x - (largerTouch ? 60 : 50),
-                top: basket.y - (largerTouch ? 54 : 46),
+                left: basket.x - ButterflyBasketWidget.layoutWidth(largerTouch) / 2,
+                top: basket.y - ButterflyBasketWidget.layoutHeight(largerTouch) * 0.55,
                 child: ButterflyBasketWidget(
                   basket: basket,
                   largerTouch: largerTouch,
                 ),
               ),
+              if (butterflies.any((b) => b.canTap))
+                const Positioned(
+                  left: 12,
+                  right: 12,
+                  bottom: 12,
+                  child: _TapHint(),
+                ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+class _TapHint extends StatefulWidget {
+  const _TapHint();
+
+  @override
+  State<_TapHint> createState() => _TapHintState();
+}
+
+class _TapHintState extends State<_TapHint> with SingleTickerProviderStateMixin {
+  late final AnimationController _c;
+
+  @override
+  void initState() {
+    super.initState();
+    _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: FadeTransition(
+        opacity: Tween(begin: 0.8, end: 1.0).animate(_c),
+        child: ScaleTransition(
+          scale: Tween(begin: 0.97, end: 1.04).animate(_c),
+          child: Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF66BB6A), Color(0xFF42A5F5), Color(0xFFAB47BC)],
+                ),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white, width: 2.5),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF7B1FA2).withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Text(
+                'Tap butterflies! 🦋  Bees fly away! 🐝',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
