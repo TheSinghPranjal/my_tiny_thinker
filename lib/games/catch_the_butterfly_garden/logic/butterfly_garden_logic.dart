@@ -58,7 +58,7 @@ abstract final class ButterflyGardenLogic {
       x: pos.$1,
       y: pos.$2,
       pathT: random.nextDouble() * math.pi * 2,
-      sizeScale: isGolden ? 1.15 : (0.85 + random.nextDouble() * 0.3),
+      sizeScale: isGolden ? 1.25 : (1.05 + random.nextDouble() * 0.25),
       enterFromX: fromX,
       enterFromY: fromY,
       enterProgress: entering ? 0 : 1,
@@ -230,10 +230,29 @@ abstract final class ButterflyGardenLogic {
     if (bee.phase == BeePhase.gone) return bee;
 
     final speed = settings.speedMult * settings.animationIntensity;
-    var wing = bee.wingPhase + delta * 18;
+    var wing = bee.wingPhase + delta * (bee.phase == BeePhase.leaving ? 28 : 18);
     var lifetime = bee.lifetime - delta;
 
-    if (bee.phase == BeePhase.leaving || bee.phase == BeePhase.flying || bee.phase == BeePhase.buzzed) {
+    if (bee.phase == BeePhase.leaving) {
+      final fleeVx = bee.vx.abs() < 1 ? (bee.vx >= 0 ? 140.0 : -140.0) : bee.vx * 2.2;
+      final fleeVy = -90.0;
+      final nx = bee.x + fleeVx * delta * speed;
+      final ny = bee.y + fleeVy * delta * speed;
+      if (nx < -80 || nx > area.width + 80 || ny < -80 || lifetime <= 0) {
+        return bee.copyWith(phase: BeePhase.gone, lifetime: 0);
+      }
+      return bee.copyWith(
+        x: nx,
+        y: ny,
+        vx: fleeVx,
+        vy: fleeVy,
+        pathT: bee.pathT + delta * 6,
+        wingPhase: wing,
+        lifetime: lifetime,
+      );
+    }
+
+    if (bee.phase == BeePhase.flying || bee.phase == BeePhase.buzzed) {
       final nx = bee.x + bee.vx * delta * speed;
       final ny = bee.y + bee.vy * delta * speed + math.sin(bee.pathT) * 8 * delta;
       if (nx < -60 || nx > area.width + 60 || lifetime <= 0) {
@@ -246,6 +265,10 @@ abstract final class ButterflyGardenLogic {
         wingPhase: wing,
         lifetime: lifetime,
         phase: bee.phase == BeePhase.buzzed ? BeePhase.leaving : bee.phase,
+        vx: bee.phase == BeePhase.buzzed
+            ? (bee.vx >= 0 ? bee.vx.abs() + 80 : -(bee.vx.abs() + 80))
+            : bee.vx,
+        vy: bee.phase == BeePhase.buzzed ? -70 : bee.vy,
       );
     }
     return bee;
