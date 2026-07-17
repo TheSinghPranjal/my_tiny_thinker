@@ -25,6 +25,8 @@ import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/models/alphabet_qu
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/repository/alphabet_quiz_settings_repository.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/models/shadow_match_models.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/repository/shadow_match_settings_repository.dart';
+import 'package:my_tiny_thinker/games/shape_drop_adventure/models/shape_drop_models.dart';
+import 'package:my_tiny_thinker/games/shape_drop_adventure/repository/shape_drop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/models/cloud_pop_garden_models.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/repository/cloud_pop_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/models/flower_garden_models.dart';
@@ -422,6 +424,18 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                       style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
                   _FlowerGardenParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🔷 Shape Drop Adventure',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _ShapeDropParentControls(),
                 ],
               ),
             ),
@@ -1897,6 +1911,108 @@ class _FlowerGardenParentControls extends ConsumerWidget {
               ref.read(flowerGardenSettingsProvider.notifier).patch(
                     (x) => x.copyWith(reducedMotion: v),
                   ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ShapeDropParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(shapeDropSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
+        Slider(
+          value: s.sessionSeconds.toDouble(),
+          min: 60,
+          max: 1800,
+          divisions: 29,
+          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sessionSeconds: v.round()),
+              ),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Object-based learning',
+          value: s.objectLearningEnabled,
+          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
+                (x) => x.copyWith(objectLearningEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Sequential shape order',
+          value: s.sequentialMode,
+          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
+                (x) => x.copyWith(sequentialMode: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Narration / shape names',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'UPPERCASE labels',
+          value: s.uppercaseLabels,
+          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
+                (x) => x.copyWith(uppercaseLabels: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Shapes included', style: context.textTheme.titleSmall),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: ShapeCatalog.preschoolCore.map((kind) {
+            final selected = s.enabledShapes.contains(kind);
+            return FilterChip(
+              label: Text(ShapeCatalog.displayName(kind)),
+              selected: selected,
+              onSelected: (v) {
+                final next = [...s.enabledShapes];
+                if (v) {
+                  if (!next.contains(kind)) next.add(kind);
+                } else {
+                  next.remove(kind);
+                }
+                ref.read(shapeDropSettingsProvider.notifier).patch(
+                      (x) => x.copyWith(
+                        enabledShapes: next.isEmpty
+                            ? ShapeCatalog.preschoolCore
+                            : next,
+                      ),
+                    );
+              },
+            );
+          }).toList(),
         ),
       ],
     );
