@@ -38,6 +38,7 @@ enum GameId {
     'Bunny Hop Adventure',
   ),
   shadowMatchAdventure('shadow_match_adventure', '🌗', 'Shadow Match Adventure'),
+  shapeDropAdventure('shape_drop_adventure', '🔷', 'Shape Drop Adventure'),
   alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz');
 
   const GameId(this.id, this.emoji, this.displayName);
