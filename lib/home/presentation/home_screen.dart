@@ -118,33 +118,35 @@ class _TopBar extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  GradientText(
-                    'TinyThink',
-                    style: const TextStyle(
-                      fontSize: 42,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -1.2,
-                      fontFamily: 'Baloo2', // or Fredoka
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: GradientText(
+                        'TinyThink',
+                        style: const TextStyle(
+                          fontSize: 42,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -1.2,
+                          fontFamily: 'Baloo2',
+                        ),
+                        colors: const [
+                          Color(0xFF43B5FF),
+                          Color(0xFF7B6DFF),
+                          Color(0xFFFF7BEA),
+                          Color(0xFFFFA726),
+                          Color(0xFF7ED957),
+                          Color(0xFFFF5E9C),
+                        ],
+                      ),
                     ),
-                    colors: const [
-                      Color(0xFF43B5FF),
-                      Color(0xFF7B6DFF),
-                      Color(0xFFFF7BEA),
-                      Color(0xFFFFA726),
-                      Color(0xFF7ED957),
-                      Color(0xFFFF5E9C),
-                    ],
                   ),
                   const SizedBox(width: 8),
-                  const MascotWidget(
-                    size: 40,
-                    waving: true,
-                  ),
-                  const SizedBox(width: AppSpacing.xs),
                   const MascotWidget(size: 40, waving: true),
                 ],
               ),
             ),
+            const SizedBox(width: AppSpacing.xs),
             TTCurrencyBadge(
               icon: Icons.monetization_on_rounded,
               value: coins,
