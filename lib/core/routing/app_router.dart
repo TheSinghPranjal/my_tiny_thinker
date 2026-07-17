@@ -25,6 +25,10 @@ import 'package:my_tiny_thinker/games/shadow_match_adventure/presentation/shadow
 import 'package:my_tiny_thinker/games/shadow_match_adventure/presentation/shadow_match_game_screen.dart';
 import 'package:my_tiny_thinker/games/shape_drop_adventure/presentation/shape_drop_setup_screen.dart';
 import 'package:my_tiny_thinker/games/shape_drop_adventure/presentation/shape_drop_game_screen.dart';
+import 'package:my_tiny_thinker/games/candy_color_hunt/presentation/candy_color_hunt_setup_screen.dart';
+import 'package:my_tiny_thinker/games/candy_color_hunt/presentation/candy_color_hunt_game_screen.dart';
+import 'package:my_tiny_thinker/games/color_school_bags/presentation/color_school_bags_setup_screen.dart';
+import 'package:my_tiny_thinker/games/color_school_bags/presentation/color_school_bags_game_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_setup_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_game_screen.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_setup_screen.dart';
@@ -96,6 +100,10 @@ abstract final class AppRoutes {
   static const shadowMatchGame = '/games/shadow-match/play';
   static const shapeDropSetup = '/games/shape-drop/setup';
   static const shapeDropGame = '/games/shape-drop/play';
+  static const candyColorHuntSetup = '/games/candy-color-hunt/setup';
+  static const candyColorHuntGame = '/games/candy-color-hunt/play';
+  static const colorSchoolBagsSetup = '/games/color-school-bags/setup';
+  static const colorSchoolBagsGame = '/games/color-school-bags/play';
   static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
   static const alphabetQuizGame = '/games/alphabet-adventure/play';
   static const welcome = '/welcome';
@@ -348,6 +356,26 @@ final appRouter = GoRouter(
       path: AppRoutes.shapeDropGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const ShapeDropGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.candyColorHuntSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CandyColorHuntSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.candyColorHuntGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CandyColorHuntGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.colorSchoolBagsSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ColorSchoolBagsSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.colorSchoolBagsGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ColorSchoolBagsGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.alphabetQuizSetup,
