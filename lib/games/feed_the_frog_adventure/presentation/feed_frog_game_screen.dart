@@ -287,16 +287,23 @@ class _PlayArea extends ConsumerWidget {
                   ),
                 ),
               ...insects.map(
-                (insect) => Positioned(
-                  left: insect.x - 36,
-                  top: insect.y - 36,
-                  child: InsectWidget(
-                    insect: insect,
-                    nightFactor: nightFactor,
-                    largerTouch: largerTouch,
-                    onTap: () => onTapInsect(insect.id),
-                  ),
-                ),
+                (insect) {
+                  final half = InsectWidget.layoutSize(
+                        largerTouch,
+                        isFirefly: insect.isFirefly,
+                      ) /
+                      2;
+                  return Positioned(
+                    left: insect.x - half - 10,
+                    top: insect.y - half - 10,
+                    child: InsectWidget(
+                      insect: insect,
+                      nightFactor: nightFactor,
+                      largerTouch: largerTouch,
+                      onTap: () => onTapInsect(insect.id),
+                    ),
+                  );
+                },
               ),
               Positioned.fill(
                 child: IgnorePointer(

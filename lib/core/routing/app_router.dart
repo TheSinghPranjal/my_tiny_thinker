@@ -23,6 +23,8 @@ import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/ocean_fi
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/ocean_fish_game_screen.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/presentation/shadow_match_setup_screen.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/presentation/shadow_match_game_screen.dart';
+import 'package:my_tiny_thinker/games/shape_drop_adventure/presentation/shape_drop_setup_screen.dart';
+import 'package:my_tiny_thinker/games/shape_drop_adventure/presentation/shape_drop_game_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_setup_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_game_screen.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_setup_screen.dart';
@@ -92,6 +94,8 @@ abstract final class AppRoutes {
   static const bunnyHopGame = '/games/bunny-hop/play';
   static const shadowMatchSetup = '/games/shadow-match/setup';
   static const shadowMatchGame = '/games/shadow-match/play';
+  static const shapeDropSetup = '/games/shape-drop/setup';
+  static const shapeDropGame = '/games/shape-drop/play';
   static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
   static const alphabetQuizGame = '/games/alphabet-adventure/play';
   static const welcome = '/welcome';
@@ -334,6 +338,16 @@ final appRouter = GoRouter(
       path: AppRoutes.shadowMatchGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const ShadowMatchGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.shapeDropSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ShapeDropSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.shapeDropGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ShapeDropGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.alphabetQuizSetup,
