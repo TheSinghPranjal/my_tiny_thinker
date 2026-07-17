@@ -46,6 +46,10 @@ import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/repository/hung
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/models/bunny_hop_models.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/logic/bunny_hop_logic.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/repository/bunny_hop_settings_repository.dart';
+import 'package:my_tiny_thinker/games/candy_color_hunt/models/candy_color_hunt_models.dart';
+import 'package:my_tiny_thinker/games/candy_color_hunt/repository/candy_color_hunt_settings_repository.dart';
+import 'package:my_tiny_thinker/games/color_school_bags/models/color_school_bags_models.dart';
+import 'package:my_tiny_thinker/games/color_school_bags/repository/color_school_bags_settings_repository.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/models/frog_pond_models.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/repository/frog_pond_settings_repository.dart';
 
@@ -324,6 +328,18 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('🐜 Candy Color Hunt',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _CandyColorHuntParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text('🐰 Bunny Hop Adventure',
                       style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
@@ -424,6 +440,18 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                       style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.md),
                   _FlowerGardenParentControls(),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            TTCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('🎒 Color School Bags',
+                      style: context.textTheme.headlineMedium),
+                  const SizedBox(height: AppSpacing.md),
+                  _ColorSchoolBagsParentControls(),
                 ],
               ),
             ),
@@ -541,6 +569,130 @@ class _StatRow extends StatelessWidget {
           Text(value, style: context.textTheme.titleMedium),
         ],
       ),
+    );
+  }
+}
+
+class _CandyColorHuntParentControls extends ConsumerWidget {
+  String _sessionLabel(int seconds) {
+    if (seconds < 60) return '$seconds Seconds';
+    if (seconds == 60) return '60 Seconds';
+    if (seconds == 90) return '90 Seconds';
+    if (seconds % 60 == 0) {
+      final m = seconds ~/ 60;
+      return m == 1 ? '1 Minute' : '$m Minutes';
+    }
+    return '${seconds}s';
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(candyColorHuntSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Game Duration', style: context.textTheme.titleSmall),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: kCandySessionPresets.map((secs) {
+            return ChoiceChip(
+              label: Text(_sessionLabel(secs)),
+              selected: s.sessionSeconds == secs,
+              onSelected: (_) =>
+                  ref.read(candyColorHuntSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(sessionSeconds: secs),
+                      ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              ref.read(candyColorHuntSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rewardMultiplier: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              ref.read(candyColorHuntSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(soundEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Color name narration',
+          value: s.narrationEnabled,
+          onChanged: (v) =>
+              ref.read(candyColorHuntSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(narrationEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              ref.read(candyColorHuntSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) =>
+              ref.read(candyColorHuntSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(largerTouchTargets: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              ref.read(candyColorHuntSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(reducedMotion: v),
+                  ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Colors included', style: context.textTheme.titleSmall),
+        Text(
+          'Keep at least 4 colors selected',
+          style: context.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: CandyColorKind.values.map((kind) {
+            final def = CandyColorCatalog.def(kind);
+            final selected = s.enabledColors.contains(kind);
+            return FilterChip(
+              avatar: CircleAvatar(backgroundColor: def.color, radius: 8),
+              label: Text(def.name),
+              selected: selected,
+              onSelected: (_) async {
+                final ok = await ref
+                    .read(candyColorHuntSettingsProvider.notifier)
+                    .toggleColor(kind);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Please keep at least 4 colors selected for the game.',
+                      ),
+                    ),
+                  );
+                }
+              },
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }
@@ -1911,6 +2063,150 @@ class _FlowerGardenParentControls extends ConsumerWidget {
               ref.read(flowerGardenSettingsProvider.notifier).patch(
                     (x) => x.copyWith(reducedMotion: v),
                   ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ColorSchoolBagsParentControls extends ConsumerWidget {
+  String _sessionLabel(int seconds) {
+    if (seconds <= 0) return 'Unlimited';
+    if (seconds < 60) return '$seconds Seconds';
+    if (seconds == 60) return '60 Seconds';
+    if (seconds == 90) return '90 Seconds';
+    if (seconds % 60 == 0) {
+      final m = seconds ~/ 60;
+      return m == 1 ? '1 Minute' : '$m Minutes';
+    }
+    return '${seconds}s';
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(colorSchoolBagsSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Game Duration', style: context.textTheme.titleSmall),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: kSortBagsSessionPresets.map((secs) {
+            return ChoiceChip(
+              label: Text(_sessionLabel(secs)),
+              selected: s.sessionSeconds == secs,
+              onSelected: (_) =>
+                  ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(sessionSeconds: secs),
+                      ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Number of bags: ${s.maxBackpacks}',
+          style: context.textTheme.titleSmall,
+        ),
+        Text(
+          'Default 3 · range 2–6',
+          style: context.textTheme.bodySmall,
+        ),
+        Slider(
+          value: s.maxBackpacks.toDouble(),
+          min: 2,
+          max: 6,
+          divisions: 4,
+          label: '${s.maxBackpacks}',
+          onChanged: (v) =>
+              ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(maxBackpacks: v.round()),
+                  ),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rewardMultiplier: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(soundEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Color name narration',
+          value: s.narrationEnabled,
+          onChanged: (v) =>
+              ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(narrationEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) =>
+              ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(largerTouchTargets: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(reducedMotion: v),
+                  ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Colors included', style: context.textTheme.titleSmall),
+        Text(
+          'Keep at least 2 colors selected',
+          style: context.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: BagColorKind.values.map((kind) {
+            final def = BagColorCatalog.def(kind);
+            final selected = s.enabledColors.contains(kind);
+            return FilterChip(
+              avatar: CircleAvatar(backgroundColor: def.color, radius: 8),
+              label: Text(def.name),
+              selected: selected,
+              onSelected: (_) async {
+                final ok = await ref
+                    .read(colorSchoolBagsSettingsProvider.notifier)
+                    .toggleColor(kind);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Please keep at least 2 colors selected for the game.',
+                      ),
+                    ),
+                  );
+                }
+              },
+            );
+          }).toList(),
         ),
       ],
     );

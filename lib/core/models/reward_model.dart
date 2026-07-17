@@ -39,6 +39,8 @@ enum GameId {
   ),
   shadowMatchAdventure('shadow_match_adventure', '🌗', 'Shadow Match Adventure'),
   shapeDropAdventure('shape_drop_adventure', '🔷', 'Shape Drop Adventure'),
+  candyColorHunt('candy_color_hunt', '🐜', 'Candy Color Hunt'),
+  colorSchoolBags('color_school_bags', '🎒', 'Color School Bags'),
   alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz');
 
   const GameId(this.id, this.emoji, this.displayName);
