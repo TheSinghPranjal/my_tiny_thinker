@@ -16,6 +16,7 @@ import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_badge.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/home/presentation/widgets/game_selection_grid.dart';
+import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -36,6 +37,7 @@ class HomeScreen extends ConsumerWidget {
         .$2;
 
     return AnimatedSkyBackground(
+      showGrass: false,
       child: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -116,17 +118,27 @@ class _TopBar extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Flexible(
-                    child: Text(
-                      'TinyThink',
-                      overflow: TextOverflow.ellipsis,
-                      style: context.textTheme.headlineMedium?.copyWith(
-                        color: AppColors.white,
-                        shadows: const [
-                          Shadow(color: AppColors.skyBlueDark, blurRadius: 6),
-                        ],
-                      ),
+                  GradientText(
+                    'TinyThink',
+                    style: const TextStyle(
+                      fontSize: 42,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1.2,
+                      fontFamily: 'Baloo2', // or Fredoka
                     ),
+                    colors: const [
+                      Color(0xFF43B5FF),
+                      Color(0xFF7B6DFF),
+                      Color(0xFFFF7BEA),
+                      Color(0xFFFFA726),
+                      Color(0xFF7ED957),
+                      Color(0xFFFF5E9C),
+                    ],
+                  ),
+                  const SizedBox(width: 8),
+                  const MascotWidget(
+                    size: 40,
+                    waving: true,
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   const MascotWidget(size: 40, waving: true),
