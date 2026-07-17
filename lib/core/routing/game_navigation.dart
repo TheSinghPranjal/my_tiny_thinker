@@ -39,6 +39,8 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.bunnyHopSetup);
     case GameId.shadowMatchAdventure:
       context.push(AppRoutes.shadowMatchSetup);
+    case GameId.shapeDropAdventure:
+      context.push(AppRoutes.shapeDropSetup);
     case GameId.alphabetAdventureQuiz:
       context.push(AppRoutes.alphabetQuizSetup);
   }
