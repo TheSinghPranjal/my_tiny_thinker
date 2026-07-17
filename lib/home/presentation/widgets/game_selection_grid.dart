@@ -20,6 +20,7 @@ class GameSelectionGrid extends ConsumerWidget {
   final bool largeLayout;
 
   static const _allGames = [
+    GameId.candyColorHunt,
     GameId.bunnyHopAdventure,
     GameId.hungryTeddyCupcakeParty,
     GameId.hungryDuckPondAdventure,
@@ -28,6 +29,7 @@ class GameSelectionGrid extends ConsumerWidget {
     GameId.feedTheFrogAdventure,
     GameId.frogPondAdventure,
     GameId.peekABooAnimalFriends,
+    GameId.colorSchoolBags,
     GameId.shapeDropAdventure,
     GameId.shadowMatchAdventure,
     GameId.alphabetAdventureQuiz,
@@ -84,10 +86,22 @@ class GameSelectionGrid extends ConsumerWidget {
       'Drag cupcakes to feed the hungry teddy!',
       'Easy',
     ),
+    GameId.candyColorHunt: (
+      '🐜',
+      'Candy Color Hunt',
+      'Tap matching candies for the hungry ant!',
+      'Easy',
+    ),
     GameId.bunnyHopAdventure: (
       '🐰',
       'Bunny Hop Adventure',
       'Tap to hop across lily pads to the carrot!',
+      'Easy',
+    ),
+    GameId.colorSchoolBags: (
+      '🎒',
+      'Color School Bags',
+      'Drag books into matching backpacks!',
       'Easy',
     ),
     GameId.shapeDropAdventure: (
