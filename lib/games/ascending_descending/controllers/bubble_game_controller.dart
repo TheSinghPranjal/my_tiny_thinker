@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/models/player_profile.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/play_limits/daily_play_limits.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/services/storage_service.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/logic/bubble_game_logic.dart';
@@ -341,6 +342,9 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
     await _ref
         .read(profileProvider.notifier)
         .applyReward(BubbleRewardCalculator.toGameReward(result));
+    await _ref
+        .read(dailyPlayLimitsProvider.notifier)
+        .recordPlay(GameId.bubbleNumberPop);
   }
 
   void reset() {

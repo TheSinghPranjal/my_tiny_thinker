@@ -31,6 +31,16 @@ import 'package:my_tiny_thinker/games/color_school_bags/presentation/color_schoo
 import 'package:my_tiny_thinker/games/color_school_bags/presentation/color_school_bags_game_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_setup_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_game_screen.dart';
+import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/alphabet_bridge_setup_screen.dart';
+import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/alphabet_bridge_game_screen.dart';
+import 'package:my_tiny_thinker/games/number_bridge_adventure/presentation/number_bridge_setup_screen.dart';
+import 'package:my_tiny_thinker/games/number_bridge_adventure/presentation/number_bridge_game_screen.dart';
+import 'package:my_tiny_thinker/games/picture_bridge_adventure/presentation/picture_bridge_setup_screen.dart';
+import 'package:my_tiny_thinker/games/picture_bridge_adventure/presentation/picture_bridge_game_screen.dart';
+import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/presentation/color_shape_bridge_setup_screen.dart';
+import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/presentation/color_shape_bridge_game_screen.dart';
+import 'package:my_tiny_thinker/games/moon_rescue_adventure/presentation/moon_rescue_setup_screen.dart';
+import 'package:my_tiny_thinker/games/moon_rescue_adventure/presentation/moon_rescue_game_screen.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_setup_screen.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_game_screen.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/presentation/flower_garden_setup_screen.dart';
@@ -51,6 +61,7 @@ import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/presentation/hu
 import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/presentation/hungry_teddy_game_screen.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/presentation/bunny_hop_setup_screen.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/presentation/bunny_hop_game_screen.dart';
+import 'package:my_tiny_thinker/premium/presentation/premium_subscription_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/welcome_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/age_selection_screen.dart';
 import 'package:my_tiny_thinker/onboarding/presentation/avatar_selection_screen.dart';
@@ -64,6 +75,7 @@ abstract final class AppRoutes {
   static const parents = '/parents';
   static const settings = '/settings';
   static const parentZone = '/parent-zone';
+  static const premium = '/premium';
   static const bubbleSetup = '/games/bubble-number-pop/setup';
   static const bubbleGame = '/games/bubble-number-pop/play';
   static const memoryHub = '/games/memory-game';
@@ -106,6 +118,16 @@ abstract final class AppRoutes {
   static const colorSchoolBagsGame = '/games/color-school-bags/play';
   static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
   static const alphabetQuizGame = '/games/alphabet-adventure/play';
+  static const alphabetBridgeSetup = '/games/alphabet-bridge/setup';
+  static const alphabetBridgeGame = '/games/alphabet-bridge/play';
+  static const numberBridgeSetup = '/games/number-bridge/setup';
+  static const numberBridgeGame = '/games/number-bridge/play';
+  static const pictureBridgeSetup = '/games/picture-bridge/setup';
+  static const pictureBridgeGame = '/games/picture-bridge/play';
+  static const colorShapeBridgeSetup = '/games/color-shape-bridge/setup';
+  static const colorShapeBridgeGame = '/games/color-shape-bridge/play';
+  static const moonRescueSetup = '/games/moon-rescue/setup';
+  static const moonRescueGame = '/games/moon-rescue/play';
   static const welcome = '/welcome';
   static const ageSelection = '/onboarding/age';
   static const avatarSelection = '/onboarding/avatar';
@@ -172,6 +194,11 @@ final appRouter = GoRouter(
       path: AppRoutes.parentZone,
       pageBuilder: (context, state) =>
           _slidePage(state, const ParentZoneScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.premium,
+      pageBuilder: (context, state) =>
+          _fadePage(state, const PremiumSubscriptionScreen()),
     ),
     GoRoute(
       path: AppRoutes.bubbleSetup,
@@ -386,6 +413,56 @@ final appRouter = GoRouter(
       path: AppRoutes.alphabetQuizGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const AlphabetQuizGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.alphabetBridgeSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const AlphabetBridgeSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.alphabetBridgeGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const AlphabetBridgeGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.numberBridgeSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const NumberBridgeSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.numberBridgeGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const NumberBridgeGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.pictureBridgeSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const PictureBridgeSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.pictureBridgeGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const PictureBridgeGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.colorShapeBridgeSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ColorShapeBridgeSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.colorShapeBridgeGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ColorShapeBridgeGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.moonRescueSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const MoonRescueSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.moonRescueGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const MoonRescueGameScreen()),
     ),
   ],
 );
