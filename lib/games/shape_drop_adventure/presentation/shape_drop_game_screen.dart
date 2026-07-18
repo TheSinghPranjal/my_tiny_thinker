@@ -5,10 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/shape_drop_adventure/controllers/shape_drop_controller.dart';
 import 'package:my_tiny_thinker/games/shape_drop_adventure/models/shape_drop_models.dart';
 import 'package:my_tiny_thinker/games/shape_drop_adventure/presentation/widgets/classroom_background.dart';
@@ -91,9 +91,11 @@ class _ShapeDropGameScreenState extends ConsumerState<ShapeDropGameScreen>
         ref.read(shapeDropControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
       },
-      onSettings: () {
+      onSettings: () async {
         ref.read(shapeDropControllerProvider.notifier).pause();
-        context.push(AppRoutes.parentZone);
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _showPauseMenu();
       },
     );
   }
@@ -224,7 +226,10 @@ class _ShapeDropGameScreenState extends ConsumerState<ShapeDropGameScreen>
                   ),
                   rewardShadowColor: const Color(0xFF7E57C2),
                 ),
-                if (phase == ShapeDropPhase.paused) const _PausedOverlay(),
+                if (phase == ShapeDropPhase.paused) GamePausedOverlay(
+                    onResume: () => ref.read(shapeDropControllerProvider.notifier).resume(),
+                    onOpenMenu: _showPauseMenu,
+                  ),
                 if (phase == ShapeDropPhase.finished)
                   ShapeDropVictoryOverlay(
                     result: ref
@@ -245,25 +250,3 @@ class _ShapeDropGameScreenState extends ConsumerState<ShapeDropGameScreen>
   }
 }
 
-class _PausedOverlay extends StatelessWidget {
-  const _PausedOverlay();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: const Color(0xFF7E57C2).withValues(alpha: 0.55),
-        child: const Center(
-          child: Text(
-            'Paused',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
