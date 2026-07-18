@@ -10,6 +10,7 @@ import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/controllers/ocean_fish_controller.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/models/ocean_fish_models.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/widgets/fish_widget.dart';
@@ -174,7 +175,10 @@ class _OceanFishGameScreenState extends ConsumerState<OceanFishGameScreen>
                   rewardShadowColor: AppColors.skyBlueDark,
                 ),
                 if (phase == OceanFishPhase.paused)
-                  const _PausedOverlay(),
+                  GamePausedOverlay(
+                    onResume: () => ref.read(oceanFishControllerProvider.notifier).resume(),
+                    onOpenMenu: _showPauseMenu,
+                  ),
                 if (phase == OceanFishPhase.finished)
                   OceanVictoryOverlay(
                     result: ref
@@ -195,28 +199,6 @@ class _OceanFishGameScreenState extends ConsumerState<OceanFishGameScreen>
   }
 }
 
-class _PausedOverlay extends StatelessWidget {
-  const _PausedOverlay();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: const Color(0xFF01579B).withValues(alpha: 0.55),
-        child: const Center(
-          child: Text(
-            'Paused',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _FishPlayArea extends ConsumerWidget {
   const _FishPlayArea({
