@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/premium/premium_provider.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
+import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
@@ -17,6 +19,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final settingsNotifier = ref.read(settingsProvider.notifier);
+    final isPremium = ref.watch(isPremiumProvider);
 
     return AnimatedSkyBackground(
       showGrass: false,
@@ -32,6 +35,37 @@ class SettingsScreen extends ConsumerWidget {
         body: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
+            TTCard(
+              gradient: isPremium
+                  ? const LinearGradient(
+                      colors: [Color(0xFFFFE082), Color(0xFFFFCC80)],
+                    )
+                  : null,
+              child: Column(
+                children: [
+                  _SettingTile(
+                    icon: Icons.workspace_premium_rounded,
+                    title: 'Developer: Premium Mode',
+                    trailing: Switch(
+                      value: isPremium,
+                      activeThumbColor: AppColors.orange,
+                      onChanged: (v) =>
+                          ref.read(isPremiumProvider.notifier).setPremium(v),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.star_rounded, color: AppColors.orange),
+                    title: const Text('TinyThink Premium'),
+                    subtitle: Text(
+                      isPremium ? 'Premium active' : 'Free plan · 5 plays/day',
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push(AppRoutes.premium),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
             TTCard(
               child: Column(
                 children: [
