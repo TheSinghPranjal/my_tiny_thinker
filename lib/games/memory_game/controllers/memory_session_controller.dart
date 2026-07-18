@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/play_limits/daily_play_limits.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/games/memory_game/logic/memory_game_logic.dart';
@@ -629,6 +631,9 @@ class MemorySessionController extends StateNotifier<MemorySessionState> {
     await _ref
         .read(profileProvider.notifier)
         .applyReward(MemoryScoring.toGameReward(result));
+    await _ref
+        .read(dailyPlayLimitsProvider.notifier)
+        .recordPlay(GameId.memoryGame);
     _ref.read(memoryHubStatsProvider.notifier).refresh();
   }
 
