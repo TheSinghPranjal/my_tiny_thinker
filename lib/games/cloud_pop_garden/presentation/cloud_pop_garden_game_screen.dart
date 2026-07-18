@@ -7,11 +7,11 @@ import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/controllers/cloud_pop_garden_controller.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/logic/cloud_pop_garden_logic.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/models/cloud_pop_garden_models.dart';
@@ -104,9 +104,11 @@ class _CloudPopGardenGameScreenState extends ConsumerState<CloudPopGardenGameScr
         ref.read(cloudPopGardenControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
       },
-      onSettings: () {
+      onSettings: () async {
         ref.read(cloudPopGardenControllerProvider.notifier).pause();
-        context.push(AppRoutes.parentZone);
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _showPauseMenu();
       },
     );
   }
@@ -234,7 +236,10 @@ class _CloudPopGardenGameScreenState extends ConsumerState<CloudPopGardenGameScr
                     child: Center(child: MascotWidget(size: 64, waving: true)),
                   ),
                 if (sessionPhase == CloudPopSessionPhase.paused)
-                  const _PausedOverlay(),
+                  GamePausedOverlay(
+                    onResume: () => ref.read(cloudPopGardenControllerProvider.notifier).resume(),
+                    onOpenMenu: _showPauseMenu,
+                  ),
                 if (sessionPhase == CloudPopSessionPhase.finished)
                   CloudPopVictoryOverlay(
                     result: ref
@@ -255,28 +260,6 @@ class _CloudPopGardenGameScreenState extends ConsumerState<CloudPopGardenGameScr
   }
 }
 
-class _PausedOverlay extends StatelessWidget {
-  const _PausedOverlay();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: const Color(0xFF0277BD).withValues(alpha: 0.55),
-        child: const Center(
-          child: Text(
-            'Paused',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _PlayArea extends ConsumerWidget {
   const _PlayArea({
