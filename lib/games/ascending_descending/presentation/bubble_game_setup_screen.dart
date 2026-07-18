@@ -11,7 +11,7 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
+import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/controllers/bubble_game_controller.dart';
@@ -51,52 +51,18 @@ class _ToddlerSetupView extends StatelessWidget {
       showElements: true,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, size: 32),
-                    onPressed: () => context.pop(),
-                    style: IconButton.styleFrom(
-                      backgroundColor: AppColors.white.withValues(alpha: 0.9),
-                    ),
-                  ),
-                ),
-                const Spacer(),
-                const MascotWidget(size: 120, waving: true),
-                const SizedBox(height: AppSpacing.xl),
-                Text(
-                  'Bubble Pop!',
-                  style: context.textTheme.displayMedium?.copyWith(
-                    color: AppColors.white,
-                    shadows: const [
-                      Shadow(color: AppColors.skyBlueDark, blurRadius: 6),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  'Tap the number you see!',
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.headlineSmall?.copyWith(
-                    color: AppColors.white,
-                  ),
-                ),
-                const Spacer(flex: 2),
-                TTButton(
-                  label: 'Play!',
-                  expanded: true,
-                  size: TTButtonSize.large,
-                  onPressed: onPlay,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-              ],
-            ),
-          ),
+        body: GameSetupScaffold(
+          emoji: '🫧🔢',
+          emojiSize: 80,
+          title: 'Bubble Pop!',
+          subtitle: 'Tap the number you see!',
+          titleColor: AppColors.white,
+          subtitleColor: AppColors.white,
+          titleShadows: const [
+            Shadow(color: AppColors.skyBlueDark, blurRadius: 6),
+          ],
+          playLabel: 'Play!',
+          onPlay: onPlay,
         ),
       ),
     );

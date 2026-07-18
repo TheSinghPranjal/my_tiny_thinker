@@ -12,6 +12,7 @@ import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/controllers/bubble_game_controller.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/logic/bubble_game_logic.dart';
@@ -92,6 +93,12 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
       onHome: () {
         ref.read(bubbleGameControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
+      },
+      onSettings: () async {
+        ref.read(bubbleGameControllerProvider.notifier).pause();
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _onWillPop();
       },
     );
     return false;
@@ -231,7 +238,12 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                 if (phase == GamePhase.countdown)
                   const Positioned.fill(child: _CountdownLayer()),
                 if (phase == GamePhase.paused)
-                  const Positioned.fill(child: _PausedLayer()),
+                  GamePausedOverlay(
+                    scrimColor: AppColors.skyBlueDark,
+                    onResume: () =>
+                        ref.read(bubbleGameControllerProvider.notifier).resume(),
+                    onOpenMenu: _onWillPop,
+                  ),
               ],
             ),
           ),
@@ -426,24 +438,5 @@ class _CountdownLayer extends ConsumerWidget {
       bubbleGameControllerProvider.select((s) => s.countdown),
     );
     return CountdownOverlay(count: count);
-  }
-}
-
-class _PausedLayer extends StatelessWidget {
-  const _PausedLayer();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: AppColors.skyBlueDark.withValues(alpha: 0.5),
-        child: const Center(
-          child: Text(
-            'Paused',
-            style: TextStyle(color: AppColors.white, fontSize: 32),
-          ),
-        ),
-      ),
-    );
   }
 }
