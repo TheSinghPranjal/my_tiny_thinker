@@ -41,7 +41,32 @@ enum GameId {
   shapeDropAdventure('shape_drop_adventure', '🔷', 'Shape Drop Adventure'),
   candyColorHunt('candy_color_hunt', '🐜', 'Candy Color Hunt'),
   colorSchoolBags('color_school_bags', '🎒', 'Color School Bags'),
-  alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz');
+  alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz'),
+  alphabetBridgeAdventure(
+    'alphabet_bridge_adventure',
+    '🌉',
+    'Alphabet Bridge Adventure',
+  ),
+  numberBridgeAdventure(
+    'number_bridge_adventure',
+    '🔢',
+    'Number Bridge Adventure',
+  ),
+  pictureBridgeAdventure(
+    'picture_bridge_adventure',
+    '🖼️',
+    'Picture Bridge Adventure',
+  ),
+  colorShapeBridgeAdventure(
+    'color_shape_bridge_adventure',
+    '🔷',
+    'Color & Shape Bridge Adventure',
+  ),
+  moonRescueAdventure(
+    'moon_rescue_adventure',
+    '🚀',
+    'Moon Rescue Adventure',
+  );
 
   const GameId(this.id, this.emoji, this.displayName);
   final String id;
