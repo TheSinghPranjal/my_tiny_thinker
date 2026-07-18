@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/play_limits/daily_play_limits.dart';
 import 'package:my_tiny_thinker/core/providers/game_stats_provider.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/services/storage_service.dart';
@@ -330,6 +331,7 @@ class HungryMonkeyController extends StateNotifier<HungryMonkeyState> {
             xp: result.xp,
           ),
         );
+    await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.hungryMonkeyBananaAdventure);
     _ref.invalidate(allGameStatsProvider);
   }
 
