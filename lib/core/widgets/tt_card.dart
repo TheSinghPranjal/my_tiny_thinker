@@ -130,22 +130,22 @@ class TTGameCard extends StatelessWidget {
           Color.lerp(color, Colors.white, 0.2)!,
         ],
       ),
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 36)),
+              Text(emoji, style: const TextStyle(fontSize: 32)),
               const Spacer(),
               if (starsEarned > 0)
                 Row(
                   children: [
                     const Icon(Icons.star_rounded,
-                        color: AppColors.sunYellow, size: 18),
+                        color: AppColors.sunYellow, size: 16),
                     Text(
                       '$starsEarned',
-                      style: context.textTheme.labelMedium?.copyWith(
+                      style: context.textTheme.labelSmall?.copyWith(
                         color: AppColors.white,
                       ),
                     ),
@@ -153,52 +153,59 @@ class TTGameCard extends StatelessWidget {
                 ),
             ],
           ),
-          const Spacer(),
-          Text(
-            title,
-            style: context.textTheme.titleMedium?.copyWith(
-              color: AppColors.white,
-              fontWeight: FontWeight.w800,
+          const SizedBox(height: AppSpacing.xs),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: context.textTheme.titleSmall?.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w800,
+                    height: 1.15,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle!,
+                    style: context.textTheme.bodySmall?.copyWith(
+                      color: AppColors.white.withValues(alpha: 0.9),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                      height: 1.2,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                const Spacer(),
+                if (difficulty != null)
+                  Text(
+                    difficulty!,
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: AppColors.white.withValues(alpha: 0.85),
+                    ),
+                  ),
+                if (bestScore > 0)
+                  Text(
+                    'Best: $bestScore',
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: AppColors.white.withValues(alpha: 0.75),
+                    ),
+                  ),
+              ],
             ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
-          if (subtitle != null) ...[
-            const SizedBox(height: AppSpacing.xxs),
-            Text(
-              subtitle!,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: AppColors.white.withValues(alpha: 0.9),
-                fontWeight: FontWeight.w600,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-          if (difficulty != null) ...[
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              difficulty!,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: AppColors.white.withValues(alpha: 0.85),
-              ),
-            ),
-          ],
-          if (bestScore > 0) ...[
-            const SizedBox(height: AppSpacing.xxs),
-            Text(
-              'Best: $bestScore',
-              style: context.textTheme.bodySmall?.copyWith(
-                color: AppColors.white.withValues(alpha: 0.75),
-              ),
-            ),
-          ],
-          const SizedBox(height: AppSpacing.sm),
+          const SizedBox(height: AppSpacing.xs),
           if (comingSoon)
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.sm,
-                vertical: AppSpacing.xs,
+                vertical: 4,
               ),
               decoration: BoxDecoration(
                 color: AppColors.white.withValues(alpha: 0.25),
@@ -214,8 +221,8 @@ class TTGameCard extends StatelessWidget {
           else
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.xs,
+                horizontal: AppSpacing.sm,
+                vertical: 4,
               ),
               decoration: BoxDecoration(
                 color: AppColors.white,
@@ -224,10 +231,13 @@ class TTGameCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.play_arrow_rounded, color: color, size: 20),
+                  Icon(Icons.play_arrow_rounded, color: color, size: 18),
                   Text(
                     'Play',
-                    style: context.textTheme.labelMedium?.copyWith(color: color),
+                    style: context.textTheme.labelSmall?.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ],
               ),
