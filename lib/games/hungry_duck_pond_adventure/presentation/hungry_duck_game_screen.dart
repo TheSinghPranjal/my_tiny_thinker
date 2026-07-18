@@ -5,10 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/controllers/hungry_duck_controller.dart';
 import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/models/hungry_duck_models.dart';
 import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/presentation/widgets/duck_pond_background.dart';
@@ -105,9 +105,11 @@ class _HungryDuckGameScreenState extends ConsumerState<HungryDuckGameScreen>
         ref.read(hungryDuckControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
       },
-      onSettings: () {
+      onSettings: () async {
         ref.read(hungryDuckControllerProvider.notifier).pause();
-        context.push(AppRoutes.parentZone);
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _showPauseMenu();
       },
     );
   }
@@ -186,7 +188,10 @@ class _HungryDuckGameScreenState extends ConsumerState<HungryDuckGameScreen>
                       child: const Center(child: Text('✨🐟✨', style: TextStyle(fontSize: 72))),
                     ),
                   ),
-                if (sessionPhase == HungryDuckSessionPhase.paused) const _PausedOverlay(),
+                if (sessionPhase == HungryDuckSessionPhase.paused) GamePausedOverlay(
+                    onResume: () => ref.read(hungryDuckControllerProvider.notifier).resume(),
+                    onOpenMenu: _showPauseMenu,
+                  ),
                 if (sessionPhase == HungryDuckSessionPhase.finished)
                   DuckPondVictoryOverlay(
                     result: ref.read(hungryDuckControllerProvider.notifier).getResult(),
@@ -205,21 +210,6 @@ class _HungryDuckGameScreenState extends ConsumerState<HungryDuckGameScreen>
   }
 }
 
-class _PausedOverlay extends StatelessWidget {
-  const _PausedOverlay();
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: const Color(0xFF0277BD).withValues(alpha: 0.55),
-        child: const Center(
-          child: Text('Paused',
-              style: TextStyle(color: AppColors.white, fontSize: 36, fontWeight: FontWeight.w800)),
-        ),
-      ),
-    );
-  }
-}
 
 class _PondPlayArea extends ConsumerWidget {
   const _PondPlayArea({
