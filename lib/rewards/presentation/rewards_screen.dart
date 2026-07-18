@@ -4,6 +4,7 @@ import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
+import 'package:my_tiny_thinker/core/rewards/reward_engine.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
@@ -12,6 +13,7 @@ import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_badge.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
+import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 
 class RewardsScreen extends ConsumerStatefulWidget {
   const RewardsScreen({super.key});
@@ -24,9 +26,30 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
   bool _showConfetti = false;
 
   Future<void> _claimDailyReward() async {
-    final reward = await ref.read(dailyRewardProvider.notifier).claim();
-    await ref.read(profileProvider.notifier).addCoins(10 + reward.streakDays * 2);
+    final daily = await ref.read(dailyRewardProvider.notifier).claim();
+    final chest = ref.read(rewardEngineProvider).rollDailyChest(
+          streakDays: daily.streakDays,
+        );
+    await ref.read(profileProvider.notifier).applyChestReward(
+          coins: chest.coins,
+          xp: chest.xp,
+          stars: chest.stars,
+          streakDays: daily.streakDays,
+          stickerId: chest.stickerId,
+        );
+    if (!mounted) return;
     setState(() => _showConfetti = true);
+    await TTDialog.show(
+      context: context,
+      title: 'Treasure Opened!',
+      emoji: '💎',
+      message:
+          '+${chest.coins} coins · +${chest.xp} XP · +${chest.stars} stars'
+          '${chest.bonusLabel != null ? '\n${chest.bonusLabel}' : ''}'
+          '${chest.stickerId != null ? '\nSticker unlocked!' : ''}'
+          '\n\n🔥 ${daily.streakDays} day streak',
+      primaryLabel: 'Yay!',
+    );
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) setState(() => _showConfetti = false);
     });

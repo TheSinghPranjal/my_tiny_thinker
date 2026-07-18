@@ -98,6 +98,33 @@ class ProfileNotifier extends StateNotifier<PlayerProfile> {
     await _save();
   }
 
+  Future<void> applyChestReward({
+    required int coins,
+    required int xp,
+    required int stars,
+    required int streakDays,
+    String? stickerId,
+  }) async {
+    final unlocked = List<String>.from(state.unlockedStickers);
+    if (stickerId != null && !unlocked.contains(stickerId)) {
+      unlocked.add(stickerId);
+    }
+    final newXp = state.xp + xp;
+    var newLevel = state.level;
+    while (newXp >= newLevel * 100) {
+      newLevel++;
+    }
+    state = state.copyWith(
+      coins: state.coins + coins,
+      stars: state.stars + stars,
+      xp: newXp,
+      level: newLevel,
+      dailyStreak: streakDays,
+      unlockedStickers: unlocked,
+    );
+    await _save();
+  }
+
   Future<void> resetProgress() async {
     state = const PlayerProfile();
     await _save();
@@ -126,10 +153,19 @@ class DailyRewardNotifier extends StateNotifier<DailyRewardState> {
       final lastClaim = json['lastClaimDate'] != null
           ? DateTime.parse(json['lastClaimDate'] as String)
           : null;
-      final streak = json['streakDays'] as int? ?? 0;
+      var streak = json['streakDays'] as int? ?? 0;
       final today = DateTime.now();
-      final canClaim = lastClaim == null ||
-          !_isSameDay(lastClaim, today);
+      final canClaim =
+          lastClaim == null || !_isSameDay(lastClaim, today);
+      // Gracefully reset streak if a calendar day was missed.
+      if (lastClaim != null && canClaim) {
+        final dayGap = DateTime(today.year, today.month, today.day)
+            .difference(
+              DateTime(lastClaim.year, lastClaim.month, lastClaim.day),
+            )
+            .inDays;
+        if (dayGap > 1) streak = 0;
+      }
       state = DailyRewardState(
         lastClaimDate: lastClaim,
         streakDays: streak,
