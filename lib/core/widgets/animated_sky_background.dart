@@ -274,13 +274,14 @@ class _SkyElementsPainter extends CustomPainter {
   }
 
   void _drawRainbow(Canvas canvas, Size size) {
+    final outerRadius = size.width * (skyOnly ? 0.5 : 0.68);
+    // Circle center below mid-screen so the upper semicircle sits vertically centered.
     final center = Offset(
       size.width * 0.5,
-      size.height * (skyOnly ? 0.38 : 0.52),
+      size.height * 0.5 + outerRadius * 0.5,
     );
-    final outerRadius = size.width * (skyOnly ? 0.5 : 0.68);
     // Wider pastel bands
-    final band = (size.width * 1.048).clamp(18.0, 40.0);
+    final band = (size.width * 0.048).clamp(18.0, 40.0);
 
     for (var i = 0; i < _rainbowColors.length; i++) {
       final radius = outerRadius - i * band;
