@@ -5,10 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/candy_color_hunt/controllers/candy_color_hunt_controller.dart';
 import 'package:my_tiny_thinker/games/candy_color_hunt/models/candy_color_hunt_models.dart';
 import 'package:my_tiny_thinker/games/candy_color_hunt/presentation/widgets/candy_ant_widget.dart';
@@ -94,9 +94,11 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
         ref.read(candyColorHuntControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
       },
-      onSettings: () {
+      onSettings: () async {
         ref.read(candyColorHuntControllerProvider.notifier).pause();
-        context.push(AppRoutes.parentZone);
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _showPauseMenu();
       },
     );
   }
@@ -250,7 +252,10 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
                   ),
                   rewardShadowColor: const Color(0xFFFF7043),
                 ),
-                if (phase == CandyHuntPhase.paused) const _PausedOverlay(),
+                if (phase == CandyHuntPhase.paused) GamePausedOverlay(
+                    onResume: () => ref.read(candyColorHuntControllerProvider.notifier).resume(),
+                    onOpenMenu: _showPauseMenu,
+                  ),
                 if (phase == CandyHuntPhase.finished)
                   CandyHuntVictoryOverlay(
                     result: ref
@@ -271,25 +276,3 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
   }
 }
 
-class _PausedOverlay extends StatelessWidget {
-  const _PausedOverlay();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: const Color(0xFFFF7043).withValues(alpha: 0.55),
-        child: const Center(
-          child: Text(
-            'Paused',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
