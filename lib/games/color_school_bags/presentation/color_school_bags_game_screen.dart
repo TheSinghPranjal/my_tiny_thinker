@@ -5,10 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/controllers/color_school_bags_controller.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/models/color_school_bags_models.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/presentation/widgets/playground_background.dart';
@@ -97,9 +97,11 @@ class _ColorSchoolBagsGameScreenState
         if (!mounted) return;
         context.go(AppRoutes.home);
       },
-      onSettings: () {
+      onSettings: () async {
         ref.read(colorSchoolBagsControllerProvider.notifier).pause();
-        context.push(AppRoutes.parentZone);
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _showPauseMenu();
       },
     );
   }
@@ -218,7 +220,10 @@ class _ColorSchoolBagsGameScreenState
                   ),
                   rewardShadowColor: const Color(0xFF42A5F5),
                 ),
-                if (phase == SortBagsPhase.paused) const _PausedOverlay(),
+                if (phase == SortBagsPhase.paused) GamePausedOverlay(
+                    onResume: () => ref.read(colorSchoolBagsControllerProvider.notifier).resume(),
+                    onOpenMenu: _showPauseMenu,
+                  ),
                 if (phase == SortBagsPhase.finished)
                   SortBagsVictoryOverlay(
                     result: ref
@@ -241,25 +246,3 @@ class _ColorSchoolBagsGameScreenState
   }
 }
 
-class _PausedOverlay extends StatelessWidget {
-  const _PausedOverlay();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: const Color(0xFF42A5F5).withValues(alpha: 0.55),
-        child: const Center(
-          child: Text(
-            'Paused',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
