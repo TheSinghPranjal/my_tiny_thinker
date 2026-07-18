@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
@@ -140,14 +142,14 @@ class TTPauseDialog extends StatelessWidget {
   final VoidCallback onResume;
   final VoidCallback onRestart;
   final VoidCallback onHome;
-  final VoidCallback? onSettings;
+  final FutureOr<void> Function()? onSettings;
 
   static Future<void> show(
     BuildContext context, {
     required VoidCallback onResume,
     required VoidCallback onRestart,
     required VoidCallback onHome,
-    VoidCallback? onSettings,
+    FutureOr<void> Function()? onSettings,
   }) {
     return showDialog(
       context: context,
@@ -188,9 +190,9 @@ class TTPauseDialog extends StatelessWidget {
               label: 'Settings',
               variant: TTButtonVariant.ghost,
               expanded: true,
-              onPressed: () {
+              onPressed: () async {
                 Navigator.of(context).pop();
-                onSettings!();
+                await onSettings!();
               },
             ),
           ],
