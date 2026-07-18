@@ -10,8 +10,10 @@ import 'package:my_tiny_thinker/core/models/age_group.dart';
 import 'package:my_tiny_thinker/core/providers/onboarding_provider.dart';
 import 'package:my_tiny_thinker/core/models/player_profile.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/premium/premium_provider.dart';
 import 'package:my_tiny_thinker/core/providers/game_stats_provider.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
+import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
@@ -52,6 +54,14 @@ import 'package:my_tiny_thinker/games/color_school_bags/models/color_school_bags
 import 'package:my_tiny_thinker/games/color_school_bags/repository/color_school_bags_settings_repository.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/models/frog_pond_models.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/repository/frog_pond_settings_repository.dart';
+import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/models/alphabet_bridge_models.dart';
+import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/repository/alphabet_bridge_settings_repository.dart';
+import 'package:my_tiny_thinker/games/number_bridge_adventure/repository/number_bridge_settings_repository.dart';
+import 'package:my_tiny_thinker/games/picture_bridge_adventure/repository/picture_bridge_settings_repository.dart';
+import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/models/color_shape_bridge_models.dart';
+import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/repository/color_shape_bridge_settings_repository.dart';
+import 'package:my_tiny_thinker/games/moon_rescue_adventure/repository/moon_rescue_settings_repository.dart';
+import 'package:my_tiny_thinker/parent_zone/presentation/widgets/parent_game_settings_card.dart';
 
 class ParentZoneScreen extends ConsumerStatefulWidget {
   const ParentZoneScreen({super.key});
@@ -244,6 +254,42 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
         body: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
+            if (!ref.watch(isPremiumProvider)) ...[
+              TTCard(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFB39DDB), Color(0xFFCE93D8)],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'TinyThink Premium',
+                      style: context.textTheme.headlineMedium?.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Text(
+                      'Unlock unlimited play, parent controls, and Learning Path sessions.',
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.white.withValues(alpha: 0.95),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    TTButton(
+                      label: 'See Premium',
+                      expanded: true,
+                      onPressed: () => context.push(AppRoutes.premium),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+            ],
             TTCard(
               gradient: AppGradients.welcomeCard,
               child: Column(
@@ -299,7 +345,7 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Learning Path', style: context.textTheme.headlineMedium),
+                  Text('Age Learning Track', style: context.textTheme.headlineMedium),
                   const SizedBox(height: AppSpacing.sm),
                   Text(
                     'Current: ${onboarding.ageGroup.emoji} '
@@ -324,195 +370,109 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🐜 Candy Color Hunt',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _CandyColorHuntParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.candyColorHunt,
+              child: _CandyColorHuntParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🐰 Bunny Hop Adventure',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _BunnyHopParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.bunnyHopAdventure,
+              child: _BunnyHopParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🧸 Hungry Teddy Cupcake Party',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _HungryTeddyParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.hungryTeddyCupcakeParty,
+              child: _HungryTeddyParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🦆 Hungry Duck Pond Adventure',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _HungryDuckParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.hungryDuckPondAdventure,
+              child: _HungryDuckParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🦋 Catch the Butterfly Garden',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _ButterflyGardenParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.catchTheButterflyGarden,
+              child: _ButterflyGardenParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🐵 Hungry Monkey Banana Adventure',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _HungryMonkeyParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.hungryMonkeyBananaAdventure,
+              child: _HungryMonkeyParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🪰 Feed the Frog Adventure',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _FeedTheFrogParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.feedTheFrogAdventure,
+              child: _FeedTheFrogParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🐸 Frog Pond Adventure',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _FrogPondParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.frogPondAdventure,
+              child: _FrogPondParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🐾 Peek-a-Boo Animal Friends',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _PeekABooParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.peekABooAnimalFriends,
+              child: _PeekABooParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🌸 Magical Flower Garden',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _FlowerGardenParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.magicalFlowerGarden,
+              child: _FlowerGardenParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🎒 Color School Bags',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _ColorSchoolBagsParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.colorSchoolBags,
+              child: _ColorSchoolBagsParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🔷 Shape Drop Adventure',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _ShapeDropParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.shapeDropAdventure,
+              child: _ShapeDropParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🌗 Shadow Match Adventure',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _ShadowMatchParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.shadowMatchAdventure,
+              child: _ShadowMatchParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🔤 Alphabet Adventure Quiz',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _AlphabetQuizParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.alphabetAdventureQuiz,
+              child: _AlphabetQuizParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('☁️ Cloud Pop Garden',
-                      style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _CloudPopGardenParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.cloudPopGarden,
+              child: _CloudPopGardenParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('🐠 Ocean Fish Adventure', style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _OceanFishParentControls(),
-                ],
-              ),
+            ParentGameSettingsCard(
+              gameId: GameId.oceanFishAdventure,
+              child: _OceanFishParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.alphabetBridgeAdventure,
+              child: _AlphabetBridgeParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.numberBridgeAdventure,
+              child: _NumberBridgeParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.pictureBridgeAdventure,
+              child: _PictureBridgeParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.colorShapeBridgeAdventure,
+              child: _ColorShapeBridgeParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.moonRescueAdventure,
+              child: _MoonRescueParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             TTCard(
@@ -574,40 +534,12 @@ class _StatRow extends StatelessWidget {
 }
 
 class _CandyColorHuntParentControls extends ConsumerWidget {
-  String _sessionLabel(int seconds) {
-    if (seconds < 60) return '$seconds Seconds';
-    if (seconds == 60) return '60 Seconds';
-    if (seconds == 90) return '90 Seconds';
-    if (seconds % 60 == 0) {
-      final m = seconds ~/ 60;
-      return m == 1 ? '1 Minute' : '$m Minutes';
-    }
-    return '${seconds}s';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(candyColorHuntSettingsProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Game Duration', style: context.textTheme.titleSmall),
-        const SizedBox(height: AppSpacing.xs),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: kCandySessionPresets.map((secs) {
-            return ChoiceChip(
-              label: Text(_sessionLabel(secs)),
-              selected: s.sessionSeconds == secs,
-              onSelected: (_) =>
-                  ref.read(candyColorHuntSettingsProvider.notifier).patch(
-                        (x) => x.copyWith(sessionSeconds: secs),
-                      ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: AppSpacing.sm),
         _ParentSlider(
           label: 'Reward multiplier',
           value: s.rewardMultiplier,
@@ -716,17 +648,6 @@ class _BunnyHopParentControls extends ConsumerWidget {
                   ref.read(bunnyHopSettingsProvider.notifier).applyDifficulty(d),
             );
           }).toList(),
-        ),
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(bunnyHopSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
         ),
         Text('Lily pads: ${s.lilyPadCount} (cracked: $cracked)'),
         Slider(
@@ -847,17 +768,6 @@ class _HungryTeddyParentControls extends ConsumerWidget {
             );
           }).toList(),
         ),
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(hungryTeddySettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
-        ),
         Text('Cupcakes on table: ${s.cupcakeCount}'),
         Slider(
           value: s.cupcakeCount.toDouble(),
@@ -976,17 +886,6 @@ class _HungryDuckParentControls extends ConsumerWidget {
                   ref.read(hungryDuckSettingsProvider.notifier).applyDifficulty(d),
             );
           }).toList(),
-        ),
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(hungryDuckSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
         ),
         Text('Fish in pond: ${s.fishCount}'),
         Slider(
@@ -1128,17 +1027,6 @@ class _ButterflyGardenParentControls extends ConsumerWidget {
                   .applyDifficulty(d),
             );
           }).toList(),
-        ),
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
         ),
         Text('Butterflies in garden: ${s.butterflyCount}'),
         Slider(
@@ -1288,17 +1176,6 @@ class _HungryMonkeyParentControls extends ConsumerWidget {
             );
           }).toList(),
         ),
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(hungryMonkeySettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
-        ),
         Text('Bananas on tree: ${s.bananaCount}'),
         Slider(
           value: s.bananaCount.toDouble(),
@@ -1434,17 +1311,6 @@ class _FeedTheFrogParentControls extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(feedFrogSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
-        ),
         Text('Flying insects: ${s.insectCount}'),
         Slider(
           value: s.insectCount.toDouble(),
@@ -1583,17 +1449,6 @@ class _FrogPondParentControls extends ConsumerWidget {
                   ref.read(frogPondSettingsProvider.notifier).applyDifficulty(d),
             );
           }).toList(),
-        ),
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(frogPondSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
         ),
         Text('Lily pads: ${s.lilyPadCount}'),
         Slider(
@@ -1771,17 +1626,6 @@ class _PeekABooParentControls extends ConsumerWidget {
             );
           }).toList(),
         ),
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(peekABooSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
-        ),
         Text('Bushes: ${s.bushCount}'),
         Slider(
           value: s.bushCount.toDouble(),
@@ -1938,18 +1782,6 @@ class _FlowerGardenParentControls extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) =>
-              ref.read(flowerGardenSettingsProvider.notifier).patch(
-                    (x) => x.copyWith(sessionSeconds: v.round()),
-                  ),
-        ),
         Text('Bird speed', style: context.textTheme.titleSmall),
         Wrap(
           spacing: AppSpacing.sm,
@@ -2070,41 +1902,12 @@ class _FlowerGardenParentControls extends ConsumerWidget {
 }
 
 class _ColorSchoolBagsParentControls extends ConsumerWidget {
-  String _sessionLabel(int seconds) {
-    if (seconds <= 0) return 'Unlimited';
-    if (seconds < 60) return '$seconds Seconds';
-    if (seconds == 60) return '60 Seconds';
-    if (seconds == 90) return '90 Seconds';
-    if (seconds % 60 == 0) {
-      final m = seconds ~/ 60;
-      return m == 1 ? '1 Minute' : '$m Minutes';
-    }
-    return '${seconds}s';
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(colorSchoolBagsSettingsProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Game Duration', style: context.textTheme.titleSmall),
-        const SizedBox(height: AppSpacing.xs),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: kSortBagsSessionPresets.map((secs) {
-            return ChoiceChip(
-              label: Text(_sessionLabel(secs)),
-              selected: s.sessionSeconds == secs,
-              onSelected: (_) =>
-                  ref.read(colorSchoolBagsSettingsProvider.notifier).patch(
-                        (x) => x.copyWith(sessionSeconds: secs),
-                      ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: AppSpacing.sm),
         Text(
           'Number of bags: ${s.maxBackpacks}',
           style: context.textTheme.titleSmall,
@@ -2220,16 +2023,6 @@ class _ShapeDropParentControls extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          onChanged: (v) => ref.read(shapeDropSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
-        ),
         _ParentSlider(
           label: 'Reward multiplier',
           value: s.rewardMultiplier,
@@ -2322,16 +2115,6 @@ class _ShadowMatchParentControls extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          onChanged: (v) => ref.read(shadowMatchSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
-        ),
         Text('Difficulty', style: context.textTheme.titleSmall),
         Wrap(
           spacing: AppSpacing.sm,
@@ -2384,16 +2167,6 @@ class _AlphabetQuizParentControls extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          onChanged: (v) => ref.read(alphabetQuizSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
-        ),
         Text('Alphabet order', style: context.textTheme.titleSmall),
         Wrap(
           spacing: AppSpacing.sm,
@@ -2505,18 +2278,6 @@ class _CloudPopGardenParentControls extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) =>
-              ref.read(cloudPopGardenSettingsProvider.notifier).patch(
-                    (x) => x.copyWith(sessionSeconds: v.round()),
-                  ),
-        ),
         Text('Cloud & flower pairs: ${s.pairCount}'),
         Slider(
           value: s.pairCount.toDouble(),
@@ -2680,17 +2441,6 @@ class _OceanFishParentControls extends ConsumerWidget {
                 (x) => x.copyWith(maxFishOnScreen: v.round()),
               ),
         ),
-        Text('Session: ${s.sessionSeconds ~/ 60} min ${s.sessionSeconds % 60}s'),
-        Slider(
-          value: s.sessionSeconds.toDouble(),
-          min: 60,
-          max: 1800,
-          divisions: 29,
-          label: '${s.sessionSeconds}s',
-          onChanged: (v) => ref.read(oceanFishSettingsProvider.notifier).patch(
-                (x) => x.copyWith(sessionSeconds: v.round()),
-              ),
-        ),
         Text('Swim speed', style: context.textTheme.titleSmall),
         Wrap(
           spacing: AppSpacing.sm,
@@ -2721,6 +2471,462 @@ class _OceanFishParentControls extends ConsumerWidget {
           label: s.fishSizeScale.toStringAsFixed(1),
           onChanged: (v) => ref.read(oceanFishSettingsProvider.notifier).patch(
                 (x) => x.copyWith(fishSizeScale: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AlphabetBridgeParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(alphabetBridgeSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Letter pairs: ${s.pairCount}'),
+        Slider(
+          value: s.pairCount.toDouble(),
+          min: 3,
+          max: 7,
+          divisions: 4,
+          label: '${s.pairCount}',
+          onChanged: (v) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(pairCount: v.round()),
+              ),
+        ),
+        Text('Letter order', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: AlphabetOrderMode.values.map((mode) {
+            return ChoiceChip(
+              label: Text(mode.name),
+              selected: s.orderMode == mode,
+              onSelected: (_) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(orderMode: mode),
+                  ),
+            );
+          }).toList(),
+        ),
+        Text('Practice mode', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: AlphabetPracticeMode.values.map((mode) {
+            return ChoiceChip(
+              label: Text(mode.name),
+              selected: s.practiceMode == mode,
+              onSelected: (_) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(practiceMode: mode),
+                  ),
+            );
+          }).toList(),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Letter narration',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(alphabetBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _NumberBridgeParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(numberBridgeSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Number pairs: ${s.pairCount}'),
+        Slider(
+          value: s.pairCount.toDouble(),
+          min: 3,
+          max: 7,
+          divisions: 4,
+          label: '${s.pairCount}',
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(pairCount: v.round()),
+              ),
+        ),
+        Text('Highest number: ${s.maxNumber}'),
+        Slider(
+          value: s.maxNumber.toDouble(),
+          min: 20,
+          max: 100,
+          divisions: 16,
+          label: '${s.maxNumber}',
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(maxNumber: v.round()),
+              ),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Number narration',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(numberBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PictureBridgeParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(pictureBridgeSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Picture pairs: ${s.pairCount}'),
+        Slider(
+          value: s.pairCount.toDouble(),
+          min: 3,
+          max: 7,
+          divisions: 4,
+          label: '${s.pairCount}',
+          onChanged: (v) => ref.read(pictureBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(pairCount: v.round()),
+              ),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(pictureBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(pictureBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Word narration',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(pictureBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(pictureBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(pictureBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(pictureBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(pictureBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ColorShapeBridgeParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(colorShapeBridgeSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Match pairs: ${s.pairCount}'),
+        Slider(
+          value: s.pairCount.toDouble(),
+          min: 3,
+          max: 7,
+          divisions: 4,
+          label: '${s.pairCount}',
+          onChanged: (v) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(pairCount: v.round()),
+              ),
+        ),
+        Text('Match mode', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: ColorShapeBridgeMode.values.map((mode) {
+            return ChoiceChip(
+              label: Text(mode.name),
+              selected: s.mode == mode,
+              onSelected: (_) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(mode: mode),
+                  ),
+            );
+          }).toList(),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Name narration',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(colorShapeBridgeSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MoonRescueParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(moonRescueSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Astronauts: ${s.astronautCount}'),
+        Slider(
+          value: s.astronautCount.toDouble(),
+          min: 5,
+          max: 12,
+          divisions: 7,
+          label: '${s.astronautCount}',
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(astronautCount: v.round()),
+              ),
+        ),
+        Text('Rocket capacity: ${s.rocketCapacity}'),
+        Slider(
+          value: s.rocketCapacity.toDouble(),
+          min: 2,
+          max: 5,
+          divisions: 3,
+          label: '${s.rocketCapacity}',
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rocketCapacity: v.round()),
+              ),
+        ),
+        _ParentSlider(
+          label: 'Float speed',
+          value: s.floatSpeed,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(floatSpeed: v),
+              ),
+        ),
+        _ParentSlider(
+          label: 'Drift intensity',
+          value: s.driftIntensity,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(driftIntensity: v),
+              ),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Narration',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Rocket sounds',
+          value: s.rocketSoundsEnabled,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rocketSoundsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
               ),
         ),
       ],
