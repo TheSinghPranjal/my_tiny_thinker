@@ -68,6 +68,10 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
       ],
     AgeGroup.tinyLearners => [
         'color_school_bags',
+        'alphabet_bridge_adventure',
+        'number_bridge_adventure',
+        'picture_bridge_adventure',
+        'moon_rescue_adventure',
         'shape_drop_adventure',
         'shadow_match_adventure',
         'alphabet_adventure_quiz',
@@ -76,6 +80,7 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
         'memory_game',
       ],
     AgeGroup.smartExplorers => [
+        'color_shape_bridge_adventure',
         'bubble_number_pop',
         'memory_game',
         'odd_one_out',
