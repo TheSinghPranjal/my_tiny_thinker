@@ -10,6 +10,7 @@ import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/controllers/bunny_hop_controller.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/models/bunny_hop_models.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/presentation/widgets/bunny_hop_hud.dart';
@@ -105,9 +106,11 @@ class _BunnyHopGameScreenState extends ConsumerState<BunnyHopGameScreen>
         ref.read(bunnyHopControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
       },
-      onSettings: () {
+      onSettings: () async {
         ref.read(bunnyHopControllerProvider.notifier).pause();
-        context.push(AppRoutes.parentZone);
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _showPauseMenu();
       },
     );
   }
@@ -226,6 +229,12 @@ class _BunnyHopGameScreenState extends ConsumerState<BunnyHopGameScreen>
                   ),
                 ),
               ),
+              if (sessionPhase == BunnyHopSessionPhase.paused)
+                GamePausedOverlay(
+                  onResume: () =>
+                      ref.read(bunnyHopControllerProvider.notifier).resume(),
+                  onOpenMenu: _showPauseMenu,
+                ),
               if (sessionPhase == BunnyHopSessionPhase.finished)
                 BunnyHopVictoryOverlay(
                   result: ref.read(bunnyHopControllerProvider.notifier).getResult(),
