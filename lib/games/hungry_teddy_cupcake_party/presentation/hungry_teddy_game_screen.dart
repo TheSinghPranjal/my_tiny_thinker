@@ -9,6 +9,7 @@ import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/controllers/hungry_teddy_controller.dart';
 import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/logic/hungry_teddy_logic.dart';
 import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/models/hungry_teddy_models.dart';
@@ -111,9 +112,11 @@ class _HungryTeddyGameScreenState extends ConsumerState<HungryTeddyGameScreen>
         ref.read(hungryTeddyControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
       },
-      onSettings: () {
+      onSettings: () async {
         ref.read(hungryTeddyControllerProvider.notifier).pause();
-        context.push(AppRoutes.parentZone);
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _showPauseMenu();
       },
     );
   }
@@ -248,6 +251,12 @@ class _HungryTeddyGameScreenState extends ConsumerState<HungryTeddyGameScreen>
                         color: AppColors.sunYellow.withValues(alpha: 0.12),
                       ),
                     ),
+                  ),
+                if (sessionPhase == HungryTeddySessionPhase.paused)
+                  GamePausedOverlay(
+                    onResume: () =>
+                        ref.read(hungryTeddyControllerProvider.notifier).resume(),
+                    onOpenMenu: _showPauseMenu,
                   ),
                 if (sessionPhase == HungryTeddySessionPhase.finished)
                   TeddyVictoryOverlay(
