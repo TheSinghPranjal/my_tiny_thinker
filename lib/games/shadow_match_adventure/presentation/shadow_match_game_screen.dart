@@ -11,6 +11,7 @@ import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
+import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/shared/education_vocabulary.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/controllers/shadow_match_controller.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/models/shadow_match_models.dart';
@@ -88,9 +89,11 @@ class _ShadowMatchGameScreenState extends ConsumerState<ShadowMatchGameScreen>
         ref.read(shadowMatchControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
       },
-      onSettings: () {
+      onSettings: () async {
         ref.read(shadowMatchControllerProvider.notifier).pause();
-        context.push(AppRoutes.parentZone);
+        await context.push(AppRoutes.parentZone);
+        if (!mounted) return;
+        await _showPauseMenu();
       },
     );
   }
@@ -266,7 +269,10 @@ class _ShadowMatchGameScreenState extends ConsumerState<ShadowMatchGameScreen>
                   ),
                   rewardShadowColor: const Color(0xFF5E35B1),
                 ),
-                if (phase == ShadowMatchPhase.paused) const _PausedOverlay(),
+                if (phase == ShadowMatchPhase.paused) GamePausedOverlay(
+                    onResume: () => ref.read(shadowMatchControllerProvider.notifier).resume(),
+                    onOpenMenu: _showPauseMenu,
+                  ),
                 if (phase == ShadowMatchPhase.finished)
                   ShadowMatchVictoryOverlay(
                     result: ref
@@ -287,25 +293,3 @@ class _ShadowMatchGameScreenState extends ConsumerState<ShadowMatchGameScreen>
   }
 }
 
-class _PausedOverlay extends StatelessWidget {
-  const _PausedOverlay();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: Container(
-        color: const Color(0xFF5E35B1).withValues(alpha: 0.55),
-        child: const Center(
-          child: Text(
-            'Paused',
-            style: TextStyle(
-              color: AppColors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
