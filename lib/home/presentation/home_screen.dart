@@ -13,10 +13,11 @@ import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
+import 'package:my_tiny_thinker/core/widgets/tiny_think_title.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_badge.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/home/presentation/widgets/game_selection_grid.dart';
-import 'package:simple_gradient_text/simple_gradient_text.dart';
+import 'package:my_tiny_thinker/home/presentation/widgets/learning_path_card.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -28,7 +29,6 @@ class HomeScreen extends ConsumerWidget {
     final onboarding = ref.watch(onboardingProvider);
     final ageGroup = onboarding.ageGroup;
     final enabledIds = enabledGameIdsForAge(ageGroup);
-    final largeLayout = useLargeLayoutForAge(ageGroup);
     final avatarEmoji = kAvatars
         .firstWhere(
           (a) => a.$1 == onboarding.avatarId,
@@ -37,6 +37,7 @@ class HomeScreen extends ConsumerWidget {
         .$2;
 
     return AnimatedSkyBackground(
+      landscapeAsset: 'assets/images/home_landscape.png',
       showGrass: false,
       child: SafeArea(
         child: CustomScrollView(
@@ -60,8 +61,10 @@ class HomeScreen extends ConsumerWidget {
                       avatarEmoji: avatarEmoji,
                     ),
                     const SizedBox(height: AppSpacing.xl),
+                    const LearningPathCard(),
+                    const SizedBox(height: AppSpacing.xl),
                     Text(
-                      largeLayout ? 'Tap to Play!' : 'Choose a Game',
+                      'Choose a Game',
                       style: context.textTheme.headlineMedium?.copyWith(
                         color: AppColors.white,
                         shadows: const [
@@ -78,8 +81,9 @@ class HomeScreen extends ConsumerWidget {
               child: ResponsivePadding(
                 child: GameSelectionGrid(
                   enabledGameIds: enabledIds,
-                  largeLayout: largeLayout,
-                  onGameTap: (gameId) => navigateToGame(context, gameId),
+                  largeLayout: useLargeLayoutForAge(ageGroup),
+                  onGameTap: (gameId) =>
+                      navigateToGameGuarded(context, ref, gameId),
                 ),
               ),
             ),
@@ -122,23 +126,7 @@ class _TopBar extends StatelessWidget {
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
-                      child: GradientText(
-                        'TinyThink',
-                        style: const TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -1.2,
-                          fontFamily: 'Baloo2',
-                        ),
-                        colors: const [
-                          Color(0xFF43B5FF),
-                          Color(0xFF7B6DFF),
-                          Color(0xFFFF7BEA),
-                          Color(0xFFFFA726),
-                          Color(0xFF7ED957),
-                          Color(0xFFFF5E9C),
-                        ],
-                      ),
+                      child: const TinyThinkTitle(),
                     ),
                   ),
                   const SizedBox(width: 8),
