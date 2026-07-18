@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/play_limits/daily_play_limits.dart';
+import 'package:my_tiny_thinker/core/premium/premium_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
+import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
+import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 
 void navigateToGame(BuildContext context, GameId gameId) {
   switch (gameId) {
@@ -47,5 +53,94 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.colorSchoolBagsSetup);
     case GameId.alphabetAdventureQuiz:
       context.push(AppRoutes.alphabetQuizSetup);
+    case GameId.alphabetBridgeAdventure:
+      context.push(AppRoutes.alphabetBridgeSetup);
+    case GameId.numberBridgeAdventure:
+      context.push(AppRoutes.numberBridgeSetup);
+    case GameId.pictureBridgeAdventure:
+      context.push(AppRoutes.pictureBridgeSetup);
+    case GameId.colorShapeBridgeAdventure:
+      context.push(AppRoutes.colorShapeBridgeSetup);
+    case GameId.moonRescueAdventure:
+      context.push(AppRoutes.moonRescueSetup);
+  }
+}
+
+/// Checks daily play limits (free tier) before launching a game.
+Future<void> navigateToGameGuarded(
+  BuildContext context,
+  WidgetRef ref,
+  GameId gameId,
+) async {
+  final isPremium = ref.read(isPremiumProvider);
+  final limits = ref.read(dailyPlayLimitsProvider);
+  if (!limits.canPlay(gameId, isPremium: isPremium)) {
+    await TTDialog.show(
+      context: context,
+      title: 'Play Limit Reached',
+      emoji: '🌟',
+      message:
+          'You have played this game $kFreeDailyPlayLimit times today. '
+          'TinyThink Premium unlocks unlimited play!',
+      primaryLabel: 'See Premium',
+      primaryAction: () => context.push(AppRoutes.premium),
+      secondaryLabel: 'Maybe Later',
+      secondaryAction: () {},
+    );
+    return;
+  }
+  if (!context.mounted) return;
+  navigateToGame(context, gameId);
+}
+
+/// Compact premium upgrade chip used on locked surfaces.
+class PremiumUpgradeBanner extends StatelessWidget {
+  const PremiumUpgradeBanner({super.key, this.onTap});
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.softPurple.withValues(alpha: 0.15),
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: const Padding(
+          padding: EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Icon(Icons.lock_rounded, color: AppColors.softPurple, size: 18),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Available with TinyThink Premium',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.softPurple,
+                  ),
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: AppColors.softPurple),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Optional CTA button for premium upgrade.
+class PremiumCtaButton extends StatelessWidget {
+  const PremiumCtaButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TTButton(
+      label: 'Unlock Premium',
+      expanded: true,
+      onPressed: () => context.push(AppRoutes.premium),
+    );
   }
 }
