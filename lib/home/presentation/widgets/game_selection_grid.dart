@@ -30,6 +30,11 @@ class GameSelectionGrid extends ConsumerWidget {
     GameId.frogPondAdventure,
     GameId.peekABooAnimalFriends,
     GameId.colorSchoolBags,
+    GameId.alphabetBridgeAdventure,
+    GameId.numberBridgeAdventure,
+    GameId.pictureBridgeAdventure,
+    GameId.colorShapeBridgeAdventure,
+    GameId.moonRescueAdventure,
     GameId.shapeDropAdventure,
     GameId.shadowMatchAdventure,
     GameId.alphabetAdventureQuiz,
@@ -104,6 +109,36 @@ class GameSelectionGrid extends ConsumerWidget {
       'Drag books into matching backpacks!',
       'Easy',
     ),
+    GameId.alphabetBridgeAdventure: (
+      '🌉',
+      'Alphabet Bridge Adventure',
+      'Connect little letters to big letters!',
+      'Easy',
+    ),
+    GameId.numberBridgeAdventure: (
+      '🔢',
+      'Number Bridge Adventure',
+      'Connect digits to number words!',
+      'Easy',
+    ),
+    GameId.pictureBridgeAdventure: (
+      '🖼️',
+      'Picture Bridge Adventure',
+      'Connect pictures to their words!',
+      'Easy',
+    ),
+    GameId.colorShapeBridgeAdventure: (
+      '🔷',
+      'Color & Shape Bridge Adventure',
+      'Connect words to colors and shapes!',
+      'Easy',
+    ),
+    GameId.moonRescueAdventure: (
+      '🚀',
+      'Moon Rescue Adventure',
+      'Flick astronauts to the Moon and launch!',
+      'Easy',
+    ),
     GameId.shapeDropAdventure: (
       '🔷',
       'Shape Drop Adventure',
@@ -159,7 +194,7 @@ class GameSelectionGrid extends ConsumerWidget {
       itemCount: games.length + (showComingSoon ? 1 : 0),
       phoneColumns: largeLayout ? 1 : 2,
       tabletColumns: largeLayout ? 2 : 3,
-      childAspectRatio: largeLayout ? 2.2 : 0.82,
+      childAspectRatio: largeLayout ? 2.4 : 0.78,
       itemBuilder: (context, index) {
         if (showComingSoon && index == games.length) {
           return const TTGameCard(

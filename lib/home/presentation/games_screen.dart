@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
@@ -7,12 +8,13 @@ import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
 import 'package:my_tiny_thinker/home/presentation/widgets/game_selection_grid.dart';
 
-class GamesScreen extends StatelessWidget {
+class GamesScreen extends ConsumerWidget {
   const GamesScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return AnimatedSkyBackground(
+      landscapeAsset: 'assets/images/home_landscape.png',
       showGrass: false,
       child: SafeArea(
         child: ResponsivePadding(
@@ -39,7 +41,8 @@ class GamesScreen extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: GameSelectionGrid(
-                    onGameTap: (gameId) => navigateToGame(context, gameId),
+                    onGameTap: (gameId) =>
+                        navigateToGameGuarded(context, ref, gameId),
                   ),
                 ),
               ),
