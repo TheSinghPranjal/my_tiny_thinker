@@ -60,7 +60,7 @@ class _ButterflyGardenGameScreenState extends ConsumerState<ButterflyGardenGameS
     ref.read(butterflyGardenControllerProvider.notifier).reset();
     ref.read(butterflyGardenControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(ButterflyGardenSessionPhase.playing);
   }
@@ -94,7 +94,7 @@ class _ButterflyGardenGameScreenState extends ConsumerState<ButterflyGardenGameS
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    _audio?.stopMusic();
+    _audio?.playHomeMusic();
     super.dispose();
   }
 

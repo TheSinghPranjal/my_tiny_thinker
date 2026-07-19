@@ -59,7 +59,7 @@ class _BunnyHopGameScreenState extends ConsumerState<BunnyHopGameScreen>
     ref.read(bunnyHopControllerProvider.notifier).reset();
     ref.read(bunnyHopControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(BunnyHopSessionPhase.playing);
   }
@@ -93,7 +93,7 @@ class _BunnyHopGameScreenState extends ConsumerState<BunnyHopGameScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    _audio?.stopMusic();
+    _audio?.playHomeMusic();
     super.dispose();
   }
 
