@@ -48,6 +48,7 @@ class ShadowMatchController extends StateNotifier<ShadowMatchState> {
       }
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _requestEnd();
         return;
       }
@@ -58,7 +59,7 @@ class ShadowMatchController extends StateNotifier<ShadowMatchState> {
   void _requestEnd() {
     if (state.pendingEnd) return;
     if (state.phase == ShadowMatchPhase.celebrating) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

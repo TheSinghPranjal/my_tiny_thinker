@@ -337,6 +337,15 @@ class MoonRescueState extends Equatable {
             a.phase == AstronautPhase.boarding,
       );
 
+  /// In-motion rescues only — waiting astronauts should not block time-up.
+  bool get hasActiveRescueMotion => astronauts.any(
+        (a) =>
+            a.phase == AstronautPhase.pushed ||
+            a.phase == AstronautPhase.landing ||
+            a.phase == AstronautPhase.running ||
+            a.phase == AstronautPhase.boarding,
+      );
+
   bool get hasActiveLaunch =>
       rocket.phase == RocketPhase.launching ||
       rocket.phase == RocketPhase.arriving;

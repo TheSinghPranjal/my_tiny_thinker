@@ -73,6 +73,7 @@ class PictureBridgeController extends StateNotifier<PictureBridgeState> {
       if (state.settings.unlimitedTime) return;
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _requestEnd();
         return;
       }
@@ -83,7 +84,7 @@ class PictureBridgeController extends StateNotifier<PictureBridgeState> {
   void _requestEnd() {
     if (state.pendingEnd) return;
     if (state.phase == PictureBridgePhase.celebrating) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

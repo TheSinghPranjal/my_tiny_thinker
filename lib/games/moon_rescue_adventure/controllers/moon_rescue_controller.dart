@@ -70,22 +70,52 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
         return;
       }
       if (state.settings.unlimitedTime) return;
-      final rem = state.remainingSeconds - 1;
-      if (rem <= 0) {
+
+      if (state.remainingSeconds <= 0) {
+        _sessionTimer?.cancel();
         _requestEnd();
         return;
       }
+
+      final rem = state.remainingSeconds - 1;
       state = state.copyWith(remainingSeconds: rem);
+      if (rem <= 0) {
+        _sessionTimer?.cancel();
+        _requestEnd();
+      }
     });
   }
 
   void _requestEnd() {
-    if (state.pendingEnd) return;
-    if (state.hasActiveRescue || state.hasActiveLaunch) {
-      state = state.copyWith(pendingEnd: true);
+    if (state.phase == MoonRescuePhase.finished) return;
+
+    if (!state.settings.unlimitedTime && state.remainingSeconds > 0) {
+      state = state.copyWith(remainingSeconds: 0);
+    }
+
+    if (state.hasActiveRescueMotion || state.hasActiveLaunch) {
+      if (!state.pendingEnd) {
+        state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
+      }
       return;
     }
     _endSession();
+  }
+
+  void _flushPendingEnd() {
+    if (state.phase == MoonRescuePhase.finished) return;
+    if (!state.pendingEnd &&
+        (state.settings.unlimitedTime || state.remainingSeconds > 0)) {
+      return;
+    }
+
+    if (!state.settings.unlimitedTime && state.remainingSeconds > 0) {
+      state = state.copyWith(remainingSeconds: 0);
+    }
+
+    if (!state.hasActiveRescueMotion && !state.hasActiveLaunch) {
+      _endSession();
+    }
   }
 
   void tick(double delta) {
@@ -94,6 +124,20 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
       return;
     }
     if (!state.playAreaReady) return;
+
+    if (!state.settings.unlimitedTime &&
+        (state.pendingEnd || state.remainingSeconds <= 0)) {
+      if (state.remainingSeconds > 0) {
+        state = state.copyWith(remainingSeconds: 0);
+      }
+      if (!state.pendingEnd) {
+        state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
+      }
+      if (!state.hasActiveRescueMotion && !state.hasActiveLaunch) {
+        _endSession();
+        return;
+      }
+    }
 
     final tick = MoonRescueLogic.tick(
       astronauts: state.astronauts,
@@ -141,19 +185,21 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
       phase = MoonRescuePhase.celebrating;
       _scheduleFeedbackClear();
 
-      // Smoothly bring replacements in from the edges.
-      final need = state.settings.astronautCount - astronauts.length;
-      for (var i = 0; i < need; i++) {
-        spawnCounter += 1;
-        astronauts = [
-          ...astronauts,
-          MoonRescueLogic.spawnAstronaut(
-            state.playArea,
-            state.settings,
-            idSuffix: spawnCounter,
-            smoothEntrance: true,
-          ),
-        ];
+      // Don't spawn replacements once the session is winding down.
+      if (!state.pendingEnd) {
+        final need = state.settings.astronautCount - astronauts.length;
+        for (var i = 0; i < need; i++) {
+          spawnCounter += 1;
+          astronauts = [
+            ...astronauts,
+            MoonRescueLogic.spawnAstronaut(
+              state.playArea,
+              state.settings,
+              idSuffix: spawnCounter,
+              smoothEntrance: true,
+            ),
+          ];
+        }
       }
 
       Timer(const Duration(milliseconds: 900), () {
@@ -164,11 +210,7 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
             phase: MoonRescuePhase.playing,
             showSparkles: false,
           );
-          if (state.pendingEnd &&
-              !state.hasActiveRescue &&
-              !state.hasActiveLaunch) {
-            _endSession();
-          }
+          _flushPendingEnd();
         }
       });
     }
@@ -206,9 +248,12 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
       phase: phase,
       envPhase: state.envPhase + delta,
     );
+
+    _flushPendingEnd();
   }
 
   bool get _canInteractAstronauts =>
+      !state.pendingEnd &&
       (state.phase == MoonRescuePhase.playing ||
           state.phase == MoonRescuePhase.celebrating) &&
       state.rocket.phase != RocketPhase.launching;
@@ -240,6 +285,11 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
   }
 
   void tapRocket() {
+    if (state.pendingEnd ||
+        (!state.settings.unlimitedTime && state.remainingSeconds <= 0)) {
+      _flushPendingEnd();
+      return;
+    }
     if (state.phase != MoonRescuePhase.playing &&
         state.phase != MoonRescuePhase.celebrating) {
       return;
@@ -297,9 +347,7 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
         showSparkles: false,
         phase: MoonRescuePhase.playing,
       );
-      if (state.pendingEnd && !state.hasActiveLaunch && !state.hasActiveRescue) {
-        _endSession();
-      }
+      _flushPendingEnd();
     });
   }
 
@@ -327,6 +375,11 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
   void resume() {
     if (state.phase == MoonRescuePhase.paused) {
       state = state.copyWith(phase: MoonRescuePhase.playing);
+      if (state.pendingEnd ||
+          (!state.settings.unlimitedTime && state.remainingSeconds <= 0)) {
+        _requestEnd();
+        return;
+      }
       if (!state.settings.unlimitedTime) _startTimer();
     }
   }

@@ -58,6 +58,7 @@ class ShapeDropController extends StateNotifier<ShapeDropState> {
       }
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _requestEnd();
         return;
       }
@@ -68,7 +69,7 @@ class ShapeDropController extends StateNotifier<ShapeDropState> {
   void _requestEnd() {
     if (state.pendingEnd) return;
     if (state.phase == ShapeDropPhase.celebrating) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

@@ -68,6 +68,7 @@ class PeekABooController extends StateNotifier<PeekABooState> {
       if (state.sessionPhase != PeekABooSessionPhase.playing) return;
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _requestEndSession();
         return;
       }
@@ -78,7 +79,7 @@ class PeekABooController extends StateNotifier<PeekABooState> {
   void _requestEndSession() {
     if (state.pendingEnd) return;
     if (state.hasActiveReveal) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();
