@@ -80,7 +80,7 @@ class FeedFrogController extends StateNotifier<FeedFrogState> {
       final elapsed = state.elapsedSeconds + 1;
       final night = FeedFrogLogic.computeNightFactor(elapsed, state.settings);
       if (rem <= 0) {
-        state = state.copyWith(elapsedSeconds: elapsed, nightFactor: night);
+        state = state.copyWith(remainingSeconds: 0, elapsedSeconds: elapsed, nightFactor: night);
         _requestEndSession();
         return;
       }
@@ -95,7 +95,7 @@ class FeedFrogController extends StateNotifier<FeedFrogState> {
   void _requestEndSession() {
     if (state.pendingEnd) return;
     if (state.isFeeding) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

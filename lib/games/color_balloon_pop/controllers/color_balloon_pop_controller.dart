@@ -65,6 +65,7 @@ class ColorBalloonPopController extends StateNotifier<ColorBalloonPopState> {
       if (state.sessionPhase != ColorBalloonSessionPhase.playing) return;
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _requestEndSession();
         return;
       }
@@ -78,7 +79,7 @@ class ColorBalloonPopController extends StateNotifier<ColorBalloonPopState> {
     if (state.roundPhase == ColorBalloonRoundPhase.celebrating ||
         state.roundPhase == ColorBalloonRoundPhase.clearing ||
         state.balloons.any((b) => b.phase == BalloonPhase.popping)) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

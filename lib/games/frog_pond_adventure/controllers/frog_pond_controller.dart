@@ -71,7 +71,7 @@ class FrogPondController extends StateNotifier<FrogPondState> {
       }
 
       if (rem <= 0) {
-        state = state.copyWith(elapsedSeconds: elapsed, kingDue: kingDue);
+        state = state.copyWith(remainingSeconds: 0, elapsedSeconds: elapsed, kingDue: kingDue);
         _requestEndSession();
         return;
       }
@@ -87,7 +87,7 @@ class FrogPondController extends StateNotifier<FrogPondState> {
     if (state.pendingEnd) return;
     if (state.hasActiveAnimation ||
         state.frogs.any((f) => f.phase == FrogPhase.jumping)) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

@@ -64,6 +64,7 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
       if (state.sessionPhase != CloudPopSessionPhase.playing) return;
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _requestEndSession();
         return;
       }
@@ -75,7 +76,7 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
     if (state.pendingEnd) return;
     final activeRain = state.clouds.any((c) => c.phase == CloudPhase.raining);
     if (activeRain) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();
