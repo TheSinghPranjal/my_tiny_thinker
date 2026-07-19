@@ -50,11 +50,11 @@ class TTDialog extends StatelessWidget {
         title: title,
         message: message,
         emoji: emoji,
-        child: child,
         primaryAction: primaryAction,
         primaryLabel: primaryLabel,
         secondaryAction: secondaryAction,
         secondaryLabel: secondaryLabel,
+        child: child,
       ),
     );
   }

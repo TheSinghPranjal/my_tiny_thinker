@@ -55,7 +55,7 @@ class _ShadowMatchGameScreenState extends ConsumerState<ShadowMatchGameScreen>
     ref.read(shadowMatchControllerProvider.notifier).reset();
     ref.read(shadowMatchControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
   }
 
@@ -75,7 +75,7 @@ class _ShadowMatchGameScreenState extends ConsumerState<ShadowMatchGameScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 
