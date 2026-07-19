@@ -10,9 +10,6 @@ import 'package:my_tiny_thinker/core/services/storage_service.dart';
 import 'package:my_tiny_thinker/games/pattern_match/logic/pattern_match_logic.dart';
 import 'package:my_tiny_thinker/games/pattern_match/models/pattern_match_models.dart';
 
-final patternMatchConfigProvider =
-    StateProvider<PatternMatchConfig>((ref) => const PatternMatchConfig());
-
 final patternMatchControllerProvider =
     StateNotifierProvider<PatternMatchController, PatternMatchState>((ref) {
   return PatternMatchController(ref);
@@ -22,24 +19,26 @@ class PatternMatchController extends StateNotifier<PatternMatchState> {
   PatternMatchController(this._ref) : super(const PatternMatchState());
 
   final Ref _ref;
-  Timer? _timer;
+  Timer? _sessionTimer;
+  Timer? _feedbackTimer;
   int _previousBest = 0;
 
-  void start(PatternMatchConfig config) {
+  void startGame(PatternMatchSettings settings) {
+    _cancelTimers();
     _previousBest =
         _ref.read(allGameStatsProvider)[GameId.patternMatch]?.bestScore ?? 0;
-    final rounds = PatternMatchGenerator.roundsFor(config.difficulty);
     state = PatternMatchState(
-      config: config,
+      settings: settings,
       phase: PatternPhase.playing,
-      roundsTarget: rounds,
+      remainingSeconds: settings.sessionSeconds,
     );
     _loadPuzzle();
     _startTimer();
   }
 
   void _loadPuzzle() {
-    final puzzle = PatternMatchGenerator.generate(state.config.difficulty);
+    final puzzle =
+        PatternMatchGenerator.generate(state.settings.difficulty);
     final options = puzzle.options
         .asMap()
         .entries
@@ -57,14 +56,40 @@ class PatternMatchController extends StateNotifier<PatternMatchState> {
   }
 
   void _startTimer() {
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      state = state.copyWith(elapsedSeconds: state.elapsedSeconds + 1);
+    _sessionTimer?.cancel();
+    _sessionTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (state.phase != PatternPhase.playing &&
+          state.phase != PatternPhase.feedback) {
+        return;
+      }
+      if (state.remainingSeconds <= 0) {
+        _sessionTimer?.cancel();
+        _requestEnd();
+        return;
+      }
+      final rem = state.remainingSeconds - 1;
+      state = state.copyWith(remainingSeconds: rem);
+      if (rem <= 0) {
+        _sessionTimer?.cancel();
+        _requestEnd();
+      }
     });
   }
 
+  void _requestEnd() {
+    if (state.phase == PatternPhase.finished) return;
+    if (state.remainingSeconds > 0) {
+      state = state.copyWith(remainingSeconds: 0);
+    }
+    if (state.phase == PatternPhase.feedback) {
+      state = state.copyWith(pendingEnd: true);
+      return;
+    }
+    _endSession();
+  }
+
   void selectOption(int optionId) {
-    if (state.phase != PatternPhase.playing) return;
+    if (state.phase != PatternPhase.playing || state.pendingEnd) return;
     if (optionId == state.correctOptionId) {
       final newStreak = state.streak + 1;
       state = state.copyWith(
@@ -72,9 +97,15 @@ class PatternMatchController extends StateNotifier<PatternMatchState> {
         streak: newStreak,
         longestStreak: math.max(state.longestStreak, newStreak),
         phase: PatternPhase.feedback,
+        showSparkles: true,
       );
-      Future.delayed(const Duration(milliseconds: 700), () {
+      _feedbackTimer?.cancel();
+      _feedbackTimer = Timer(const Duration(milliseconds: 700), () {
         if (!mounted) return;
+        if (state.pendingEnd) {
+          _endSession();
+          return;
+        }
         _nextRound();
       });
     } else {
@@ -84,21 +115,50 @@ class PatternMatchController extends StateNotifier<PatternMatchState> {
         wrongOptionId: optionId,
         phase: PatternPhase.feedback,
       );
-      Future.delayed(const Duration(milliseconds: 600), () {
+      _feedbackTimer?.cancel();
+      _feedbackTimer = Timer(const Duration(milliseconds: 600), () {
         if (!mounted) return;
+        if (state.pendingEnd) {
+          _endSession();
+          return;
+        }
         state = state.copyWith(clearWrong: true, phase: PatternPhase.playing);
       });
     }
   }
 
   void _nextRound() {
-    if (state.round >= state.roundsTarget) {
-      _timer?.cancel();
-      state = state.copyWith(phase: PatternPhase.victory);
-      return;
-    }
-    state = state.copyWith(round: state.round + 1, phase: PatternPhase.playing);
+    if (state.phase == PatternPhase.finished) return;
+    state = state.copyWith(
+      round: state.round + 1,
+      phase: PatternPhase.playing,
+      showSparkles: false,
+    );
     _loadPuzzle();
+  }
+
+  void pause() {
+    if (state.phase == PatternPhase.playing ||
+        state.phase == PatternPhase.feedback) {
+      _sessionTimer?.cancel();
+      state = state.copyWith(phase: PatternPhase.paused);
+    }
+  }
+
+  void resume() {
+    if (state.phase == PatternPhase.paused) {
+      state = state.copyWith(phase: PatternPhase.playing);
+      if (state.pendingEnd || state.remainingSeconds <= 0) {
+        _requestEnd();
+        return;
+      }
+      _startTimer();
+    }
+  }
+
+  void _endSession() {
+    _cancelTimers();
+    state = state.copyWith(phase: PatternPhase.finished, remainingSeconds: 0);
   }
 
   PatternMatchResult getResult() =>
@@ -106,16 +166,22 @@ class PatternMatchController extends StateNotifier<PatternMatchState> {
 
   Future<void> saveResult() async {
     final result = getResult();
+    if (result.score == 0 && result.coins == 0) return;
+
     final storage = _ref.read(storageServiceProvider);
-    await saveGameStatsResult(storage, GameId.patternMatch, (s) => s.copyWith(
-          bestScore: math.max(s.bestScore, result.score),
-          starsEarned: s.starsEarned + result.stars,
-          timesPlayed: s.timesPlayed + 1,
-          totalCorrect: s.totalCorrect + state.round,
-          totalMistakes: s.totalMistakes + state.mistakes,
-          longestCombo: math.max(s.longestCombo, result.longestStreak),
-          lastPlayed: DateTime.now(),
-        ));
+    await saveGameStatsResult(
+      storage,
+      GameId.patternMatch,
+      (s) => s.copyWith(
+        bestScore: math.max(s.bestScore, result.score),
+        starsEarned: s.starsEarned + result.stars,
+        timesPlayed: s.timesPlayed + 1,
+        totalCorrect: s.totalCorrect + result.roundsSolved,
+        totalMistakes: s.totalMistakes + result.mistakes,
+        longestCombo: math.max(s.longestCombo, result.longestStreak),
+        lastPlayed: DateTime.now(),
+      ),
+    );
     await _ref
         .read(profileProvider.notifier)
         .applyReward(PatternMatchScoring.toReward(result));
@@ -126,13 +192,18 @@ class PatternMatchController extends StateNotifier<PatternMatchState> {
   }
 
   void reset() {
-    _timer?.cancel();
+    _cancelTimers();
     state = const PatternMatchState();
+  }
+
+  void _cancelTimers() {
+    _sessionTimer?.cancel();
+    _feedbackTimer?.cancel();
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _cancelTimers();
     super.dispose();
   }
 }

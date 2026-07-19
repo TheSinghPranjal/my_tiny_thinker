@@ -29,6 +29,10 @@ import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/models/alphabet_qu
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/repository/alphabet_quiz_settings_repository.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/models/shadow_match_models.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/repository/shadow_match_settings_repository.dart';
+import 'package:my_tiny_thinker/games/odd_one_out/models/odd_one_out_models.dart';
+import 'package:my_tiny_thinker/games/odd_one_out/repository/odd_one_out_settings_repository.dart';
+import 'package:my_tiny_thinker/games/pattern_match/models/pattern_match_models.dart';
+import 'package:my_tiny_thinker/games/pattern_match/repository/pattern_match_settings_repository.dart';
 import 'package:my_tiny_thinker/games/shape_drop_adventure/models/shape_drop_models.dart';
 import 'package:my_tiny_thinker/games/shape_drop_adventure/repository/shape_drop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/models/cloud_pop_garden_models.dart';
@@ -435,6 +439,16 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ParentGameSettingsCard(
               gameId: GameId.shadowMatchAdventure,
               child: _ShadowMatchParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.oddOneOut,
+              child: _OddOneOutParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.patternMatch,
+              child: _PatternMatchParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             ParentGameSettingsCard(
@@ -2114,6 +2128,117 @@ class _ShapeDropParentControls extends ConsumerWidget {
               },
             );
           }).toList(),
+        ),
+      ],
+    );
+  }
+}
+
+class _PatternMatchParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(patternMatchSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: PatternDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text(d.name[0].toUpperCase() + d.name.substring(1)),
+              selected: s.difficulty == d,
+              onSelected: (_) => ref.read(patternMatchSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(difficulty: d),
+                  ),
+            );
+          }).toList(),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(patternMatchSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Hints',
+          value: s.hintsEnabled,
+          onChanged: (v) => ref.read(patternMatchSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hintsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(patternMatchSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _OddOneOutParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(oddOneOutSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Category', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: OddOneOutCategory.values.map((c) {
+            return ChoiceChip(
+              label: Text('${c.emoji} ${c.label}'),
+              selected: s.category == c,
+              onSelected: (_) => ref.read(oddOneOutSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(category: c),
+                  ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Difficulty', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: OddOneOutDifficulty.values.map((d) {
+            return ChoiceChip(
+              label: Text(d.name[0].toUpperCase() + d.name.substring(1)),
+              selected: s.difficulty == d,
+              onSelected: (_) => ref.read(oddOneOutSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(difficulty: d),
+                  ),
+            );
+          }).toList(),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) => ref.read(oddOneOutSettingsProvider.notifier).patch(
+                (x) => x.copyWith(rewardMultiplier: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Hints',
+          value: s.hintsEnabled,
+          onChanged: (v) => ref.read(oddOneOutSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hintsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(oddOneOutSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
         ),
       ],
     );
