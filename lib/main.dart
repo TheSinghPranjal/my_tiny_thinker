@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/app.dart';
+import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,11 +49,22 @@ class _AppBootstrapState extends ConsumerState<_AppBootstrap> {
   @override
   void initState() {
     super.initState();
-    ref.read(audioServiceProvider).initialize();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final audio = ref.read(audioServiceProvider);
+      await audio.initialize();
+      await audio.playHomeMusic();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<bool>(
+      settingsProvider.select((s) => s.musicEnabled),
+      (previous, next) {
+        if (previous == null || previous == next) return;
+        ref.read(audioServiceProvider).onMusicEnabledChanged(next);
+      },
+    );
     return const TinyThinkApp();
   }
 }

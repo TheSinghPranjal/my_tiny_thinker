@@ -21,7 +21,7 @@ class MascotWidget extends StatelessWidget {
       painter: _MascotPainter(waving: waving),
     );
     return waving
-        ? FloatingAnimation(child: mascot, amplitude: 6)
+        ? FloatingAnimation(amplitude: 6, child: mascot)
         : mascot;
   }
 }
