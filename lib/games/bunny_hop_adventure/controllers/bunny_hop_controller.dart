@@ -76,7 +76,7 @@ class BunnyHopController extends StateNotifier<BunnyHopState> {
       final rem = state.remainingSeconds - 1;
       final elapsed = state.elapsedSeconds + 1;
       if (rem <= 0) {
-        state = state.copyWith(elapsedSeconds: elapsed);
+        state = state.copyWith(remainingSeconds: 0, elapsedSeconds: elapsed);
         _requestEndSession();
         return;
       }
@@ -87,7 +87,7 @@ class BunnyHopController extends StateNotifier<BunnyHopState> {
   void _requestEndSession() {
     if (state.pendingEnd) return;
     if (state.hasActiveAnimation) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

@@ -52,6 +52,7 @@ class BalloonParadeController extends StateNotifier<BalloonParadeState> {
       if (state.sessionPhase != BalloonParadeSessionPhase.playing) return;
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _requestEndSession();
         return;
       }
@@ -64,7 +65,7 @@ class BalloonParadeController extends StateNotifier<BalloonParadeState> {
     final popping =
         state.balloons.any((b) => b.phase == BalloonPhase.popping);
     if (popping) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

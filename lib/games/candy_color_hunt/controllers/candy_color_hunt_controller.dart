@@ -66,6 +66,7 @@ class CandyColorHuntController extends StateNotifier<CandyHuntState> {
       }
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _requestEnd();
         return;
       }
@@ -76,7 +77,7 @@ class CandyColorHuntController extends StateNotifier<CandyHuntState> {
   void _requestEnd() {
     if (state.pendingEnd) return;
     if (state.phase == CandyHuntPhase.celebrating) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();

@@ -74,7 +74,7 @@ class ButterflyGardenController extends StateNotifier<ButterflyGardenState> {
         goldenDue = true;
       }
       if (rem <= 0) {
-        state = state.copyWith(elapsedSeconds: elapsed, goldenDue: goldenDue);
+        state = state.copyWith(remainingSeconds: 0, elapsedSeconds: elapsed, goldenDue: goldenDue);
         _requestEndSession();
         return;
       }
@@ -89,7 +89,7 @@ class ButterflyGardenController extends StateNotifier<ButterflyGardenState> {
   void _requestEndSession() {
     if (state.pendingEnd) return;
     if (state.hasActiveAnimation) {
-      state = state.copyWith(pendingEnd: true);
+      state = state.copyWith(pendingEnd: true, remainingSeconds: 0);
       return;
     }
     _endSession();
