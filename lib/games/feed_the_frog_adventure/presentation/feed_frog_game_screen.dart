@@ -55,7 +55,7 @@ class _FeedFrogGameScreenState extends ConsumerState<FeedFrogGameScreen>
     ref.read(feedFrogControllerProvider.notifier).reset();
     ref.read(feedFrogControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      _audio?.playMusic(asset: 'audio/ambient_music.mp3');
+      _audio?.playGameMusic();
     }
     _syncTicker(FeedFrogSessionPhase.playing);
   }
@@ -89,7 +89,7 @@ class _FeedFrogGameScreenState extends ConsumerState<FeedFrogGameScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    _audio?.stopMusic();
+    _audio?.playHomeMusic();
     super.dispose();
   }
 
