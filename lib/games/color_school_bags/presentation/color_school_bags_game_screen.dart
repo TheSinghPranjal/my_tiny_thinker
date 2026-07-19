@@ -54,7 +54,7 @@ class _ColorSchoolBagsGameScreenState
     ref.read(colorSchoolBagsControllerProvider.notifier).reset();
     ref.read(colorSchoolBagsControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _ticker ??= createTicker((_) {
       ref.read(colorSchoolBagsControllerProvider.notifier).tick(1 / 60);
@@ -80,7 +80,7 @@ class _ColorSchoolBagsGameScreenState
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 

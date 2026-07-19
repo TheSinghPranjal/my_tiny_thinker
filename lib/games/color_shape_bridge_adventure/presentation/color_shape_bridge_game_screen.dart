@@ -56,7 +56,7 @@ class _ColorShapeBridgeGameScreenState
     ref.read(colorShapeBridgeControllerProvider.notifier).reset();
     ref.read(colorShapeBridgeControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _ticker ??= createTicker((_) {
       ref.read(colorShapeBridgeControllerProvider.notifier).tick(1 / 60);
@@ -82,7 +82,7 @@ class _ColorShapeBridgeGameScreenState
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 
