@@ -298,10 +298,13 @@ class _PlayArea extends ConsumerWidget {
     final cupcakes = ref.watch(hungryTeddyControllerProvider.select((s) => s.cupcakes));
     final teddy = ref.watch(hungryTeddyControllerProvider.select((s) => s.teddy));
     final visitors = ref.watch(hungryTeddyControllerProvider.select((s) => s.visitors));
-    final evening = ref.watch(hungryTeddyControllerProvider.select((s) => s.eveningFactor));
     final settings = ref.watch(hungryTeddySettingsProvider);
     final showSparkles = ref.watch(hungryTeddyControllerProvider.select((s) => s.showSparkles));
     final draggingId = ref.watch(hungryTeddyControllerProvider.select((s) => s.draggingCupcakeId));
+    final elapsedSeconds = ref.watch(
+      hungryTeddyControllerProvider.select((s) => s.elapsedSeconds),
+    );
+    final showDragHint = elapsedSeconds < 5;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -316,24 +319,11 @@ class _PlayArea extends ConsumerWidget {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            CupcakeTableWidget(eveningFactor: evening),
-            if (isDragging)
-              Positioned(
-                left: mouthX - 78,
-                top: mouthY - 78,
-                child: IgnorePointer(
-                  child: _FeedZoneGlow(),
-                ),
-              ),
             ...visitors.map(
               (v) => PartyVisitorWidget(
                 visitor: v,
                 onTap: () => onTapVisitor(v.id),
               ),
-            ),
-            TeddyWidget(
-              teddy: teddy,
-              largerTouch: settings.largerTouchTargets,
             ),
             Positioned.fill(
               child: IgnorePointer(
@@ -344,13 +334,26 @@ class _PlayArea extends ConsumerWidget {
                 ),
               ),
             ),
-            if (draggingId == null &&
+            TeddyWidget(
+              teddy: teddy,
+              largerTouch: settings.largerTouchTargets,
+            ),
+            if (isDragging)
+              Positioned(
+                left: mouthX - 78,
+                top: mouthY - 78,
+                child: IgnorePointer(
+                  child: _FeedZoneGlow(),
+                ),
+              ),
+            if (showDragHint &&
+                draggingId == null &&
                 teddy.phase == TeddyPhase.idle &&
                 cupcakes.any((c) => c.canDrag))
               Positioned(
                 left: 12,
                 right: 12,
-                bottom: 18,
+                top: area.height * 0.40,
                 child: IgnorePointer(
                   child: _DragHint(larger: settings.largerTouchTargets),
                 ),

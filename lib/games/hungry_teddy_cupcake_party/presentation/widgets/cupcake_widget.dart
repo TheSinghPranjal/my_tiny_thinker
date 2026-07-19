@@ -1,158 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/logic/hungry_teddy_logic.dart';
 import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/models/hungry_teddy_models.dart';
 import 'package:my_tiny_thinker/games/shared/cupcake_varieties.dart';
-
-class CupcakeTableWidget extends StatelessWidget {
-  const CupcakeTableWidget({super.key, this.eveningFactor = 0});
-
-  final double eveningFactor;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _TablePainter(eveningFactor: eveningFactor),
-      size: Size.infinite,
-    );
-  }
-}
-
-class _TablePainter extends CustomPainter {
-  _TablePainter({required this.eveningFactor});
-
-  final double eveningFactor;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final tableLeft = size.width * 0.03;
-    final tableWidth = size.width * 0.50;
-    final tableTop = size.height * 0.42;
-    final tableDepth = size.height * 0.36;
-    final wood = Color.lerp(const Color(0xFFA1887F), const Color(0xFF5D4037), eveningFactor * 0.3)!;
-    final cloth = Color.lerp(const Color(0xFFFCE4EC), const Color(0xFFF48FB1), eveningFactor * 0.15)!;
-
-    // Teddy party rug
-    final rugCenter = Offset(size.width * 0.74, size.height * 0.72);
-    canvas.drawOval(
-      Rect.fromCenter(center: rugCenter, width: size.width * 0.34, height: size.height * 0.14),
-      Paint()
-        ..shader = RadialGradient(
-          colors: [
-            const Color(0xFFF48FB1).withValues(alpha: 0.7),
-            const Color(0xFFCE93D8).withValues(alpha: 0.45),
-            const Color(0xFFAB47BC).withValues(alpha: 0.15),
-          ],
-        ).createShader(Rect.fromCircle(center: rugCenter, radius: size.width * 0.17)),
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: rugCenter, width: size.width * 0.28, height: size.height * 0.1),
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.25)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 3,
-    );
-
-    // Table legs (thicker, rounded)
-    for (var i = 0; i < 4; i++) {
-      final lx = tableLeft + tableWidth * (0.12 + i * 0.26);
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(
-            center: Offset(lx, tableTop + tableDepth + 32),
-            width: 18,
-            height: 64,
-          ),
-          const Radius.circular(8),
-        ),
-        Paint()
-          ..shader = const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF8D6E63), Color(0xFF5D4037)],
-          ).createShader(Rect.fromLTWH(lx - 9, tableTop + tableDepth, 18, 64)),
-      );
-    }
-
-    // Table body with depth
-    final bodyRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(tableLeft, tableTop + 14, tableWidth, tableDepth),
-      const Radius.circular(14),
-    );
-    canvas.drawRRect(
-      bodyRect,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [wood, Color.lerp(wood, Colors.black, 0.2)!],
-        ).createShader(bodyRect.outerRect),
-    );
-
-    // Front edge highlight
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(tableLeft + 6, tableTop + 18, tableWidth - 12, 10),
-        const Radius.circular(6),
-      ),
-      Paint()..color = Colors.white.withValues(alpha: 0.12),
-    );
-
-    // Party tablecloth draped over top
-    final clothRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(tableLeft - 8, tableTop, tableWidth + 16, 36),
-      const Radius.circular(16),
-    );
-    canvas.drawRRect(clothRect, Paint()..color = cloth);
-    canvas.drawRRect(
-      clothRect,
-      Paint()
-        ..color = const Color(0xFFEC407A).withValues(alpha: 0.45)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5,
-    );
-
-    // Scalloped hem
-    for (var i = 0; i < 9; i++) {
-      final sx = tableLeft + i * (tableWidth / 8);
-      canvas.drawArc(
-        Rect.fromCenter(center: Offset(sx, tableTop + 34), width: 20, height: 14),
-        0,
-        math.pi,
-        false,
-        Paint()..color = cloth,
-      );
-      canvas.drawCircle(
-        Offset(sx, tableTop + 18),
-        3,
-        Paint()..color = const Color(0xFFFF80AB).withValues(alpha: 0.7),
-      );
-    }
-
-    // Soft slot guides (subtle circles where cupcakes sit)
-    const slots = [
-      (0.12, 0.55),
-      (0.22, 0.55),
-      (0.32, 0.55),
-      (0.12, 0.67),
-      (0.22, 0.67),
-      (0.32, 0.67),
-    ];
-    for (final (nx, ny) in slots) {
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: Offset(size.width * nx, size.height * ny + 18),
-          width: 44,
-          height: 12,
-        ),
-        Paint()..color = const Color(0xFF5D4037).withValues(alpha: 0.08),
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _TablePainter old) => old.eveningFactor != eveningFactor;
-}
 
 class CupcakeWidget extends StatelessWidget {
   const CupcakeWidget({
@@ -176,7 +27,7 @@ class CupcakeWidget extends StatelessWidget {
 
     final def = CupcakeVarieties.byIndex(cupcake.varietyIndex, isGolden: cupcake.isGolden);
     final size = (largerTouch ? 100.0 : 90.0) * cupcake.scale;
-    final touchPad = size * 1.2;
+    final touchPad = size * 1.35;
     final isDragging = cupcake.phase == CupcakePhase.dragging;
     final isSnapping = cupcake.phase == CupcakePhase.snapping;
     final displayX = isDragging || isSnapping ? (isDragging ? cupcake.dragX : cupcake.x) : cupcake.x;

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/logic/hungry_teddy_logic.dart';
 
 class PartyBackground extends StatelessWidget {
   const PartyBackground({
@@ -117,6 +118,32 @@ class _PartyRoomPainter extends CustomPainter {
     canvas.drawRect(
       Rect.fromLTWH(0, size.height * 0.775, size.width, 8),
       Paint()..color = const Color(0xFFEC407A).withValues(alpha: 0.55),
+    );
+    _drawTeddyRug(canvas, size);
+  }
+
+  void _drawTeddyRug(Canvas canvas, Size size) {
+    final rugCenter = Offset(
+      size.width * HungryTeddyLogic.rugCenterXFrac,
+      size.height * HungryTeddyLogic.rugCenterYFrac,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: rugCenter, width: size.width * 0.42, height: size.height * 0.12),
+      Paint()
+        ..shader = RadialGradient(
+          colors: [
+            const Color(0xFFF48FB1).withValues(alpha: 0.7),
+            const Color(0xFFCE93D8).withValues(alpha: 0.45),
+            const Color(0xFFAB47BC).withValues(alpha: 0.15),
+          ],
+        ).createShader(Rect.fromCircle(center: rugCenter, radius: size.width * 0.21)),
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: rugCenter, width: size.width * 0.34, height: size.height * 0.08),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.25)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
     );
   }
 

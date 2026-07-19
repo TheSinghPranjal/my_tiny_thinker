@@ -8,23 +8,34 @@ abstract final class HungryTeddyLogic {
   static final random = math.Random();
   static const snapDistance = 95.0;
 
+  /// Teddy sits on a rug at the bottom of the play area.
+  static const teddyXFrac = 0.5;
+  static const teddyYFrac = 0.82;
+  static const rugCenterXFrac = 0.5;
+  static const rugCenterYFrac = 0.88;
+
+  /// Cupcake slots — two roomy rows across the top (supports up to 10).
   static const tableSlots = <(double, double)>[
-    (0.12, 0.55),
-    (0.22, 0.55),
-    (0.32, 0.55),
-    (0.12, 0.67),
-    (0.22, 0.67),
-    (0.32, 0.67),
+    (0.12, 0.15),
+    (0.30, 0.15),
+    (0.50, 0.15),
+    (0.70, 0.15),
+    (0.88, 0.15),
+    (0.12, 0.27),
+    (0.30, 0.27),
+    (0.50, 0.27),
+    (0.70, 0.27),
+    (0.88, 0.27),
   ];
 
-  static const minSlotDistance = 0.07;
+  static const minSlotDistance = 0.08;
 
   static (double, double) teddyAnchor(Size area) =>
-      (area.width * 0.74, area.height * 0.56);
+      (area.width * teddyXFrac, area.height * teddyYFrac);
 
   static (double, double) teddyMouth(Size area) {
     final (tx, ty) = teddyAnchor(area);
-    return (tx - 18, ty - 28);
+    return (tx, ty - 52);
   }
 
   static (double, double) slotPosition(Size area, int slotIndex) {
@@ -144,10 +155,13 @@ abstract final class HungryTeddyLogic {
   static PartyVisitorEntity spawnVisitor(Size area) {
     final kind = PartyVisitorKind.values[random.nextInt(PartyVisitorKind.values.length)];
     final (x, y) = switch (kind) {
-      PartyVisitorKind.balloon => (area.width * random.nextDouble(), area.height * 0.85),
-      PartyVisitorKind.toyAnimal => (area.width * 0.08, area.height * 0.22),
-      PartyVisitorKind.giftBox => (area.width * 0.92, area.height * 0.78),
-      PartyVisitorKind.bird => (area.width + 30.0, area.height * 0.12),
+      PartyVisitorKind.balloon => (
+          area.width * (0.08 + random.nextDouble() * 0.84),
+          area.height * 0.44,
+        ),
+      PartyVisitorKind.toyAnimal => (area.width * 0.07, area.height * 0.50),
+      PartyVisitorKind.giftBox => (area.width * 0.93, area.height * 0.52),
+      PartyVisitorKind.bird => (area.width + 30.0, area.height * 0.06),
     };
     return PartyVisitorEntity(
       id: 'visitor_${DateTime.now().microsecondsSinceEpoch}',
