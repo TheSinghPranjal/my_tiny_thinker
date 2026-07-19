@@ -66,6 +66,16 @@ enum GameId {
     'moon_rescue_adventure',
     '🚀',
     'Moon Rescue Adventure',
+  ),
+  balloonParade(
+    'balloon_parade',
+    '🎈',
+    'Balloon Parade',
+  ),
+  colorBalloonPop(
+    'color_balloon_pop',
+    '🎨',
+    'Color Balloon Pop',
   );
 
   const GameId(this.id, this.emoji, this.displayName);

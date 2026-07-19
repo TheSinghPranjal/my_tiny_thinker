@@ -138,7 +138,7 @@ class PremiumSubscriptionScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.md),
             _PlanCard(
               title: '1 Month',
-              price: '\$4.99',
+              price: '\$2.99',
               subtitle: 'Flexible monthly learning',
               highlighted: false,
               onBuy: () => _placeholderPurchase(context),
@@ -146,8 +146,8 @@ class PremiumSubscriptionScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.md),
             _PlanCard(
               title: '6 Months',
-              price: '\$22.99',
-              subtitle: 'Save 23%',
+              price: '\$16.99',
+              subtitle: 'Save 12%',
               badge: 'Popular',
               highlighted: false,
               onBuy: () => _placeholderPurchase(context),
@@ -155,8 +155,8 @@ class PremiumSubscriptionScreen extends ConsumerWidget {
             const SizedBox(height: AppSpacing.md),
             _PlanCard(
               title: '12 Months',
-              price: '\$39.99',
-              subtitle: 'Best Value · Save 33%',
+              price: '\$29.99',
+              subtitle: 'Best Value · Save 17%',
               badge: 'Best Value',
               highlighted: true,
               onBuy: () => _placeholderPurchase(context),
