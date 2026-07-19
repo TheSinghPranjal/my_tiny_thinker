@@ -275,11 +275,11 @@ class _JunglePlayArea extends ConsumerWidget {
             clipBehavior: Clip.hardEdge,
             children: [
               Positioned(
-                left: w * 0.08,
-                top: h * 0.02,
+                left: w * 0.02,
+                top: 0,
                 child: BananaTreeWidget(
-                  width: w * 0.84,
-                  height: h * 0.72,
+                  width: w * 0.96,
+                  height: h * 0.78,
                   envPhase: envPhase,
                   reducedMotion: reducedMotion,
                 ),
@@ -296,8 +296,8 @@ class _JunglePlayArea extends ConsumerWidget {
                 ),
               ...bananas.where((b) => b.phase == BananaPhase.onTree || b.phase == BananaPhase.growing).map(
                     (banana) => Positioned(
-                      left: banana.x - (largerTouch ? 36 : 32),
-                      top: banana.y - (largerTouch ? 36 : 32),
+                      left: banana.x - (largerTouch ? 48 : 42),
+                      top: banana.y - (largerTouch ? 48 : 42),
                       child: BananaWidget(
                         banana: banana,
                         largerTouch: largerTouch,
@@ -307,8 +307,8 @@ class _JunglePlayArea extends ConsumerWidget {
                   ),
               ...bananas.where((b) => b.phase == BananaPhase.tapped || b.phase == BananaPhase.falling).map(
                     (banana) => Positioned(
-                      left: banana.x - 18 * banana.sizeScale,
-                      top: banana.y - 24 * banana.sizeScale,
+                      left: banana.x - 28 * banana.sizeScale,
+                      top: banana.y - 34 * banana.sizeScale,
                       child: FallingBananaWidget(banana: banana),
                     ),
                   ),
