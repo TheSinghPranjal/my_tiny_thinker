@@ -21,9 +21,11 @@ enum SoundEffect {
 /// Soothing loop tracks for TinyThink.
 abstract final class AppMusic {
   /// Home, settings, parent zone, onboarding — everywhere outside games.
+  /// Controlled by Settings → Music.
   static const home = 'audio/home_music.mp3';
 
   /// Shared background loop while any game is open.
+  /// Controlled by Settings → Game sound.
   static const game = 'audio/game_music.mp3';
 }
 
@@ -56,6 +58,12 @@ class AudioService {
   bool get _soundEnabled => _ref.read(settingsProvider).soundEnabled;
   bool get _musicEnabled => _ref.read(settingsProvider).musicEnabled;
 
+  bool _isTrackAllowed(String asset) {
+    if (asset == AppMusic.home) return _musicEnabled;
+    if (asset == AppMusic.game) return _soundEnabled;
+    return _musicEnabled;
+  }
+
   Future<void> playSfx(SoundEffect effect) async {
     if (!_soundEnabled) return;
     try {
@@ -78,7 +86,10 @@ class AudioService {
   Future<void> playMusic({String asset = AppMusic.home}) async {
     await initialize();
     _activeTrack = asset;
-    if (!_musicEnabled) return;
+    if (!_isTrackAllowed(asset)) {
+      await stopMusic();
+      return;
+    }
 
     // Keep looping without restarting the same track.
     if (_playingTrack == asset &&
@@ -109,7 +120,7 @@ class AudioService {
   }
 
   Future<void> resumeMusic() async {
-    if (!_musicEnabled) return;
+    if (!_isTrackAllowed(_activeTrack)) return;
     if (_playingTrack != null) {
       await _musicPlayer.resume();
       return;
@@ -117,10 +128,21 @@ class AudioService {
     await playMusic(asset: _activeTrack);
   }
 
-  /// Apply the global music toggle without losing the current track choice.
+  /// Settings → Music (home loop only).
   Future<void> onMusicEnabledChanged(bool enabled) async {
+    if (_activeTrack != AppMusic.home) return;
     if (enabled) {
-      await playMusic(asset: _activeTrack);
+      await playHomeMusic();
+    } else {
+      await stopMusic();
+    }
+  }
+
+  /// Settings → Game sound (in-game loop + SFX).
+  Future<void> onGameSoundEnabledChanged(bool enabled) async {
+    if (_activeTrack != AppMusic.game) return;
+    if (enabled) {
+      await playGameMusic();
     } else {
       await stopMusic();
     }

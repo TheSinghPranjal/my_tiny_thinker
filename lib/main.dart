@@ -65,6 +65,13 @@ class _AppBootstrapState extends ConsumerState<_AppBootstrap> {
         ref.read(audioServiceProvider).onMusicEnabledChanged(next);
       },
     );
+    ref.listen<bool>(
+      settingsProvider.select((s) => s.soundEnabled),
+      (previous, next) {
+        if (previous == null || previous == next) return;
+        ref.read(audioServiceProvider).onGameSoundEnabledChanged(next);
+      },
+    );
     return const TinyThinkApp();
   }
 }
