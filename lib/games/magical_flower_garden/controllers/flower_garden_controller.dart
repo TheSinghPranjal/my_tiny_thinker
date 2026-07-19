@@ -64,6 +64,7 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
       if (state.sessionPhase != GardenSessionPhase.playing) return;
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _endSession(reason: 'timer');
         return;
       }

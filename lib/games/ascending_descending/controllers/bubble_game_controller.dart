@@ -142,6 +142,7 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
       if (state.config.timerMode == TimerMode.timed || state.config.toddlerMode) {
         remaining = remaining - 1;
         if (remaining <= 0) {
+          state = state.copyWith(remainingSeconds: 0);
           _endGame(victory: false);
           return;
         }

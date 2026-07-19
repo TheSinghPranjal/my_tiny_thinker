@@ -95,6 +95,7 @@ class OceanFishController extends StateNotifier<OceanFishState> {
       if (state.phase != OceanFishPhase.playing) return;
       final rem = state.remainingSeconds - 1;
       if (rem <= 0) {
+        state = state.copyWith(remainingSeconds: 0);
         _endSession();
         return;
       }
