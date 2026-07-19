@@ -56,7 +56,7 @@ class _AlphabetQuizGameScreenState extends ConsumerState<AlphabetQuizGameScreen>
     ref.read(alphabetQuizControllerProvider.notifier).reset();
     ref.read(alphabetQuizControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
   }
 
@@ -76,7 +76,7 @@ class _AlphabetQuizGameScreenState extends ConsumerState<AlphabetQuizGameScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 

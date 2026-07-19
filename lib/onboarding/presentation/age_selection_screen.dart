@@ -82,7 +82,12 @@ class _AgeSelectionScreenState extends ConsumerState<AgeSelectionScreen> {
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeOutBack,
                         transform: Matrix4.identity()
-                          ..scale(isSelected ? 1.03 : 1.0),
+                          ..scaleByDouble(
+                            isSelected ? 1.03 : 1.0,
+                            isSelected ? 1.03 : 1.0,
+                            isSelected ? 1.03 : 1.0,
+                            1.0,
+                          ),
                         padding: const EdgeInsets.all(AppSpacing.lg),
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.92),
