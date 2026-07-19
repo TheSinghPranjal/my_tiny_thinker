@@ -52,7 +52,7 @@ class _OceanFishGameScreenState extends ConsumerState<OceanFishGameScreen>
     final settings = ref.read(oceanFishSettingsProvider);
     ref.read(oceanFishControllerProvider.notifier).reset();
     ref.read(oceanFishControllerProvider.notifier).startGame(settings);
-    ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+    ref.read(audioServiceProvider).playGameMusic();
     _syncTicker(OceanFishPhase.playing);
   }
 
@@ -85,7 +85,7 @@ class _OceanFishGameScreenState extends ConsumerState<OceanFishGameScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 
