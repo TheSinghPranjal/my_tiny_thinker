@@ -11,7 +11,6 @@ class MemoryRepository {
 
   final StorageService _storage;
   static const _hubStatsKey = 'memory_hub_statistics';
-  static const _unlockedThemesKey = 'memory_unlocked_themes';
 
   MemoryHubStatistics loadStatistics() {
     final json = _storage.getJson(_hubStatsKey);

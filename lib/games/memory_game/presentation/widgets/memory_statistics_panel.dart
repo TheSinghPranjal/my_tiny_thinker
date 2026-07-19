@@ -3,7 +3,6 @@ import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
-import 'package:my_tiny_thinker/games/memory_game/logic/memory_game_logic.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
 
 class MemoryStatisticsPanel extends StatelessWidget {
