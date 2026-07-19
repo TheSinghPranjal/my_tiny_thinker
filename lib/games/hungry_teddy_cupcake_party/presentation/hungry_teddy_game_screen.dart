@@ -59,7 +59,7 @@ class _HungryTeddyGameScreenState extends ConsumerState<HungryTeddyGameScreen>
     ref.read(hungryTeddyControllerProvider.notifier).reset();
     ref.read(hungryTeddyControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(HungryTeddySessionPhase.playing);
   }
@@ -93,7 +93,7 @@ class _HungryTeddyGameScreenState extends ConsumerState<HungryTeddyGameScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    _audio?.stopMusic();
+    _audio?.playHomeMusic();
     super.dispose();
   }
 
