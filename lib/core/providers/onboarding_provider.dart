@@ -80,6 +80,7 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
         'color_memory',
         'memory_game',
         'color_balloon_pop',
+        'odd_one_out',
       ],
     AgeGroup.smartExplorers => [
         'color_shape_bridge_adventure',
