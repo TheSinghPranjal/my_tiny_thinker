@@ -29,6 +29,7 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
     with WidgetsBindingObserver {
   bool _resultShown = false;
   bool _initialized = false;
+  AudioService? _audio;
 
   @override
   void initState() {
@@ -40,6 +41,8 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
   void _init() {
     if (_initialized) return;
     _initialized = true;
+    _audio = ref.read(audioServiceProvider);
+    _audio?.playGameMusic();
     final config = widget.initialConfig ??
         (GoRouterState.of(context).extra as MemoryGameConfig?);
     if (config != null) {
@@ -57,6 +60,7 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _audio?.playHomeMusic();
     super.dispose();
   }
 
