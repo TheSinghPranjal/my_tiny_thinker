@@ -55,7 +55,7 @@ class _PatternMatchGameScreenState extends ConsumerState<PatternMatchGameScreen>
     ref.read(patternMatchControllerProvider.notifier).reset();
     ref.read(patternMatchControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
   }
 
@@ -75,7 +75,7 @@ class _PatternMatchGameScreenState extends ConsumerState<PatternMatchGameScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 

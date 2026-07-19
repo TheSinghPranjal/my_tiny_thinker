@@ -54,7 +54,7 @@ class _OddOneOutGameScreenState extends ConsumerState<OddOneOutGameScreen>
     ref.read(oddOneOutControllerProvider.notifier).reset();
     ref.read(oddOneOutControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
   }
 
@@ -74,7 +74,7 @@ class _OddOneOutGameScreenState extends ConsumerState<OddOneOutGameScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 
