@@ -41,6 +41,10 @@ import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/presentation/
 import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/presentation/color_shape_bridge_game_screen.dart';
 import 'package:my_tiny_thinker/games/moon_rescue_adventure/presentation/moon_rescue_setup_screen.dart';
 import 'package:my_tiny_thinker/games/moon_rescue_adventure/presentation/moon_rescue_game_screen.dart';
+import 'package:my_tiny_thinker/games/balloon_parade/presentation/balloon_parade_setup_screen.dart';
+import 'package:my_tiny_thinker/games/balloon_parade/presentation/balloon_parade_game_screen.dart';
+import 'package:my_tiny_thinker/games/color_balloon_pop/presentation/color_balloon_pop_setup_screen.dart';
+import 'package:my_tiny_thinker/games/color_balloon_pop/presentation/color_balloon_pop_game_screen.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_setup_screen.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/presentation/cloud_pop_garden_game_screen.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/presentation/flower_garden_setup_screen.dart';
@@ -128,6 +132,10 @@ abstract final class AppRoutes {
   static const colorShapeBridgeGame = '/games/color-shape-bridge/play';
   static const moonRescueSetup = '/games/moon-rescue/setup';
   static const moonRescueGame = '/games/moon-rescue/play';
+  static const balloonParadeSetup = '/games/balloon-parade/setup';
+  static const balloonParadeGame = '/games/balloon-parade/play';
+  static const colorBalloonPopSetup = '/games/color-balloon-pop/setup';
+  static const colorBalloonPopGame = '/games/color-balloon-pop/play';
   static const welcome = '/welcome';
   static const ageSelection = '/onboarding/age';
   static const avatarSelection = '/onboarding/avatar';
@@ -463,6 +471,26 @@ final appRouter = GoRouter(
       path: AppRoutes.moonRescueGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const MoonRescueGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.balloonParadeSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const BalloonParadeSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.balloonParadeGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const BalloonParadeGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.colorBalloonPopSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ColorBalloonPopSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.colorBalloonPopGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ColorBalloonPopGameScreen()),
     ),
   ],
 );
