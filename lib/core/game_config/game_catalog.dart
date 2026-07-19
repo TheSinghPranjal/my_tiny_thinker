@@ -107,9 +107,19 @@ abstract final class GameCatalog {
       subtitle: 'Tap the fish swimming in the ocean!',
     ),
     GameCatalogEntry(
+      gameId: GameId.balloonParade,
+      category: LearningCategory.littleExplorers,
+      subtitle: 'Tap rising balloons in a magical parade!',
+    ),
+    GameCatalogEntry(
       gameId: GameId.colorSchoolBags,
       category: LearningCategory.tinyLearners,
       subtitle: 'Drag books into matching backpacks!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.colorBalloonPop,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Find and pop the matching color balloon!',
     ),
     GameCatalogEntry(
       gameId: GameId.alphabetBridgeAdventure,

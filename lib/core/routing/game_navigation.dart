@@ -63,6 +63,10 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.colorShapeBridgeSetup);
     case GameId.moonRescueAdventure:
       context.push(AppRoutes.moonRescueSetup);
+    case GameId.balloonParade:
+      context.push(AppRoutes.balloonParadeSetup);
+    case GameId.colorBalloonPop:
+      context.push(AppRoutes.colorBalloonPopSetup);
   }
 }
 
