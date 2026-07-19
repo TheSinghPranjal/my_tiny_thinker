@@ -26,6 +26,8 @@ import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/repository/hung
 import 'package:my_tiny_thinker/games/magical_flower_garden/repository/flower_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/moon_rescue_adventure/repository/moon_rescue_settings_repository.dart';
 import 'package:my_tiny_thinker/games/number_bridge_adventure/repository/number_bridge_settings_repository.dart';
+import 'package:my_tiny_thinker/games/odd_one_out/repository/odd_one_out_settings_repository.dart';
+import 'package:my_tiny_thinker/games/pattern_match/repository/pattern_match_settings_repository.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
 import 'package:my_tiny_thinker/games/balloon_parade/repository/balloon_parade_settings_repository.dart';
 import 'package:my_tiny_thinker/games/color_balloon_pop/repository/color_balloon_pop_settings_repository.dart';
@@ -71,6 +73,9 @@ class ParentGameSettingsCard extends ConsumerWidget {
         ref.watch(alphabetBridgeSettingsProvider).sessionSeconds,
       GameId.numberBridgeAdventure =>
         ref.watch(numberBridgeSettingsProvider).sessionSeconds,
+      GameId.oddOneOut => ref.watch(oddOneOutSettingsProvider).sessionSeconds,
+      GameId.patternMatch =>
+        ref.watch(patternMatchSettingsProvider).sessionSeconds,
       GameId.pictureBridgeAdventure =>
         ref.watch(pictureBridgeSettingsProvider).sessionSeconds,
       GameId.colorShapeBridgeAdventure =>
@@ -134,6 +139,12 @@ class ParentGameSettingsCard extends ConsumerWidget {
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.numberBridgeAdventure:
         ref.read(numberBridgeSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.oddOneOut:
+        ref.read(oddOneOutSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.patternMatch:
+        ref.read(patternMatchSettingsProvider.notifier)
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.pictureBridgeAdventure:
         ref.read(pictureBridgeSettingsProvider.notifier)
