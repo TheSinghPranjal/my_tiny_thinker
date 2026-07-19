@@ -65,7 +65,7 @@ class _HungryDuckGameScreenState extends ConsumerState<HungryDuckGameScreen>
     ref.read(hungryDuckControllerProvider.notifier).reset();
     ref.read(hungryDuckControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(HungryDuckSessionPhase.playing);
   }
@@ -92,7 +92,7 @@ class _HungryDuckGameScreenState extends ConsumerState<HungryDuckGameScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    _audio?.stopMusic();
+    _audio?.playHomeMusic();
     super.dispose();
   }
 
