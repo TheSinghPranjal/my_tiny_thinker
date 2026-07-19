@@ -51,7 +51,7 @@ class _PeekABooGameScreenState extends ConsumerState<PeekABooGameScreen>
     ref.read(peekABooControllerProvider.notifier).reset();
     ref.read(peekABooControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(PeekABooSessionPhase.playing);
   }
@@ -85,7 +85,7 @@ class _PeekABooGameScreenState extends ConsumerState<PeekABooGameScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 

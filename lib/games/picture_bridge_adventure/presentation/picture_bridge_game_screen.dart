@@ -55,7 +55,7 @@ class _PictureBridgeGameScreenState extends ConsumerState<PictureBridgeGameScree
     ref.read(pictureBridgeControllerProvider.notifier).reset();
     ref.read(pictureBridgeControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _ticker ??= createTicker((_) {
       ref.read(pictureBridgeControllerProvider.notifier).tick(1 / 60);
@@ -81,7 +81,7 @@ class _PictureBridgeGameScreenState extends ConsumerState<PictureBridgeGameScree
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 
