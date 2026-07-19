@@ -65,6 +65,7 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
         'magical_flower_garden',
         'bubble_number_pop',
         'ocean_fish_adventure',
+        'balloon_parade',
       ],
     AgeGroup.tinyLearners => [
         'color_school_bags',
@@ -78,6 +79,7 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
         'bubble_number_pop',
         'color_memory',
         'memory_game',
+        'color_balloon_pop',
       ],
     AgeGroup.smartExplorers => [
         'color_shape_bridge_adventure',
