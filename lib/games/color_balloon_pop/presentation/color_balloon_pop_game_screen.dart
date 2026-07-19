@@ -57,7 +57,7 @@ class _ColorBalloonPopGameScreenState
     ref.read(colorBalloonPopControllerProvider.notifier).reset();
     ref.read(colorBalloonPopControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(ColorBalloonSessionPhase.playing);
   }
@@ -91,7 +91,7 @@ class _ColorBalloonPopGameScreenState
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 

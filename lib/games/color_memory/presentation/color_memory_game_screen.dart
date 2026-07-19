@@ -28,6 +28,7 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
   bool _started = false;
   bool _resultShown = false;
   final _particleKey = GlobalKey<ParticleSystemState>();
+  AudioService? _audio;
 
   @override
   void initState() {
@@ -35,11 +36,19 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_started) {
         _started = true;
+        _audio = ref.read(audioServiceProvider);
+        _audio?.playGameMusic();
         ref.read(colorMemoryControllerProvider.notifier).start(
               ref.read(colorMemoryConfigProvider),
             );
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _audio?.playHomeMusic();
+    super.dispose();
   }
 
   Future<void> _pause() async {
@@ -290,7 +299,13 @@ class _ColorTile extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOutBack,
-        transform: Matrix4.identity()..scale(isActive ? 1.08 : 1.0),
+        transform: Matrix4.identity()
+          ..scaleByDouble(
+            isActive ? 1.08 : 1.0,
+            isActive ? 1.08 : 1.0,
+            isActive ? 1.08 : 1.0,
+            1.0,
+          ),
         decoration: BoxDecoration(
           gradient: isActive ? AppGradients.rainbow : AppGradients.welcomeCard,
           borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
