@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96" fill="none">
+  <!-- Stem / crown -->
+  <path d="M36 10 C34 4 38 2 42 4 C46 2 50 4 48 10 C52 12 54 16 52 20 L28 20 C26 16 28 12 36 10Z" fill="#6D4C41"/>
+  <path d="M34 14 C38 10 46 10 50 14 C48 12 40 11 34 14Z" fill="#8D6E63" opacity="0.55"/>
+  <ellipse cx="40" cy="20" rx="13" ry="5" fill="#5D4037"/>
+
+  <!-- Left banana -->
+  <path d="M22 22
+           C10 30 6 48 10 66
+           C12 76 18 84 26 86
+           C30 87 33 84 32 78
+           C28 62 28 42 34 28
+           C35 24 28 20 22 22Z"
+        fill="#FDD835"/>
+  <path d="M24 28
+           C16 36 14 52 16 66
+           C17 74 21 80 26 82
+           C28 78 26 64 28 46
+           C29 36 28 30 24 28Z"
+        fill="#FFF59D" opacity="0.55"/>
+  <path d="M14 48 C12 58 14 70 18 78" stroke="#F9A825" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>
+  <ellipse cx="26" cy="84" rx="3.2" ry="2.4" fill="#6D4C41"/>
+
+  <!-- Mid-left banana -->
+  <path d="M32 22
+           C20 32 16 50 20 68
+           C22 78 28 86 36 88
+           C40 89 43 86 42 80
+           C38 64 38 44 44 30
+           C45 26 38 20 32 22Z"
+        fill="#FFEB3B"/>
+  <path d="M34 28
+           C26 36 24 54 26 68
+           C27 76 31 82 36 84
+           C38 80 36 66 38 48
+           C39 38 38 32 34 28Z"
+        fill="#FFFDE7" opacity="0.5"/>
+  <path d="M24 50 C22 60 24 72 28 80" stroke="#FBC02D" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <ellipse cx="36" cy="86" rx="3.2" ry="2.4" fill="#6D4C41"/>
+
+  <!-- Mid-right banana -->
+  <path d="M48 22
+           C60 30 64 48 60 66
+           C58 76 52 84 44 86
+           C40 87 37 84 38 78
+           C42 62 42 42 36 28
+           C35 24 42 20 48 22Z"
+        fill="#FDD835"/>
+  <path d="M46 28
+           C54 36 56 52 54 66
+           C53 74 49 80 44 82
+           C42 78 44 64 42 46
+           C41 36 42 30 46 28Z"
+        fill="#FFF59D" opacity="0.45"/>
+  <path d="M56 48 C58 58 56 70 52 78" stroke="#F9A825" stroke-width="2.2" stroke-linecap="round" opacity="0.5"/>
+  <ellipse cx="44" cy="84" rx="3.2" ry="2.4" fill="#6D4C41"/>
+
+  <!-- Right banana -->
+  <path d="M58 22
+           C70 30 74 48 70 66
+           C68 76 62 84 54 86
+           C50 87 47 84 48 78
+           C52 62 52 42 46 28
+           C45 24 52 20 58 22Z"
+        fill="#FFEB3B"/>
+  <path d="M56 28
+           C64 36 66 54 64 68
+           C63 76 59 82 54 84
+           C52 80 54 66 52 48
+           C51 38 52 32 56 28Z"
+        fill="#FFFDE7" opacity="0.5"/>
+  <path d="M66 50 C68 60 66 72 62 80" stroke="#FBC02D" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+  <ellipse cx="54" cy="86" rx="3.2" ry="2.4" fill="#6D4C41"/>
+</svg>
