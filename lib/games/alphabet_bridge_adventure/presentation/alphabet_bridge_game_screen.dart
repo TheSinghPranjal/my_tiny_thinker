@@ -59,7 +59,7 @@ class _AlphabetBridgeGameScreenState
     ref.read(alphabetBridgeControllerProvider.notifier).reset();
     ref.read(alphabetBridgeControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _ticker ??= createTicker((_) {
       ref.read(alphabetBridgeControllerProvider.notifier).tick(1 / 60);
@@ -111,7 +111,7 @@ class _AlphabetBridgeGameScreenState
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 

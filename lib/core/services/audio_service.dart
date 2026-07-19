@@ -18,6 +18,15 @@ enum SoundEffect {
   final String fileName;
 }
 
+/// Soothing loop tracks for TinyThink.
+abstract final class AppMusic {
+  /// Home, settings, parent zone, onboarding — everywhere outside games.
+  static const home = 'audio/home_music.mp3';
+
+  /// Shared background loop while any game is open.
+  static const game = 'audio/game_music.mp3';
+}
+
 final audioServiceProvider = Provider<AudioService>((ref) {
   final service = AudioService(ref);
   ref.onDispose(service.dispose);
@@ -32,11 +41,15 @@ class AudioService {
   final AudioPlayer _musicPlayer = AudioPlayer();
   bool _initialized = false;
 
+  /// Last requested loop track (kept so music can resume after toggle).
+  String _activeTrack = AppMusic.home;
+  String? _playingTrack;
+
   Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
     await _musicPlayer.setReleaseMode(ReleaseMode.loop);
-    await _musicPlayer.setVolume(0.3);
+    await _musicPlayer.setVolume(0.28);
     await _sfxPlayer.setVolume(0.7);
   }
 
@@ -58,11 +71,28 @@ class AudioService {
     }
   }
 
-  Future<void> playMusic({String asset = 'audio/ambient_music.mp3'}) async {
+  Future<void> playHomeMusic() => playMusic(asset: AppMusic.home);
+
+  Future<void> playGameMusic() => playMusic(asset: AppMusic.game);
+
+  Future<void> playMusic({String asset = AppMusic.home}) async {
+    await initialize();
+    _activeTrack = asset;
     if (!_musicEnabled) return;
+
+    // Keep looping without restarting the same track.
+    if (_playingTrack == asset &&
+        _musicPlayer.state == PlayerState.playing) {
+      return;
+    }
+
     try {
-      await _musicPlayer.play(AssetSource(asset), volume: 0.3);
+      await _musicPlayer.stop();
+      await _musicPlayer.setReleaseMode(ReleaseMode.loop);
+      await _musicPlayer.play(AssetSource(asset), volume: 0.28);
+      _playingTrack = asset;
     } catch (e) {
+      _playingTrack = null;
       if (kDebugMode) {
         debugPrint('AudioService: Could not play music: $e');
       }
@@ -71,6 +101,7 @@ class AudioService {
 
   Future<void> stopMusic() async {
     await _musicPlayer.stop();
+    _playingTrack = null;
   }
 
   Future<void> pauseMusic() async {
@@ -78,8 +109,20 @@ class AudioService {
   }
 
   Future<void> resumeMusic() async {
-    if (_musicEnabled) {
+    if (!_musicEnabled) return;
+    if (_playingTrack != null) {
       await _musicPlayer.resume();
+      return;
+    }
+    await playMusic(asset: _activeTrack);
+  }
+
+  /// Apply the global music toggle without losing the current track choice.
+  Future<void> onMusicEnabledChanged(bool enabled) async {
+    if (enabled) {
+      await playMusic(asset: _activeTrack);
+    } else {
+      await stopMusic();
     }
   }
 
