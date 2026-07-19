@@ -133,10 +133,17 @@ abstract final class PatternMatchScoring {
   static int pointsForCorrect(int streak) => 10 + (streak >= 2 ? 5 : 0);
 
   static PatternMatchResult calculate(PatternMatchState state, int previousBest) {
-    final isPerfect = state.mistakes == 0 && state.isComplete;
-    var score = state.score;
+    final solved = state.roundsSolved ? state.round : 0;
+    final isPerfect = state.mistakes == 0 && solved >= 3;
+    var score = (state.score * state.settings.rewardMultiplier).round();
     if (isPerfect) score += 100;
-    final stars = isPerfect ? 3 : state.mistakes <= 2 ? 2 : 1;
+    final stars = isPerfect
+        ? 3
+        : state.mistakes <= 2
+            ? 2
+            : solved > 0
+                ? 1
+                : 0;
     return PatternMatchResult(
       score: score,
       stars: stars,
@@ -144,6 +151,7 @@ abstract final class PatternMatchScoring {
       xp: score ~/ 5,
       longestStreak: state.longestStreak,
       mistakes: state.mistakes,
+      roundsSolved: solved,
       isPerfect: isPerfect,
       isNewBest: score > previousBest,
     );
