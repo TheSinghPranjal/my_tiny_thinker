@@ -33,7 +33,6 @@ abstract final class OddOneOutGenerator {
 
   static List<OddOneItem> generatePuzzle(OddOneOutConfig config) {
     final count = itemCountFor(config.difficulty);
-    final grid = gridSizeFor(config.difficulty);
     final (common, odd) = _pickPair(config.category, config.difficulty);
 
     final oddIndex = _random.nextInt(count);
@@ -136,23 +135,27 @@ abstract final class OddOneOutScoring {
   static int pointsForCorrect(int streak) => 10 + (streak >= 2 ? 5 : 0);
 
   static OddOneOutResult calculate(OddOneOutState state, int previousBest) {
-    final isPerfect = state.mistakes == 0 && state.isComplete;
-    var score = state.score;
+    final solved = state.roundsSolved ? state.round : 0;
+    final isPerfect = state.mistakes == 0 && solved >= 3;
+    var score = (state.score * state.settings.rewardMultiplier).round();
     if (isPerfect) score += 100;
 
     final stars = isPerfect
         ? 3
         : state.mistakes <= 2
             ? 2
-            : 1;
+            : solved > 0
+                ? 1
+                : 0;
 
     return OddOneOutResult(
       score: score,
       stars: stars,
-      coins: score ~/ 8 + stars * 2,
+      coins: (score ~/ 8 + stars * 2),
       xp: score ~/ 5,
       longestStreak: state.longestStreak,
       mistakes: state.mistakes,
+      roundsSolved: solved,
       isPerfect: isPerfect,
       isNewBest: score > previousBest,
     );

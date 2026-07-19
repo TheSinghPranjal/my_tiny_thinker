@@ -28,7 +28,106 @@ enum OddOneOutCategory {
 
 enum OddOneOutDifficulty { easy, medium, hard, expert }
 
-enum OddOnePhase { setup, playing, feedback, victory, gameOver }
+enum OddOnePhase { ready, playing, feedback, paused, celebrating, finished }
+
+/// Parent-configurable settings persisted from Parent Zone.
+class OddOneOutSettings extends Equatable {
+  const OddOneOutSettings({
+    this.sessionSeconds = 60,
+    this.category = OddOneOutCategory.animals,
+    this.difficulty = OddOneOutDifficulty.easy,
+    this.hintsEnabled = true,
+    this.rewardMultiplier = 1.0,
+    this.soundEnabled = true,
+    this.musicEnabled = true,
+    this.hapticsEnabled = true,
+    this.reducedMotion = false,
+  });
+
+  final int sessionSeconds;
+  final OddOneOutCategory category;
+  final OddOneOutDifficulty difficulty;
+  final bool hintsEnabled;
+  final double rewardMultiplier;
+  final bool soundEnabled;
+  final bool musicEnabled;
+  final bool hapticsEnabled;
+  final bool reducedMotion;
+
+  OddOneOutConfig toConfig() => OddOneOutConfig(
+        category: category,
+        difficulty: difficulty,
+        hintsEnabled: hintsEnabled,
+      );
+
+  OddOneOutSettings copyWith({
+    int? sessionSeconds,
+    OddOneOutCategory? category,
+    OddOneOutDifficulty? difficulty,
+    bool? hintsEnabled,
+    double? rewardMultiplier,
+    bool? soundEnabled,
+    bool? musicEnabled,
+    bool? hapticsEnabled,
+    bool? reducedMotion,
+  }) =>
+      OddOneOutSettings(
+        sessionSeconds: sessionSeconds ?? this.sessionSeconds,
+        category: category ?? this.category,
+        difficulty: difficulty ?? this.difficulty,
+        hintsEnabled: hintsEnabled ?? this.hintsEnabled,
+        rewardMultiplier: rewardMultiplier ?? this.rewardMultiplier,
+        soundEnabled: soundEnabled ?? this.soundEnabled,
+        musicEnabled: musicEnabled ?? this.musicEnabled,
+        hapticsEnabled: hapticsEnabled ?? this.hapticsEnabled,
+        reducedMotion: reducedMotion ?? this.reducedMotion,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'sessionSeconds': sessionSeconds,
+        'category': category.name,
+        'difficulty': difficulty.name,
+        'hintsEnabled': hintsEnabled,
+        'rewardMultiplier': rewardMultiplier,
+        'soundEnabled': soundEnabled,
+        'musicEnabled': musicEnabled,
+        'hapticsEnabled': hapticsEnabled,
+        'reducedMotion': reducedMotion,
+      };
+
+  factory OddOneOutSettings.fromJson(Map<String, dynamic> json) {
+    return OddOneOutSettings(
+      sessionSeconds: (json['sessionSeconds'] as int? ?? 60).clamp(60, 1800),
+      category: OddOneOutCategory.values.firstWhere(
+        (c) => c.name == json['category'],
+        orElse: () => OddOneOutCategory.animals,
+      ),
+      difficulty: OddOneOutDifficulty.values.firstWhere(
+        (d) => d.name == json['difficulty'],
+        orElse: () => OddOneOutDifficulty.easy,
+      ),
+      hintsEnabled: json['hintsEnabled'] as bool? ?? true,
+      rewardMultiplier: (json['rewardMultiplier'] as num? ?? 1.0).toDouble(),
+      soundEnabled: json['soundEnabled'] as bool? ?? true,
+      musicEnabled: json['musicEnabled'] as bool? ?? true,
+      hapticsEnabled: json['hapticsEnabled'] as bool? ?? true,
+      reducedMotion: json['reducedMotion'] as bool? ?? false,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+        sessionSeconds,
+        category,
+        difficulty,
+        hintsEnabled,
+        rewardMultiplier,
+        soundEnabled,
+        musicEnabled,
+        hapticsEnabled,
+        reducedMotion,
+      ];
+}
 
 class OddOneItem extends Equatable {
   const OddOneItem({
@@ -79,8 +178,8 @@ class OddOneOutConfig extends Equatable {
 
 class OddOneOutState extends Equatable {
   const OddOneOutState({
-    this.config = const OddOneOutConfig(),
-    this.phase = OddOnePhase.setup,
+    this.settings = const OddOneOutSettings(),
+    this.phase = OddOnePhase.ready,
     this.items = const [],
     this.gridSize = 2,
     this.score = 0,
@@ -91,11 +190,12 @@ class OddOneOutState extends Equatable {
     this.hintsUsed = 0,
     this.showHint = false,
     this.wrongItemId,
-    this.elapsedSeconds = 0,
-    this.roundsTarget = 10,
+    this.remainingSeconds = 0,
+    this.pendingEnd = false,
+    this.showSparkles = false,
   });
 
-  final OddOneOutConfig config;
+  final OddOneOutSettings settings;
   final OddOnePhase phase;
   final List<OddOneItem> items;
   final int gridSize;
@@ -107,13 +207,14 @@ class OddOneOutState extends Equatable {
   final int hintsUsed;
   final bool showHint;
   final int? wrongItemId;
-  final int elapsedSeconds;
-  final int roundsTarget;
+  final int remainingSeconds;
+  final bool pendingEnd;
+  final bool showSparkles;
 
-  bool get isComplete => round > roundsTarget;
+  bool get roundsSolved => round > 1 || (round == 1 && score > 0);
 
   OddOneOutState copyWith({
-    OddOneOutConfig? config,
+    OddOneOutSettings? settings,
     OddOnePhase? phase,
     List<OddOneItem>? items,
     int? gridSize,
@@ -125,13 +226,14 @@ class OddOneOutState extends Equatable {
     int? hintsUsed,
     bool? showHint,
     int? wrongItemId,
-    int? elapsedSeconds,
-    int? roundsTarget,
+    int? remainingSeconds,
+    bool? pendingEnd,
+    bool? showSparkles,
     bool clearWrong = false,
     bool clearHint = false,
   }) =>
       OddOneOutState(
-        config: config ?? this.config,
+        settings: settings ?? this.settings,
         phase: phase ?? this.phase,
         items: items ?? this.items,
         gridSize: gridSize ?? this.gridSize,
@@ -143,13 +245,14 @@ class OddOneOutState extends Equatable {
         hintsUsed: hintsUsed ?? this.hintsUsed,
         showHint: clearHint ? false : (showHint ?? this.showHint),
         wrongItemId: clearWrong ? null : (wrongItemId ?? this.wrongItemId),
-        elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
-        roundsTarget: roundsTarget ?? this.roundsTarget,
+        remainingSeconds: remainingSeconds ?? this.remainingSeconds,
+        pendingEnd: pendingEnd ?? this.pendingEnd,
+        showSparkles: showSparkles ?? this.showSparkles,
       );
 
   @override
   List<Object?> get props => [
-        config,
+        settings,
         phase,
         items,
         gridSize,
@@ -161,8 +264,9 @@ class OddOneOutState extends Equatable {
         hintsUsed,
         showHint,
         wrongItemId,
-        elapsedSeconds,
-        roundsTarget,
+        remainingSeconds,
+        pendingEnd,
+        showSparkles,
       ];
 }
 
@@ -174,6 +278,7 @@ class OddOneOutResult extends Equatable {
     required this.xp,
     required this.longestStreak,
     required this.mistakes,
+    required this.roundsSolved,
     required this.isPerfect,
     required this.isNewBest,
   });
@@ -184,10 +289,29 @@ class OddOneOutResult extends Equatable {
   final int xp;
   final int longestStreak;
   final int mistakes;
+  final int roundsSolved;
   final bool isPerfect;
   final bool isNewBest;
 
   @override
-  List<Object?> get props =>
-      [score, stars, coins, xp, longestStreak, mistakes, isPerfect, isNewBest];
+  List<Object?> get props => [
+        score,
+        stars,
+        coins,
+        xp,
+        longestStreak,
+        mistakes,
+        roundsSolved,
+        isPerfect,
+        isNewBest,
+      ];
 }
+
+const kOddOneOutSkills = [
+  'Visual Discrimination',
+  'Observation',
+  'Categorization',
+  'Attention to Detail',
+  'Logical Thinking',
+  'Problem Solving',
+];
