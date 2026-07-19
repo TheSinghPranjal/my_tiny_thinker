@@ -51,7 +51,7 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
     ref.read(bubbleGameControllerProvider.notifier).reset();
     await ref.read(bubbleGameControllerProvider.notifier).startGame();
     _syncTicker(ref.read(bubbleGameControllerProvider).phase);
-    ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+    ref.read(audioServiceProvider).playGameMusic();
   }
 
   void _syncTicker(GamePhase phase) {
@@ -81,7 +81,7 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 

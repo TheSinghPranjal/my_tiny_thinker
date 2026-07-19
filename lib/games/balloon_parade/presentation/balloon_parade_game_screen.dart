@@ -55,7 +55,7 @@ class _BalloonParadeGameScreenState
     ref.read(balloonParadeControllerProvider.notifier).reset();
     ref.read(balloonParadeControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(BalloonParadeSessionPhase.playing);
   }
@@ -89,7 +89,7 @@ class _BalloonParadeGameScreenState
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 
