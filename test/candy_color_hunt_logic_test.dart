@@ -11,6 +11,7 @@ void main() {
       final counts = <CandyColorKind, int>{};
       for (final c in candies) {
         counts[c.colorKind] = (counts[c.colorKind] ?? 0) + 1;
+        expect(c.style, CandyStyle.wrapped);
       }
       for (final color in CandyColorCatalog.defaultEnabled) {
         expect(counts[color] ?? 0, greaterThanOrEqualTo(2));

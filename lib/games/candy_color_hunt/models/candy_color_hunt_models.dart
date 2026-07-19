@@ -179,6 +179,7 @@ class CandyEntity extends Equatable {
     required this.style,
     required this.slotIndex,
     this.wigglePhase = 0,
+    this.rotation = 0,
     this.pulseHint = false,
     this.wrongShake = false,
     this.eaten = false,
@@ -189,6 +190,8 @@ class CandyEntity extends Equatable {
   final CandyStyle style;
   final int slotIndex;
   final double wigglePhase;
+  /// Stable random tilt in radians.
+  final double rotation;
   final bool pulseHint;
   final bool wrongShake;
   final bool eaten;
@@ -197,6 +200,7 @@ class CandyEntity extends Equatable {
 
   CandyEntity copyWith({
     double? wigglePhase,
+    double? rotation,
     bool? pulseHint,
     bool? wrongShake,
     bool? eaten,
@@ -207,14 +211,24 @@ class CandyEntity extends Equatable {
         style: style,
         slotIndex: slotIndex,
         wigglePhase: wigglePhase ?? this.wigglePhase,
+        rotation: rotation ?? this.rotation,
         pulseHint: pulseHint ?? this.pulseHint,
         wrongShake: wrongShake ?? this.wrongShake,
         eaten: eaten ?? this.eaten,
       );
 
   @override
-  List<Object?> get props =>
-      [id, colorKind, style, slotIndex, wigglePhase, pulseHint, wrongShake, eaten];
+  List<Object?> get props => [
+        id,
+        colorKind,
+        style,
+        slotIndex,
+        wigglePhase,
+        rotation,
+        pulseHint,
+        wrongShake,
+        eaten,
+      ];
 }
 
 enum AntMood { idle, looking, happy, eating, shakeNo }

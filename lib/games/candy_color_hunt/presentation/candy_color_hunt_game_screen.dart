@@ -171,52 +171,45 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
                       largerFonts: settings.largerTouchTargets,
                       onPause: _showPauseMenu,
                     ),
+                    // Ant perched on the hill with matching thought candy.
                     Expanded(
-                      flex: 4,
+                      flex: 3,
                       child: targetDef == null
                           ? const Center(child: CircularProgressIndicator())
-                          : Row(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      ThoughtBubbleWidget(
-                                        target: targetDef,
-                                        scale: ref.watch(
-                                          candyColorHuntControllerProvider
-                                              .select((s) => s.bubbleScale),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      CandyAntWidget(
-                                        mood: ref.watch(
-                                          candyColorHuntControllerProvider
-                                              .select((s) => s.antMood),
-                                        ),
-                                        animPhase: ref.watch(
-                                          candyColorHuntControllerProvider
-                                              .select((s) => s.antAnimPhase),
-                                        ),
-                                        blinkTimer: ref.watch(
-                                          candyColorHuntControllerProvider
-                                              .select((s) => s.blinkTimer),
-                                        ),
-                                        size: settings.largerTouchTargets
-                                            ? 150
-                                            : 130,
-                                      ),
-                                    ],
+                                ThoughtBubbleWidget(
+                                  target: targetDef,
+                                  scale: ref.watch(
+                                    candyColorHuntControllerProvider
+                                        .select((s) => s.bubbleScale),
                                   ),
                                 ),
+                                CandyAntWidget(
+                                  mood: ref.watch(
+                                    candyColorHuntControllerProvider
+                                        .select((s) => s.antMood),
+                                  ),
+                                  animPhase: ref.watch(
+                                    candyColorHuntControllerProvider
+                                        .select((s) => s.antAnimPhase),
+                                  ),
+                                  blinkTimer: ref.watch(
+                                    candyColorHuntControllerProvider
+                                        .select((s) => s.blinkTimer),
+                                  ),
+                                  size: settings.largerTouchTargets ? 128 : 112,
+                                ),
+                                const SizedBox(height: 4),
                               ],
                             ),
                     ),
+                    // Floating wrapped candies over the meadow (no bowl).
                     Expanded(
                       flex: 5,
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
+                        padding: const EdgeInsets.fromLTRB(10, 4, 10, 16),
                         child: CandyBowlWidget(
                           candies: ref.watch(
                             candyColorHuntControllerProvider

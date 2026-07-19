@@ -64,11 +64,22 @@ class CandyHuntHud extends StatelessWidget {
             large: largerFonts,
           ),
           const SizedBox(width: AppSpacing.sm),
-          IconButton(
-            icon: const Icon(Icons.pause_rounded, size: 30),
-            onPressed: onPause,
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.white.withValues(alpha: 0.95),
+          Material(
+            color: AppColors.white.withValues(alpha: 0.96),
+            shape: const CircleBorder(),
+            elevation: 2,
+            shadowColor: const Color(0xFFFF8A65).withValues(alpha: 0.35),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: onPause,
+              child: const Padding(
+                padding: EdgeInsets.all(10),
+                child: Icon(
+                  Icons.pause_rounded,
+                  size: 26,
+                  color: Color(0xFF5D4037),
+                ),
+              ),
             ),
           ),
         ],

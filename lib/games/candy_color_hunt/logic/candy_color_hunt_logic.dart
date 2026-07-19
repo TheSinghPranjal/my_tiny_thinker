@@ -41,18 +41,23 @@ abstract final class CandyColorHuntLogic {
           colorKind: shuffled[i].colorKind,
           style: shuffled[i].style,
           slotIndex: i,
-          wigglePhase: random.nextDouble() * math.pi * 2,
+          wigglePhase: shuffled[i].wigglePhase,
+          rotation: shuffled[i].rotation,
         ),
     ];
   }
 
   static CandyEntity _makeCandy(CandyColorKind color, int slot) {
+    // Random tilt roughly between -55° and +55°.
+    final rotation = (random.nextDouble() * 1.9 - 0.95);
     return CandyEntity(
       id: 'candy_${DateTime.now().microsecondsSinceEpoch}_$slot',
       colorKind: color,
-      style: CandyStyle.values[random.nextInt(CandyStyle.values.length)],
+      // All candies share the same wrapped silhouette; pattern is color-based.
+      style: CandyStyle.wrapped,
       slotIndex: slot,
       wigglePhase: random.nextDouble() * math.pi * 2,
+      rotation: rotation,
     );
   }
 
