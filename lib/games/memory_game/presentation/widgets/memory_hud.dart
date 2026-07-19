@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
@@ -9,77 +8,6 @@ import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/games/memory_game/logic/memory_game_logic.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
-
-class MemoryHud extends StatelessWidget {
-  const MemoryHud({
-    super.key,
-    required this.score,
-    required this.round,
-    required this.totalRounds,
-    required this.combo,
-  });
-
-  final int score;
-  final int round;
-  final int totalRounds;
-  final int combo;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            _Chip(icon: Icons.star_rounded, label: '$score', color: AppColors.sunYellow),
-            const SizedBox(width: AppSpacing.sm),
-            _Chip(icon: Icons.flag_rounded, label: '$round/$totalRounds', color: AppColors.skyBlue),
-            if (combo >= 2) ...[
-              const SizedBox(width: AppSpacing.sm),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-                decoration: BoxDecoration(
-                  gradient: AppGradients.rainbow,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
-                ),
-                child: Text(
-                  '${MemoryScoring.comboLabel(combo)} ($combo×)',
-                  style: context.textTheme.labelSmall?.copyWith(color: AppColors.white),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip({required this.icon, required this.label, required this.color});
-
-  final IconData icon;
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-      decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: color, size: 16),
-          const SizedBox(width: AppSpacing.xxs),
-          Text(label, style: context.textTheme.labelMedium),
-        ],
-      ),
-    );
-  }
-}
 
 class MemoryVictoryDialog extends StatelessWidget {
   const MemoryVictoryDialog({

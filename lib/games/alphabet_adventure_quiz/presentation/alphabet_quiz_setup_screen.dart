@@ -17,7 +17,7 @@ class AlphabetQuizSetupScreen extends ConsumerWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
-          emoji: '🔤📚✨',
+          emoji: '🔤📚',
           emojiSize: 72,
           title: 'Alphabet Adventure Quiz',
           subtitle: 'Find the picture that matches the letter!',

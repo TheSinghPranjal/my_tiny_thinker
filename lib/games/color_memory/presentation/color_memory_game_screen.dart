@@ -10,6 +10,7 @@ import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/color_memory/controllers/color_memory_controller.dart';
@@ -150,24 +151,6 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
         showGrass: false,
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.pause_rounded),
-              onPressed: _pause,
-            ),
-            title: Text('Level ${state.level}/${state.roundsTarget}'),
-            actions: [
-              if (state.config.hintsEnabled)
-                IconButton(
-                  icon: Badge(
-                    label: Text('${state.hintsRemaining}'),
-                    isLabelVisible: state.hintsRemaining > 0,
-                    child: const Icon(Icons.lightbulb_outline_rounded),
-                  ),
-                  onPressed: _showHintMenu,
-                ),
-            ],
-          ),
           body: Stack(
             children: [
               ParticleSystem(key: _particleKey, particleCount: 24, autoStart: false),
@@ -176,16 +159,26 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Score: ${state.score}',
-                              style: context.textTheme.titleMedium),
-                          Text('Streak: ${state.streak}',
-                              style: context.textTheme.titleMedium),
-                        ],
+                      GameSessionHud(
+                        remainingSeconds: 0,
+                        unlimitedTime: true,
+                        coinsEarned: state.score,
+                        starsEarned: state.streak,
+                        onPause: _pause,
                       ),
-                      const SizedBox(height: AppSpacing.lg),
+                      if (state.config.hintsEnabled)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: Badge(
+                              label: Text('${state.hintsRemaining}'),
+                              isLabelVisible: state.hintsRemaining > 0,
+                              child: const Icon(Icons.lightbulb_outline_rounded),
+                            ),
+                            onPressed: _showHintMenu,
+                          ),
+                        ),
+                      const SizedBox(height: AppSpacing.md),
                       Expanded(
                         child: Center(
                           child: AspectRatio(

@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
@@ -177,18 +178,15 @@ class _FlowerGardenGameScreenState extends ConsumerState<FlowerGardenGameScreen>
               children: [
                 Column(
                   children: [
-                    GardenHud(
+                    GameSessionHud(
                       remainingSeconds: ref.watch(
-                        flowerGardenControllerProvider
-                            .select((s) => s.remainingSeconds),
-                      ),
-                      bloomsCount: ref.watch(
-                        flowerGardenControllerProvider
-                            .select((s) => s.bloomsCount),
+                        flowerGardenControllerProvider.select((s) => s.remainingSeconds),
                       ),
                       coinsEarned: ref.watch(
-                        flowerGardenControllerProvider
-                            .select((s) => s.coinsEarned),
+                        flowerGardenControllerProvider.select((s) => s.coinsEarned),
+                      ),
+                      starsEarned: ref.watch(
+                        flowerGardenControllerProvider.select((s) => s.starsEarned),
                       ),
                       onPause: _showPauseMenu,
                     ),

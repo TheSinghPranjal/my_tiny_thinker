@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
@@ -183,22 +184,15 @@ class _CloudPopGardenGameScreenState extends ConsumerState<CloudPopGardenGameScr
               children: [
                 Column(
                   children: [
-                    CloudPopHud(
+                    GameSessionHud(
                       remainingSeconds: ref.watch(
-                        cloudPopGardenControllerProvider
-                            .select((s) => s.remainingSeconds),
-                      ),
-                      flowersWatered: ref.watch(
-                        cloudPopGardenControllerProvider
-                            .select((s) => s.flowersWatered),
+                        cloudPopGardenControllerProvider.select((s) => s.remainingSeconds),
                       ),
                       coinsEarned: ref.watch(
-                        cloudPopGardenControllerProvider
-                            .select((s) => s.coinsEarned),
+                        cloudPopGardenControllerProvider.select((s) => s.coinsEarned),
                       ),
                       starsEarned: ref.watch(
-                        cloudPopGardenControllerProvider
-                            .select((s) => s.starsEarned),
+                        cloudPopGardenControllerProvider.select((s) => s.starsEarned),
                       ),
                       onPause: _showPauseMenu,
                     ),

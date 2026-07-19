@@ -8,9 +8,9 @@ import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
-import 'package:my_tiny_thinker/games/memory_game/logic/memory_game_logic.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/widgets/animated_toy_room_background.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/widgets/memory_hud.dart';
@@ -125,8 +125,6 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
       );
     }
 
-    final totalRounds = MemoryDifficultyConfig.roundsToWin(config.difficulty);
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -135,24 +133,6 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
       child: AnimatedToyRoomBackground(
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.pause_rounded),
-              onPressed: _onPause,
-            ),
-            title: Text('${config.gameType.emoji} ${config.gameType.displayName}'),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.md),
-                child: Center(
-                  child: Text(
-                    MemoryDifficultyConfig.label(config.difficulty),
-                    style: context.textTheme.labelMedium,
-                  ),
-                ),
-              ),
-            ],
-          ),
           body: SafeArea(
             child: Stack(
               children: [
@@ -160,11 +140,22 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
                   padding: const EdgeInsets.all(AppSpacing.md),
                   child: Column(
                     children: [
-                      MemoryHud(
-                        score: state.score,
-                        round: state.round,
-                        totalRounds: totalRounds,
-                        combo: state.combo,
+                      GameSessionHud(
+                        remainingSeconds: 0,
+                        unlimitedTime: true,
+                        coinsEarned: state.score,
+                        starsEarned: state.combo,
+                        onPause: () {
+                          _onPause();
+                        },
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        '${config.gameType.emoji} ${config.gameType.displayName}',
+                        style: context.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                       const SizedBox(height: AppSpacing.md),
                       Expanded(

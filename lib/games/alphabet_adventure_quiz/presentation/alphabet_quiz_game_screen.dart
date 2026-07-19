@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/animations/bounce_animation.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
@@ -145,21 +146,15 @@ class _AlphabetQuizGameScreenState extends ConsumerState<AlphabetQuizGameScreen>
               children: [
                 Column(
                   children: [
-                    AlphabetQuizHud(
+                    GameSessionHud(
                       remainingSeconds: ref.watch(
-                        alphabetQuizControllerProvider
-                            .select((s) => s.remainingSeconds),
-                      ),
-                      score: ref.watch(
-                        alphabetQuizControllerProvider.select((s) => s.score),
+                        alphabetQuizControllerProvider.select((s) => s.remainingSeconds),
                       ),
                       coinsEarned: ref.watch(
-                        alphabetQuizControllerProvider
-                            .select((s) => s.coinsEarned),
+                        alphabetQuizControllerProvider.select((s) => s.coinsEarned),
                       ),
                       starsEarned: ref.watch(
-                        alphabetQuizControllerProvider
-                            .select((s) => s.starsEarned),
+                        alphabetQuizControllerProvider.select((s) => s.starsEarned),
                       ),
                       onPause: _showPauseMenu,
                     ),

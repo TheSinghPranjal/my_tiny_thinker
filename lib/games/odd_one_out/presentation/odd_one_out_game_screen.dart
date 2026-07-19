@@ -10,6 +10,7 @@ import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/odd_one_out/controllers/odd_one_out_controller.dart';
@@ -84,32 +85,28 @@ class _OddOneOutGameScreenState extends ConsumerState<OddOneOutGameScreen> {
         showGrass: false,
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.pause_rounded),
-              onPressed: _pause,
-            ),
-            title: Text('Round ${state.round}/${state.roundsTarget}'),
-          ),
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _Chip('⭐ ${state.score}', AppColors.sunYellow),
-                      _Chip('🔥 ${state.streak}', AppColors.candyPink),
-                      if (OddOneOutScoring.streakLabel(state.streak).isNotEmpty)
-                        Text(
-                          OddOneOutScoring.streakLabel(state.streak),
-                          style: context.textTheme.labelMedium?.copyWith(
-                            color: AppColors.lavender,
-                          ),
-                        ),
-                    ],
+                  GameSessionHud(
+                    remainingSeconds: 0,
+                    unlimitedTime: true,
+                    coinsEarned: state.score,
+                    starsEarned: state.streak,
+                    onPause: _pause,
                   ),
+                  if (OddOneOutScoring.streakLabel(state.streak).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.xs),
+                      child: Text(
+                        OddOneOutScoring.streakLabel(state.streak),
+                        style: context.textTheme.labelMedium?.copyWith(
+                          color: AppColors.lavender,
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: AppSpacing.md),
                   Text('Tap the odd one out!', style: context.textTheme.headlineSmall),
                   const SizedBox(height: AppSpacing.lg),
@@ -259,27 +256,6 @@ class _OddItemTile extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _Chip extends StatelessWidget {
-  const _Chip(this.label, this.color);
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
-      ),
-      child: Text(label, style: context.textTheme.labelMedium),
     );
   }
 }

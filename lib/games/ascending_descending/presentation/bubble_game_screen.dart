@@ -13,6 +13,7 @@ import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/controllers/bubble_game_controller.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/logic/bubble_game_logic.dart';
@@ -209,11 +210,45 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
               children: [
                 Column(
                   children: [
-                    _GameHeader(
-                      toddlerMode: toddlerMode,
+                    GameSessionHud(
+                      remainingSeconds: ref.watch(
+                        bubbleGameControllerProvider
+                            .select((s) => s.remainingSeconds),
+                      ),
+                      unlimitedTime: ref.watch(
+                        bubbleGameControllerProvider.select(
+                          (s) =>
+                              s.config.timerMode != TimerMode.timed &&
+                              !s.config.toddlerMode,
+                        ),
+                      ),
+                      coinsEarned: ref.watch(
+                        bubbleGameControllerProvider.select((s) => s.score),
+                      ),
+                      starsEarned: ref.watch(
+                        bubbleGameControllerProvider.select((s) => s.combo),
+                      ),
+                      largerFonts: toddlerMode,
                       onPause: _onWillPop,
                     ),
-                    const _GameHudSection(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: toddlerMode ? AppSpacing.sm : AppSpacing.md,
+                        vertical: AppSpacing.xs,
+                      ),
+                      child: TargetNumberCard(
+                        targetNumber: ref.watch(
+                          bubbleGameControllerProvider
+                              .select((s) => s.targetNumber),
+                        ),
+                        sortMode: ref.watch(
+                          bubbleGameControllerProvider
+                              .select((s) => s.config.sortMode),
+                        ),
+                        toddlerMode: toddlerMode,
+                        large: toddlerMode,
+                      ),
+                    ),
                     Expanded(
                       child: _BubblePlayArea(
                         particleKey: _particleKey,
@@ -253,109 +288,6 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
   }
 }
 
-class _GameHeader extends ConsumerWidget {
-  const _GameHeader({required this.toddlerMode, required this.onPause});
-
-  final bool toddlerMode;
-  final VoidCallback onPause;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final target = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.targetNumber),
-    );
-    final sortMode = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.config.sortMode),
-    );
-    final remaining = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.remainingSeconds),
-    );
-    final toddler = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.config.toddlerMode),
-    );
-    final timed = ref.watch(
-      bubbleGameControllerProvider.select(
-        (s) => s.config.timerMode == TimerMode.timed || s.config.toddlerMode,
-      ),
-    );
-
-    return Padding(
-      padding: EdgeInsets.all(toddlerMode ? AppSpacing.sm : AppSpacing.md),
-      child: Row(
-        children: [
-          if (!toddlerMode)
-            IconButton(
-              icon: const Icon(Icons.pause_rounded),
-              onPressed: onPause,
-              style: IconButton.styleFrom(
-                backgroundColor: AppColors.white.withValues(alpha: 0.85),
-              ),
-            ),
-          Expanded(
-            child: Center(
-              child: TargetNumberCard(
-                targetNumber: target,
-                sortMode: sortMode,
-                toddlerMode: toddler,
-                large: toddlerMode,
-              ),
-            ),
-          ),
-          if (timed)
-            GameTimerBadge(seconds: remaining, large: toddlerMode)
-          else
-            SizedBox(width: toddlerMode ? 0 : 48),
-          if (toddlerMode)
-            IconButton(
-              icon: const Icon(Icons.home_rounded, size: 32),
-              onPressed: onPause,
-              style: IconButton.styleFrom(
-                backgroundColor: AppColors.white.withValues(alpha: 0.85),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GameHudSection extends ConsumerWidget {
-  const _GameHudSection();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final current = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.currentIndex),
-    );
-    final total = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.total),
-    );
-    final score = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.score),
-    );
-    final combo = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.combo),
-    );
-    final lastPoints = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.lastPointsEarned),
-    );
-    final toddler = ref.watch(
-      bubbleGameControllerProvider.select((s) => s.config.toddlerMode),
-    );
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      child: GameHudBar(
-        current: current,
-        total: total,
-        score: score,
-        combo: combo,
-        lastPointsEarned: lastPoints,
-        toddlerMode: toddler,
-      ),
-    );
-  }
-}
 
 class _BubblePlayArea extends ConsumerWidget {
   const _BubblePlayArea({

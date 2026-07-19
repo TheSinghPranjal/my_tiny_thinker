@@ -10,12 +10,11 @@ import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/pattern_match/controllers/pattern_match_controller.dart';
-import 'package:my_tiny_thinker/games/pattern_match/logic/pattern_match_logic.dart';
 import 'package:my_tiny_thinker/games/pattern_match/models/pattern_match_models.dart';
 
 class PatternMatchGameScreen extends ConsumerStatefulWidget {
@@ -87,25 +86,17 @@ class _PatternMatchGameScreenState extends ConsumerState<PatternMatchGameScreen>
         showGrass: false,
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.pause_rounded),
-              onPressed: _pause,
-            ),
-            title: Text('Round ${state.round}/${state.roundsTarget}'),
-          ),
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('⭐ ${state.score}', style: context.textTheme.titleMedium),
-                      const SizedBox(width: AppSpacing.lg),
-                      Text('🔥 ${state.streak}', style: context.textTheme.titleMedium),
-                    ],
+                  GameSessionHud(
+                    remainingSeconds: 0,
+                    unlimitedTime: true,
+                    coinsEarned: state.score,
+                    starsEarned: state.streak,
+                    onPause: _pause,
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   TTCard(

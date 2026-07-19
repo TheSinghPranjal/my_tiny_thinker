@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
@@ -170,18 +171,18 @@ class _BunnyHopGameScreenState extends ConsumerState<BunnyHopGameScreen>
             children: [
               Column(
                 children: [
-                  BunnyHopHud(
+                  GameSessionHud(
                     remainingSeconds: ref.watch(
                       bunnyHopControllerProvider.select((s) => s.remainingSeconds),
-                    ),
-                    totalHops: ref.watch(
-                      bunnyHopControllerProvider.select((s) => s.totalHops),
                     ),
                     coinsEarned: ref.watch(
                       bunnyHopControllerProvider.select((s) => s.coinsEarned),
                     ),
-                    onPause: _showPauseMenu,
+                    starsEarned: ref.watch(
+                      bunnyHopControllerProvider.select((s) => s.starsEarned),
+                    ),
                     largerFonts: settings.largerTouchTargets,
+                    onPause: _showPauseMenu,
                   ),
                   Expanded(
                     child: GestureDetector(

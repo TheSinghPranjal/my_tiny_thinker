@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/learning_path/learning_path_flow.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/rewards/reward_engine.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
@@ -16,7 +17,6 @@ import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/controllers/alph
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/logic/alphabet_bridge_logic.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/models/alphabet_bridge_models.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_bridge_board.dart';
-import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_bridge_hud.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_garden_background.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/repository/alphabet_bridge_settings_repository.dart';
 
@@ -186,21 +186,16 @@ class _AlphabetBridgeGameScreenState
               children: [
                 Column(
                   children: [
-                    AlphabetBridgeHud(
+                    GameSessionHud(
                       remainingSeconds: ref.watch(
-                        alphabetBridgeControllerProvider
-                            .select((s) => s.remainingSeconds),
+                        alphabetBridgeControllerProvider.select((s) => s.remainingSeconds),
                       ),
                       unlimitedTime: settings.unlimitedTime,
+                      coinsEarned: ref.watch(
+                        alphabetBridgeControllerProvider.select((s) => s.coinsEarned),
+                      ),
                       starsEarned: ref.watch(
-                        alphabetBridgeControllerProvider
-                            .select((s) => s.starsEarned),
-                      ),
-                      score: ref.watch(
-                        alphabetBridgeControllerProvider.select((s) => s.score),
-                      ),
-                      round: ref.watch(
-                        alphabetBridgeControllerProvider.select((s) => s.round),
+                        alphabetBridgeControllerProvider.select((s) => s.starsEarned),
                       ),
                       largerFonts: settings.largerTouchTargets,
                       onPause: _showPauseMenu,

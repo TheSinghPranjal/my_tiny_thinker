@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
+import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
@@ -167,18 +168,15 @@ class _ColorBalloonPopGameScreenState
               children: [
                 Column(
                   children: [
-                    ColorBalloonPopHud(
+                    GameSessionHud(
                       remainingSeconds: ref.watch(
-                        colorBalloonPopControllerProvider
-                            .select((s) => s.remainingSeconds),
-                      ),
-                      roundsCompleted: ref.watch(
-                        colorBalloonPopControllerProvider
-                            .select((s) => s.roundsCompleted),
+                        colorBalloonPopControllerProvider.select((s) => s.remainingSeconds),
                       ),
                       coinsEarned: ref.watch(
-                        colorBalloonPopControllerProvider
-                            .select((s) => s.coinsEarned),
+                        colorBalloonPopControllerProvider.select((s) => s.coinsEarned),
+                      ),
+                      starsEarned: ref.watch(
+                        colorBalloonPopControllerProvider.select((s) => s.starsEarned),
                       ),
                       onPause: _showPauseMenu,
                     ),
