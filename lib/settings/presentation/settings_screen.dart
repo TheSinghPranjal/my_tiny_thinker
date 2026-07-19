@@ -79,21 +79,12 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ),
                   _SettingTile(
-                    icon: Icons.volume_up_rounded,
-                    title: 'Sound Effects',
+                    icon: Icons.sports_esports_rounded,
+                    title: 'Game sound',
                     trailing: Switch(
                       value: settings.soundEnabled,
                       activeThumbColor: AppColors.skyBlue,
                       onChanged: (_) => settingsNotifier.toggleSound(),
-                    ),
-                  ),
-                  _SettingTile(
-                    icon: Icons.vibration_rounded,
-                    title: 'Haptics',
-                    trailing: Switch(
-                      value: settings.hapticsEnabled,
-                      activeThumbColor: AppColors.skyBlue,
-                      onChanged: (_) => settingsNotifier.toggleHaptics(),
                     ),
                   ),
                   _SettingTile(
@@ -103,15 +94,6 @@ class SettingsScreen extends ConsumerWidget {
                       value: settings.hintsEnabled,
                       activeThumbColor: AppColors.skyBlue,
                       onChanged: (_) => settingsNotifier.toggleHints(),
-                    ),
-                  ),
-                  _SettingTile(
-                    icon: Icons.contrast_rounded,
-                    title: 'High Contrast',
-                    trailing: Switch(
-                      value: settings.highContrast,
-                      activeThumbColor: AppColors.skyBlue,
-                      onChanged: (_) => settingsNotifier.toggleHighContrast(),
                     ),
                   ),
                 ],
