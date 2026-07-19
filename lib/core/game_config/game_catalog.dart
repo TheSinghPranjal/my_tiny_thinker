@@ -157,6 +157,11 @@ abstract final class GameCatalog {
       subtitle: 'Match letters with pictures!',
     ),
     GameCatalogEntry(
+      gameId: GameId.oddOneOut,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Tap the picture that does not belong!',
+    ),
+    GameCatalogEntry(
       gameId: GameId.colorShapeBridgeAdventure,
       category: LearningCategory.smartExplorers,
       subtitle: 'Connect words to colors and shapes!',
@@ -174,16 +179,9 @@ abstract final class GameCatalog {
       hasParentControls: false,
     ),
     GameCatalogEntry(
-      gameId: GameId.oddOneOut,
-      category: LearningCategory.smartExplorers,
-      subtitle: 'Find the odd one out!',
-      hasParentControls: false,
-    ),
-    GameCatalogEntry(
       gameId: GameId.patternMatch,
       category: LearningCategory.smartExplorers,
-      subtitle: 'Complete the pattern!',
-      hasParentControls: false,
+      subtitle: 'Look at the pattern and pick what comes next!',
     ),
     GameCatalogEntry(
       gameId: GameId.colorMemory,

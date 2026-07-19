@@ -186,8 +186,8 @@ class GameSelectionGrid extends ConsumerWidget {
     ),
     GameId.bubbleNumberPop: ('🔵', 'Bubble Number Pop', null, 'Easy'),
     GameId.memoryGame: ('🧠', 'Memory Game', null, 'Medium'),
-    GameId.oddOneOut: ('👀', 'Odd One Out', null, 'Easy'),
-    GameId.patternMatch: ('🧩', 'Pattern Match', null, 'Medium'),
+    GameId.oddOneOut: ('👀', 'Odd One Out', 'Tap the one that is different!', 'Easy'),
+    GameId.patternMatch: ('🧩', 'Pattern Match', 'Complete the pattern!', 'Medium'),
     GameId.colorMemory: ('🌈', 'Color Memory', null, 'Easy'),
   };
 
