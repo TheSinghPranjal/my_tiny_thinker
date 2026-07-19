@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_tiny_thinker/core/models/player_profile.dart';
 import 'package:my_tiny_thinker/core/play_limits/daily_play_limits.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/providers/game_stats_provider.dart';
@@ -10,7 +9,6 @@ import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/services/storage_service.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/logic/ocean_fish_logic.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/models/ocean_fish_models.dart';
-import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
 
 final oceanFishControllerProvider =
     StateNotifierProvider<OceanFishController, OceanFishState>((ref) {
