@@ -23,6 +23,8 @@ import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/models/ocean_fish_models.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
+import 'package:my_tiny_thinker/games/balloon_parade/repository/balloon_parade_settings_repository.dart';
+import 'package:my_tiny_thinker/games/color_balloon_pop/repository/color_balloon_pop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/models/alphabet_quiz_models.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/repository/alphabet_quiz_settings_repository.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/models/shadow_match_models.dart';
@@ -448,6 +450,16 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ParentGameSettingsCard(
               gameId: GameId.oceanFishAdventure,
               child: _OceanFishParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.balloonParade,
+              child: _BalloonParadeParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.colorBalloonPop,
+              child: _ColorBalloonPopParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             ParentGameSettingsCard(
@@ -2928,6 +2940,178 @@ class _MoonRescueParentControls extends ConsumerWidget {
           onChanged: (v) => ref.read(moonRescueSettingsProvider.notifier).patch(
                 (x) => x.copyWith(reducedMotion: v),
               ),
+        ),
+      ],
+    );
+  }
+}
+
+class _BalloonParadeParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(balloonParadeSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Balloon spawn interval: ${s.spawnIntervalSeconds}s'),
+        Slider(
+          value: s.spawnIntervalSeconds.toDouble(),
+          min: 1,
+          max: 5,
+          divisions: 4,
+          label: '${s.spawnIntervalSeconds}s',
+          onChanged: (v) =>
+              ref.read(balloonParadeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(spawnIntervalSeconds: v.round()),
+                  ),
+        ),
+        Text('Balloons per spawn: ${s.balloonsPerSpawn}'),
+        Slider(
+          value: s.balloonsPerSpawn.toDouble(),
+          min: 1,
+          max: 5,
+          divisions: 4,
+          label: '${s.balloonsPerSpawn}',
+          onChanged: (v) =>
+              ref.read(balloonParadeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(balloonsPerSpawn: v.round()),
+                  ),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              ref.read(balloonParadeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rewardMultiplier: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              ref.read(balloonParadeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(soundEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              ref.read(balloonParadeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Encouraging phrases',
+          value: s.narrationEnabled,
+          onChanged: (v) =>
+              ref.read(balloonParadeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(narrationEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) =>
+              ref.read(balloonParadeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(hapticsEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              ref.read(balloonParadeSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(reducedMotion: v),
+                  ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ColorBalloonPopParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(colorBalloonPopSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ParentSwitch(
+          title: 'Voice pronunciation',
+          value: s.voiceEnabled,
+          onChanged: (v) =>
+              ref.read(colorBalloonPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(voiceEnabled: v),
+                  ),
+        ),
+        Text('Music volume: ${(s.musicVolume * 100).round()}%'),
+        Slider(
+          value: s.musicVolume,
+          min: 0,
+          max: 1,
+          divisions: 10,
+          label: '${(s.musicVolume * 100).round()}%',
+          onChanged: (v) =>
+              ref.read(colorBalloonPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicVolume: v),
+                  ),
+        ),
+        Text('Animation speed: ${s.animationSpeed.toStringAsFixed(1)}x'),
+        Slider(
+          value: s.animationSpeed,
+          min: 0.5,
+          max: 1.5,
+          divisions: 10,
+          label: '${s.animationSpeed.toStringAsFixed(1)}x',
+          onChanged: (v) =>
+              ref.read(colorBalloonPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(animationSpeed: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              ref.read(colorBalloonPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(soundEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              ref.read(colorBalloonPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) =>
+              ref.read(colorBalloonPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(hapticsEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) =>
+              ref.read(colorBalloonPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(largerTouchTargets: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced animation mode',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              ref.read(colorBalloonPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(reducedMotion: v),
+                  ),
         ),
       ],
     );

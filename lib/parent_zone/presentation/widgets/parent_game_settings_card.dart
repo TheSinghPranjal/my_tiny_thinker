@@ -27,6 +27,8 @@ import 'package:my_tiny_thinker/games/magical_flower_garden/repository/flower_ga
 import 'package:my_tiny_thinker/games/moon_rescue_adventure/repository/moon_rescue_settings_repository.dart';
 import 'package:my_tiny_thinker/games/number_bridge_adventure/repository/number_bridge_settings_repository.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
+import 'package:my_tiny_thinker/games/balloon_parade/repository/balloon_parade_settings_repository.dart';
+import 'package:my_tiny_thinker/games/color_balloon_pop/repository/color_balloon_pop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/repository/peek_a_boo_animal_friends_settings_repository.dart';
 import 'package:my_tiny_thinker/games/picture_bridge_adventure/repository/picture_bridge_settings_repository.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/repository/shadow_match_settings_repository.dart';
@@ -83,6 +85,10 @@ class ParentGameSettingsCard extends ConsumerWidget {
       GameId.cloudPopGarden =>
         ref.watch(cloudPopGardenSettingsProvider).sessionSeconds,
       GameId.oceanFishAdventure => ref.watch(oceanFishSettingsProvider).sessionSeconds,
+      GameId.balloonParade =>
+        ref.watch(balloonParadeSettingsProvider).sessionSeconds,
+      GameId.colorBalloonPop =>
+        ref.watch(colorBalloonPopSettingsProvider).sessionSeconds,
       _ => GameDuration.defaultSeconds,
     };
   }
@@ -152,6 +158,12 @@ class ParentGameSettingsCard extends ConsumerWidget {
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.oceanFishAdventure:
         ref.read(oceanFishSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.balloonParade:
+        ref.read(balloonParadeSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.colorBalloonPop:
+        ref.read(colorBalloonPopSettingsProvider.notifier)
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       default:
         break;
