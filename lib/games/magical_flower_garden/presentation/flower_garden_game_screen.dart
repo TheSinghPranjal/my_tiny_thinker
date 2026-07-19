@@ -54,7 +54,7 @@ class _FlowerGardenGameScreenState extends ConsumerState<FlowerGardenGameScreen>
     ref.read(flowerGardenControllerProvider.notifier).reset();
     ref.read(flowerGardenControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(GardenSessionPhase.playing);
   }
@@ -88,7 +88,7 @@ class _FlowerGardenGameScreenState extends ConsumerState<FlowerGardenGameScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 
