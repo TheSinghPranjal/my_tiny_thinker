@@ -56,7 +56,7 @@ class _CloudPopGardenGameScreenState extends ConsumerState<CloudPopGardenGameScr
     ref.read(cloudPopGardenControllerProvider.notifier).reset();
     ref.read(cloudPopGardenControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _syncTicker(CloudPopSessionPhase.playing);
   }
@@ -90,7 +90,7 @@ class _CloudPopGardenGameScreenState extends ConsumerState<CloudPopGardenGameScr
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 

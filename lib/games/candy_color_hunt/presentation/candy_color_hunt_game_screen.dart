@@ -55,7 +55,7 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
     ref.read(candyColorHuntControllerProvider.notifier).reset();
     ref.read(candyColorHuntControllerProvider.notifier).startGame(settings);
     if (settings.musicEnabled) {
-      ref.read(audioServiceProvider).playMusic(asset: 'audio/ambient_music.mp3');
+      ref.read(audioServiceProvider).playGameMusic();
     }
     _ticker ??= createTicker((_) {
       ref.read(candyColorHuntControllerProvider.notifier).tick(1 / 60);
@@ -81,7 +81,7 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _ticker?.dispose();
-    ref.read(audioServiceProvider).stopMusic();
+    ref.read(audioServiceProvider).playHomeMusic();
     super.dispose();
   }
 
