@@ -171,6 +171,8 @@ class FlowerEntity extends Equatable {
     this.petalCount = 6,
     this.paletteIndex = 0,
     this.petalSpread = 1,
+    this.morphPaletteIndex,
+    this.colorMorph = 0,
   });
 
   final String id;
@@ -191,9 +193,18 @@ class FlowerEntity extends Equatable {
   final int paletteIndex;
   final double petalSpread;
 
+  /// While non-null, petals slowly blend toward this palette.
+  final int? morphPaletteIndex;
+  final double colorMorph;
+
   bool get isVisible => true;
 
-  bool get canTap => phase == FlowerPhase.bud;
+  /// Bud starts a bloom cycle. While blooming/open, retaps only change colour.
+  /// After the butterfly leaves the flower unblooms back to a bud.
+  bool get canTap =>
+      phase == FlowerPhase.bud ||
+      phase == FlowerPhase.blooming ||
+      phase == FlowerPhase.open;
 
   FlowerEntity copyWith({
     double? anchorX,
@@ -213,6 +224,9 @@ class FlowerEntity extends Equatable {
     int? petalCount,
     int? paletteIndex,
     double? petalSpread,
+    int? morphPaletteIndex,
+    bool clearMorph = false,
+    double? colorMorph,
   }) =>
       FlowerEntity(
         id: id,
@@ -234,6 +248,10 @@ class FlowerEntity extends Equatable {
         petalCount: petalCount ?? this.petalCount,
         paletteIndex: paletteIndex ?? this.paletteIndex,
         petalSpread: petalSpread ?? this.petalSpread,
+        morphPaletteIndex: clearMorph
+            ? null
+            : (morphPaletteIndex ?? this.morphPaletteIndex),
+        colorMorph: clearMorph ? 0 : (colorMorph ?? this.colorMorph),
       );
 
   @override
@@ -255,6 +273,8 @@ class FlowerEntity extends Equatable {
         petalCount,
         paletteIndex,
         petalSpread,
+        morphPaletteIndex,
+        colorMorph,
       ];
 }
 
@@ -269,6 +289,7 @@ class PollinatorEntity extends Equatable {
     this.progress = 0,
     this.wingPhase = 0,
     this.rotation = 0,
+    this.varietyIndex = 0,
   });
 
   final String id;
@@ -280,6 +301,7 @@ class PollinatorEntity extends Equatable {
   final double progress;
   final double wingPhase;
   final double rotation;
+  final int varietyIndex;
 
   PollinatorEntity copyWith({
     double? x,
@@ -288,6 +310,7 @@ class PollinatorEntity extends Equatable {
     double? progress,
     double? wingPhase,
     double? rotation,
+    int? varietyIndex,
   }) =>
       PollinatorEntity(
         id: id,
@@ -299,11 +322,22 @@ class PollinatorEntity extends Equatable {
         progress: progress ?? this.progress,
         wingPhase: wingPhase ?? this.wingPhase,
         rotation: rotation ?? this.rotation,
+        varietyIndex: varietyIndex ?? this.varietyIndex,
       );
 
   @override
-  List<Object?> get props =>
-      [id, flowerId, kind, x, y, phase, progress, wingPhase, rotation];
+  List<Object?> get props => [
+        id,
+        flowerId,
+        kind,
+        x,
+        y,
+        phase,
+        progress,
+        wingPhase,
+        rotation,
+        varietyIndex,
+      ];
 }
 
 class BirdEntity extends Equatable {
@@ -552,7 +586,8 @@ const kGardenEncouragements = [
   'Wonderful!',
   'So Magical!',
   'Yay!',
-  'Nature is Happy!',
+  'Pretty Flower!',
+  'Tap Again!',
 ];
 
 const kBirdScareMessages = [
