@@ -149,6 +149,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bubbleNumberPop => 'Bubble Number Pop';
 
   @override
+  String get ascendingBubbleNumberPop => 'Ascending Bubble Number Pop';
+
+  @override
+  String get descendingNumberPop => 'Descending Number Pop';
+
+  @override
+  String get numberWordPop => 'Number Word Pop';
+
+  @override
   String get memoryGame => 'Memory Game';
 
   @override

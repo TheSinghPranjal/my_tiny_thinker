@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/widgets/app_loading_gate.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/memory_hub_screen.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/memory_play_screen.dart';
@@ -86,6 +87,12 @@ abstract final class AppRoutes {
   static const premium = '/premium';
   static const bubbleSetup = '/games/bubble-number-pop/setup';
   static const bubbleGame = '/games/bubble-number-pop/play';
+  static const ascendingBubbleSetup = '/games/ascending-bubble-number-pop/setup';
+  static const ascendingBubbleGame = '/games/ascending-bubble-number-pop/play';
+  static const descendingBubbleSetup = '/games/descending-number-pop/setup';
+  static const descendingBubbleGame = '/games/descending-number-pop/play';
+  static const numberWordPopSetup = '/games/number-word-pop/setup';
+  static const numberWordPopGame = '/games/number-word-pop/play';
   static const memoryHub = '/games/memory-game';
   static const memoryPlay = '/games/memory-game/play';
   static const oddOneOutSetup = '/games/odd-one-out/setup';
@@ -218,11 +225,49 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.bubbleSetup,
-      pageBuilder: (context, state) =>
-          _slidePage(state, const BubbleGameSetupScreen()),
+      pageBuilder: (context, state) => _slidePage(
+        state,
+        const BubbleGameSetupScreen(gameId: GameId.bubbleNumberPop),
+      ),
     ),
     GoRoute(
       path: AppRoutes.bubbleGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const BubbleGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.ascendingBubbleSetup,
+      pageBuilder: (context, state) => _slidePage(
+        state,
+        const BubbleGameSetupScreen(gameId: GameId.ascendingBubbleNumberPop),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.ascendingBubbleGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const BubbleGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.descendingBubbleSetup,
+      pageBuilder: (context, state) => _slidePage(
+        state,
+        const BubbleGameSetupScreen(gameId: GameId.descendingNumberPop),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.descendingBubbleGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const BubbleGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.numberWordPopSetup,
+      pageBuilder: (context, state) => _slidePage(
+        state,
+        const BubbleGameSetupScreen(gameId: GameId.numberWordPop),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.numberWordPopGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const BubbleGameScreen()),
     ),
