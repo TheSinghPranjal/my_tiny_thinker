@@ -9,15 +9,55 @@ abstract final class BubbleNumberGenerator {
     required int minValue,
     required int maxValue,
     required Difficulty difficulty,
+    bool randomNumbers = true,
   }) {
     if (minValue > maxValue) return [];
+
+    final clampedCount = count.clamp(1, 50);
     if (minValue == maxValue) {
-      return List.filled(count.clamp(1, 50), minValue);
+      return List.filled(clampedCount, minValue);
     }
 
     final range = maxValue - minValue + 1;
-    if (range < count) {
-      // Not enough unique values — use all available
+    final effectiveCount = clampedCount > range ? range : clampedCount;
+
+    if (!randomNumbers) {
+      return _generateSequential(
+        count: effectiveCount,
+        minValue: minValue,
+        maxValue: maxValue,
+      );
+    }
+
+    return _generateRandom(
+      count: effectiveCount,
+      minValue: minValue,
+      maxValue: maxValue,
+    );
+  }
+
+  /// Consecutive run within [minValue, maxValue], e.g. 5,6,7,8,9,10,11,12.
+  static List<int> _generateSequential({
+    required int count,
+    required int minValue,
+    required int maxValue,
+  }) {
+    final range = maxValue - minValue + 1;
+    final span = count;
+    final maxStart = maxValue - span + 1;
+    final start = maxStart <= minValue
+        ? minValue
+        : minValue + math.Random().nextInt(maxStart - minValue + 1);
+    return List.generate(span.clamp(1, range), (i) => start + i);
+  }
+
+  static List<int> _generateRandom({
+    required int count,
+    required int minValue,
+    required int maxValue,
+  }) {
+    final range = maxValue - minValue + 1;
+    if (range <= count) {
       final all = List.generate(range, (i) => minValue + i);
       all.shuffle(math.Random());
       return all.take(count).toList();
@@ -26,7 +66,6 @@ abstract final class BubbleNumberGenerator {
     final random = math.Random();
     final numbers = <int>{};
 
-    // Evenly distribute across range
     final segmentSize = range / count;
     for (var i = 0; i < count; i++) {
       final segMin = minValue + (segmentSize * i).floor();
@@ -43,13 +82,61 @@ abstract final class BubbleNumberGenerator {
       }
     }
 
-    // Fill remaining if segments didn't produce enough
     while (numbers.length < count) {
       final value = minValue + random.nextInt(range);
       numbers.add(value);
     }
 
     return numbers.take(count).toList();
+  }
+
+  /// Builds a word-match round: floating bubble numbers + one target to find.
+  ///
+  /// When [randomNumbers] is true, the target can be any value in the range and
+  /// distractors are filled from the same range. When false, bubbles are a
+  /// consecutive run and the target is one of those values.
+  static ({List<int> numbers, int target}) generateWordMatchRound({
+    required int count,
+    required int minValue,
+    required int maxValue,
+    bool randomNumbers = true,
+  }) {
+    if (minValue > maxValue) {
+      return (numbers: const <int>[], target: minValue);
+    }
+
+    final random = math.Random();
+    final clampedCount = count.clamp(1, 50);
+    final range = maxValue - minValue + 1;
+    final effectiveCount = clampedCount > range ? range : clampedCount;
+
+    if (!randomNumbers) {
+      final seq = _generateSequential(
+        count: effectiveCount,
+        minValue: minValue,
+        maxValue: maxValue,
+      );
+      final shuffled = List<int>.from(seq)..shuffle(random);
+      final target = shuffled[random.nextInt(shuffled.length)];
+      return (numbers: shuffled, target: target);
+    }
+
+    // Prefer any value from the full range as the word target.
+    final target = minValue + random.nextInt(range);
+    final numbers = <int>{target};
+    var attempts = 0;
+    while (numbers.length < effectiveCount && attempts < 500) {
+      numbers.add(minValue + random.nextInt(range));
+      attempts++;
+    }
+    // If range is tiny, pad with available values.
+    if (numbers.length < effectiveCount) {
+      for (var i = minValue; i <= maxValue && numbers.length < effectiveCount; i++) {
+        numbers.add(i);
+      }
+    }
+    final list = numbers.toList()..shuffle(random);
+    return (numbers: list.take(effectiveCount).toList(), target: target);
   }
 
   static List<int> sortNumbers(
@@ -67,7 +154,7 @@ abstract final class BubbleNumberGenerator {
 
   static (int min, int max) defaultRangeForDifficulty(Difficulty difficulty) {
     return switch (difficulty) {
-      Difficulty.easy => (1, 20),
+      Difficulty.easy => (0, 20),
       Difficulty.medium => (-10, 50),
       Difficulty.hard => (-100, 500),
       Difficulty.expert => (-999, 9999),
@@ -148,9 +235,9 @@ abstract final class BubbleScoring {
 
   static int mistakePenalty(Difficulty difficulty) => 0;
 
-  static int speedBonus(int elapsedSeconds, int total) {
-    if (total == 0) return 0;
-    final avgTime = elapsedSeconds / total;
+  static int speedBonus(int elapsedSeconds, int totalCorrect) {
+    if (totalCorrect == 0) return 0;
+    final avgTime = elapsedSeconds / totalCorrect;
     if (avgTime < 2) return 50;
     if (avgTime < 4) return 25;
     if (avgTime < 6) return 10;
@@ -162,9 +249,9 @@ abstract final class BubbleScoring {
     required int previousBest,
   }) {
     var finalScore = state.score;
-    final isPerfect = state.mistakes == 0 && state.isComplete;
+    final isPerfect = state.mistakes == 0 && state.totalCorrectPops > 0;
     if (isPerfect) finalScore += perfectBonus;
-    finalScore += speedBonus(state.elapsedSeconds, state.total);
+    finalScore += speedBonus(state.elapsedSeconds, state.totalCorrectPops);
 
     final stars = isPerfect
         ? 3
@@ -189,7 +276,7 @@ abstract final class BubbleScoring {
       longestCombo: state.longestCombo,
       isPerfect: isPerfect,
       isNewBest: finalScore > previousBest,
-      isVictory: state.phase == GamePhase.victory,
+      isVictory: state.totalCorrectPops > 0,
     );
   }
 }

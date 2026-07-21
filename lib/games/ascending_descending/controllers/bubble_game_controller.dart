@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/models/player_profile.dart';
-import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/play_limits/daily_play_limits.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/services/storage_service.dart';
@@ -42,8 +41,9 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
   }
 
   Future<void> loadBestScore() async {
+    final gameId = _ref.read(bubbleGameConfigProvider).gameId;
     final storage = _ref.read(storageServiceProvider);
-    final json = storage.getGameStats(GameId.bubbleNumberPop.id);
+    final json = storage.getGameStats(gameId.id);
     if (json != null) {
       _previousBest = GameStats.fromJson(json).bestScore;
     }
@@ -51,7 +51,6 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
 
   void setPlayArea(Size size) {
     if (size.width <= 0 || size.height <= 0) return;
-    // Ignore tiny layout jitter; only update when size meaningfully changes.
     if (_playArea.width > 0 &&
         (size.width - _playArea.width).abs() < 2 &&
         (size.height - _playArea.height).abs() < 2) {
@@ -63,24 +62,41 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
     }
   }
 
-  Future<void> startGame() async {
-    await loadBestScore();
-    final config = _ref.read(bubbleGameConfigProvider);
+  List<int> _generateSortedNumbers(BubbleGameConfig config) {
     final numbers = BubbleNumberGenerator.generate(
       count: config.bubbleCount,
       minValue: config.minValue,
       maxValue: config.maxValue,
       difficulty: config.difficulty,
+      randomNumbers: config.randomNumbers,
     );
-    final sorted = BubbleNumberGenerator.sortNumbers(numbers, config.sortMode);
+    return BubbleNumberGenerator.sortNumbers(numbers, config.sortMode);
+  }
+
+  ({List<int> numbers, int? wordTarget}) _prepareRound(BubbleGameConfig config) {
+    if (config.wordMatchMode) {
+      final round = BubbleNumberGenerator.generateWordMatchRound(
+        count: config.bubbleCount,
+        minValue: config.minValue,
+        maxValue: config.maxValue,
+        randomNumbers: config.randomNumbers,
+      );
+      return (numbers: round.numbers, wordTarget: round.target);
+    }
+    return (numbers: _generateSortedNumbers(config), wordTarget: null);
+  }
+
+  Future<void> startGame() async {
+    await loadBestScore();
+    final config = _ref.read(bubbleGameConfigProvider);
+    final round = _prepareRound(config);
 
     state = BubbleGameState(
       phase: GamePhase.countdown,
       config: config,
-      sortedNumbers: sorted,
-      remainingSeconds: config.timerMode == TimerMode.timed || config.toddlerMode
-          ? config.timerSeconds
-          : 0,
+      sortedNumbers: round.numbers,
+      wordTarget: round.wordTarget,
+      remainingSeconds: config.timerSeconds,
       countdown: config.toddlerMode ? 2 : 3,
       lastInteraction: DateTime.now(),
     );
@@ -131,21 +147,52 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
     _countdownComplete = false;
   }
 
+  /// Spawns a fresh wave without resetting the session timer or score.
+  void _spawnNextWave() {
+    if (state.phase != GamePhase.playing) return;
+    if (_playArea == Size.zero) return;
+
+    final round = _prepareRound(state.config);
+    final bubbles = _physics.spawnBubbles(
+      numbers: round.numbers,
+      playArea: _playArea,
+      difficulty: state.config.difficulty,
+      speedMultiplier: state.config.bubbleSpeed,
+      toddlerMode: state.config.toddlerMode,
+    );
+    if (bubbles.length != round.numbers.length) return;
+
+    state = state.copyWith(
+      bubbles: bubbles,
+      sortedNumbers: round.numbers,
+      wordTarget: round.wordTarget,
+      clearWordTarget: round.wordTarget == null,
+      currentIndex: 0,
+      showHint: false,
+      lastInteraction: DateTime.now(),
+      feedbackMessage: 'Keep going!',
+    );
+
+    _feedbackTimer?.cancel();
+    _feedbackTimer = Timer(const Duration(milliseconds: 1000), () {
+      if (mounted) state = state.copyWith(clearFeedback: true);
+    });
+  }
+
   void _startGameTimer() {
     _gameTimer?.cancel();
     _gameTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (state.phase != GamePhase.playing) return;
 
       final elapsed = state.elapsedSeconds + 1;
-      var remaining = state.remainingSeconds;
-
-      if (state.config.timerMode == TimerMode.timed || state.config.toddlerMode) {
-        remaining = remaining - 1;
-        if (remaining <= 0) {
-          state = state.copyWith(remainingSeconds: 0);
-          _endGame(victory: false);
-          return;
-        }
+      var remaining = state.remainingSeconds - 1;
+      if (remaining <= 0) {
+        state = state.copyWith(
+          elapsedSeconds: elapsed,
+          remainingSeconds: 0,
+        );
+        _endGame();
+        return;
       }
 
       state = state.copyWith(
@@ -240,6 +287,7 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
       longestCombo: math.max(state.longestCombo, newCombo),
       feedbackMessage: message,
       lastPointsEarned: points,
+      totalCorrectPops: state.totalCorrectPops + 1,
     );
 
     _feedbackTimer?.cancel();
@@ -248,12 +296,14 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
     });
 
     Future.delayed(const Duration(milliseconds: 400), () {
-      if (!mounted) return;
+      if (!mounted || state.phase != GamePhase.playing) return;
       final cleaned = state.bubbles.where((b) => b.id != bubbleId).toList();
       state = state.copyWith(bubbles: cleaned);
 
-      if (newIndex >= state.total) {
-        _endGame(victory: true);
+      // Word match: one correct pop refreshes the whole set.
+      // Ordered modes: refresh after every bubble in the wave is popped.
+      if (state.config.wordMatchMode || newIndex >= state.total) {
+        _spawnNextWave();
       }
     });
   }
@@ -303,16 +353,13 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
     }
   }
 
-  void _endGame({required bool victory}) {
+  void _endGame() {
     _gameTimer?.cancel();
     _hintTimer?.cancel();
     _countdownTimer?.cancel();
     _countdownComplete = false;
 
-    state = state.copyWith(
-      phase: victory ? GamePhase.victory : GamePhase.gameOver,
-      feedbackMessage: victory ? 'Level Complete!' : null,
-    );
+    state = state.copyWith(phase: GamePhase.gameOver);
   }
 
   BubbleGameResult getResult() {
@@ -323,29 +370,28 @@ class BubbleGameController extends StateNotifier<BubbleGameState> {
   }
 
   Future<void> saveResult(BubbleGameResult result) async {
+    final gameId = state.config.gameId;
     final storage = _ref.read(storageServiceProvider);
-    final existing = storage.getGameStats(GameId.bubbleNumberPop.id);
+    final existing = storage.getGameStats(gameId.id);
     var stats = existing != null
         ? GameStats.fromJson(existing)
-        : const GameStats(gameId: GameId.bubbleNumberPop);
+        : GameStats(gameId: gameId);
 
     stats = stats.copyWith(
       bestScore: math.max(stats.bestScore, result.score),
       starsEarned: stats.starsEarned + result.stars,
       timesPlayed: stats.timesPlayed + 1,
-      totalCorrect: stats.totalCorrect + state.currentIndex,
+      totalCorrect: stats.totalCorrect + state.totalCorrectPops,
       totalMistakes: stats.totalMistakes + state.mistakes,
       longestCombo: math.max(stats.longestCombo, result.longestCombo),
       lastPlayed: DateTime.now(),
     );
 
-    await storage.saveGameStats(GameId.bubbleNumberPop.id, stats.toJson());
+    await storage.saveGameStats(gameId.id, stats.toJson());
     await _ref
         .read(profileProvider.notifier)
         .applyReward(BubbleRewardCalculator.toGameReward(result));
-    await _ref
-        .read(dailyPlayLimitsProvider.notifier)
-        .recordPlay(GameId.bubbleNumberPop);
+    await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(gameId);
   }
 
   void reset() {
