@@ -1,7 +1,7 @@
 name: my_tiny_thinker
-description: "TinyThink - A colorful educational app for children aged 3-10."
+description: "TinyThink - A colorful educational app for children aged 1-10."
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.11.3

@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/services/storage_service.dart';
 
-/// Global Premium entitlement. Defaults to `true` for development.
+/// Global Premium entitlement. Defaults to `false` for the free Play Store build.
 final isPremiumProvider =
     StateNotifierProvider<PremiumNotifier, bool>((ref) {
   return PremiumNotifier(ref.watch(storageServiceProvider));
 });
 
 class PremiumNotifier extends StateNotifier<bool> {
-  PremiumNotifier(this._storage) : super(true) {
+  PremiumNotifier(this._storage) : super(false) {
     _load();
   }
 
@@ -19,7 +19,7 @@ class PremiumNotifier extends StateNotifier<bool> {
   void _load() {
     final raw = _storage.getString(_key);
     if (raw == null) {
-      state = true;
+      state = false;
       return;
     }
     state = raw == 'true';
