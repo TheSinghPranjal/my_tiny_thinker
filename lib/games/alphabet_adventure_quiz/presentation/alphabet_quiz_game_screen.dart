@@ -310,18 +310,8 @@ class _OptionCard extends StatelessWidget {
                 ),
               ],
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(item?.emoji ?? '?', style: const TextStyle(fontSize: 52)),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  item?.name ?? '',
-                  style: context.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
+            child: Center(
+              child: Text(item?.emoji ?? '?', style: const TextStyle(fontSize: 64)),
             ),
           ),
         ),
