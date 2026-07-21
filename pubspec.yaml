@@ -55,5 +55,6 @@ flutter:
 
   assets:
     - assets/audio/
+    - assets/audio/animals/
     - assets/images/
     - assets/animations/

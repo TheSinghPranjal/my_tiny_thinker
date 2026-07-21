@@ -47,6 +47,7 @@ enum GameId {
   candyColorHunt('candy_color_hunt', '🐜', 'Candy Color Hunt'),
   colorSchoolBags('color_school_bags', '🎒', 'Color School Bags'),
   alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz'),
+  animalSounds('animal_sounds', '🔊', 'Animal Sounds'),
   alphabetBridgeAdventure(
     'alphabet_bridge_adventure',
     '🌉',
