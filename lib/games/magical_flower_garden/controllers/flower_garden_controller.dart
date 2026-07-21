@@ -116,9 +116,14 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
       }
     }
 
+    String? feedbackMessage;
+    var showMascot = state.showMascot;
+
     if (flower.phase == FlowerPhase.bud &&
         prevPhase == FlowerPhase.relocating) {
       _pollinatorsSpawnedForBloom = false;
+      feedbackMessage = 'Tap the flower!';
+      showMascot = false;
     }
 
     pollinators = pollinators.map((p) {
@@ -150,20 +155,31 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
     pollinators =
         pollinators.where((p) => p.phase != PollinatorPhase.gone).toList();
 
-    if (flower.phase == FlowerPhase.open) {
-      final active = pollinators.where(
+    // Unbloom once nectar is done (butterflies leaving / gone).
+    // Failsafe: if open too long, close anyway so the cycle never stalls.
+    if (flower.phase == FlowerPhase.open && _pollinatorsSpawnedForBloom) {
+      final waitingForNectar = pollinators.any(
         (p) =>
             p.phase == PollinatorPhase.entering ||
-            p.phase == PollinatorPhase.collecting ||
-            p.phase == PollinatorPhase.leaving,
+            p.phase == PollinatorPhase.collecting,
       );
-      if (pollinators.isNotEmpty && active.isEmpty) {
-        flower = flower.copyWith(phase: FlowerPhase.cooldown, phaseTimer: 0);
-        pollinators = [];
+      // Butterflies finished drinking and are flying away.
+      final finishedNectar = pollinators.isNotEmpty && !waitingForNectar;
+      // All butterflies already gone after visiting.
+      final allGoneAfterVisit =
+          pollinators.isEmpty && flower.phaseTimer >= 0.35;
+      final stuckOpen = flower.phaseTimer >= 8.0;
+      if (finishedNectar || allGoneAfterVisit || stuckOpen) {
+        flower = flower.copyWith(
+          phase: FlowerPhase.cooldown,
+          phaseTimer: 0,
+          clearMorph: true,
+        );
         _pollinatorsSpawnedForBloom = false;
       }
     }
 
+    // Decorative birds only — never end the session. Only the timer does.
     if (bird != null && bird.phase != BirdPhase.gone) {
       bird = FlowerGardenLogic.updateBird(
         bird: bird,
@@ -172,19 +188,21 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
         intensity: intensity,
       );
       if (bird.phase == BirdPhase.landing) {
-        _endSession(reason: 'bird');
-        return;
+        // Fly away instead of ending the game.
+        bird = FlowerGardenLogic.scareBird(bird);
       }
       if (bird.phase == BirdPhase.gone) {
         bird = null;
       }
     }
 
-    if (bird == null && flower.phase == FlowerPhase.bud) {
+    if (bird == null &&
+        (flower.phase == FlowerPhase.bud ||
+            flower.phase == FlowerPhase.relocating)) {
       _birdSpawnTimer -= delta;
       if (_birdSpawnTimer <= 0) {
         bird = FlowerGardenLogic.spawnBird(_playArea, flower.x, flower.y);
-        _birdSpawnTimer = 20 + FlowerGardenLogic.random.nextDouble() * 15;
+        _birdSpawnTimer = 28 + FlowerGardenLogic.random.nextDouble() * 18;
       }
     }
 
@@ -206,13 +224,36 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
       xpEarned: xpEarned,
       starsEarned: starsEarned,
       lastRewardText: rewardText,
+      feedbackMessage: feedbackMessage,
+      showMascot: feedbackMessage != null ? false : showMascot,
     );
+    if (feedbackMessage != null) {
+      _scheduleFeedbackClear();
+    }
   }
 
   bool tapFlower(String flowerId) {
     if (state.sessionPhase != GardenSessionPhase.playing) return false;
     final flower = state.flower;
     if (flower == null || flower.id != flowerId || !flower.canTap) return false;
+
+    // Retap while butterfly is coming / drinking → slow colour change.
+    if (flower.phase == FlowerPhase.blooming ||
+        flower.phase == FlowerPhase.open) {
+      final next = FlowerGardenLogic.pickDifferentPaletteIndex(
+        flower.morphPaletteIndex ?? flower.paletteIndex,
+      );
+      state = state.copyWith(
+        flower: flower.copyWith(
+          morphPaletteIndex: next,
+          colorMorph: 0,
+        ),
+        showSparkles: true,
+        feedbackMessage: 'Pretty colours!',
+      );
+      _scheduleFeedbackClear();
+      return true;
+    }
 
     final palette = FlowerGardenLogic.pickPalette(state.bloomsCount);
     final reward = FlowerGardenLogic.bloomReward(state.settings);
@@ -223,6 +264,7 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
       flower: flower.copyWith(
         phase: FlowerPhase.blooming,
         bloomProgress: 0,
+        clearMorph: true,
         paletteIndex: FlowerGardenLogic.paletteIndexFor(palette),
         petalCount: 5 + FlowerGardenLogic.random.nextInt(4),
         petalSpread: 0.85 + FlowerGardenLogic.random.nextDouble() * 0.35,
@@ -288,12 +330,14 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
 
   void _endSession({required String reason}) {
     _sessionTimer?.cancel();
-    final message = reason == 'bird'
-        ? kBirdLandMessages[
-            FlowerGardenLogic.random.nextInt(kBirdLandMessages.length)]
-        : 'Amazing Garden Adventure!';
+    // Session always ends on the timer for this toddler tap game.
+    final message = reason == 'timer'
+        ? 'Amazing Garden Adventure!'
+        : kBirdLandMessages[
+            FlowerGardenLogic.random.nextInt(kBirdLandMessages.length)];
     state = state.copyWith(
       sessionPhase: GardenSessionPhase.finished,
+      remainingSeconds: reason == 'timer' ? 0 : state.remainingSeconds,
       showRainbow: true,
       showSparkles: true,
       showMascot: true,

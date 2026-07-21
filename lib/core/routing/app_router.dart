@@ -59,6 +59,8 @@ import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/presentatio
 import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/presentation/hungry_monkey_game_screen.dart';
 import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/presentation/butterfly_garden_setup_screen.dart';
 import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/presentation/butterfly_garden_game_screen.dart';
+import 'package:my_tiny_thinker/games/catch_the_fish/presentation/catch_the_fish_setup_screen.dart';
+import 'package:my_tiny_thinker/games/catch_the_fish/presentation/catch_the_fish_game_screen.dart';
 import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/presentation/hungry_duck_setup_screen.dart';
 import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/presentation/hungry_duck_game_screen.dart';
 import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/presentation/hungry_teddy_setup_screen.dart';
@@ -106,6 +108,8 @@ abstract final class AppRoutes {
   static const hungryMonkeyGame = '/games/hungry-monkey/play';
   static const butterflyGardenSetup = '/games/butterfly-garden/setup';
   static const butterflyGardenGame = '/games/butterfly-garden/play';
+  static const catchTheFishSetup = '/games/catch-the-fish/setup';
+  static const catchTheFishGame = '/games/catch-the-fish/play';
   static const hungryDuckSetup = '/games/hungry-duck/setup';
   static const hungryDuckGame = '/games/hungry-duck/play';
   static const hungryTeddySetup = '/games/hungry-teddy/setup';
@@ -341,6 +345,16 @@ final appRouter = GoRouter(
       path: AppRoutes.butterflyGardenGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const ButterflyGardenGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.catchTheFishSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CatchTheFishSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.catchTheFishGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CatchTheFishGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.hungryDuckSetup,
