@@ -72,6 +72,11 @@ abstract final class GameCatalog {
       subtitle: 'Tap butterflies and fill your basket!',
     ),
     GameCatalogEntry(
+      gameId: GameId.catchTheFishAdventure,
+      category: LearningCategory.littleExplorers,
+      subtitle: 'Tap fish and reel them into the boat!',
+    ),
+    GameCatalogEntry(
       gameId: GameId.hungryMonkeyBananaAdventure,
       category: LearningCategory.littleExplorers,
       subtitle: 'Tap bananas and feed the hungry monkey!',

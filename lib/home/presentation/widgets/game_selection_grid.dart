@@ -25,6 +25,7 @@ class GameSelectionGrid extends ConsumerWidget {
     GameId.hungryTeddyCupcakeParty,
     GameId.hungryDuckPondAdventure,
     GameId.catchTheButterflyGarden,
+    GameId.catchTheFishAdventure,
     GameId.hungryMonkeyBananaAdventure,
     GameId.feedTheFrogAdventure,
     GameId.frogPondAdventure,
@@ -79,6 +80,12 @@ class GameSelectionGrid extends ConsumerWidget {
       '🦋',
       'Catch the Butterfly Garden',
       'Tap butterflies and fill your basket!',
+      'Easy',
+    ),
+    GameId.catchTheFishAdventure: (
+      '🎣',
+      'Catch the Fish Adventure',
+      'Tap fish and reel them into the boat!',
       'Easy',
     ),
     GameId.hungryDuckPondAdventure: (
