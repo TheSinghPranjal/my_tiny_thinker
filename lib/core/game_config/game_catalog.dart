@@ -162,6 +162,11 @@ abstract final class GameCatalog {
       subtitle: 'Match letters with pictures!',
     ),
     GameCatalogEntry(
+      gameId: GameId.animalSounds,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Listen and tap the matching animal!',
+    ),
+    GameCatalogEntry(
       gameId: GameId.oddOneOut,
       category: LearningCategory.tinyLearners,
       subtitle: 'Tap the picture that does not belong!',

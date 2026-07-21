@@ -55,6 +55,8 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.colorSchoolBagsSetup);
     case GameId.alphabetAdventureQuiz:
       context.push(AppRoutes.alphabetQuizSetup);
+    case GameId.animalSounds:
+      context.push(AppRoutes.animalSoundsSetup);
     case GameId.alphabetBridgeAdventure:
       context.push(AppRoutes.alphabetBridgeSetup);
     case GameId.numberBridgeAdventure:
