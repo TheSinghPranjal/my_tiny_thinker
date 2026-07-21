@@ -77,6 +77,7 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
         'shape_drop_adventure',
         'shadow_match_adventure',
         'alphabet_adventure_quiz',
+        'animal_sounds',
         'bubble_number_pop',
         'color_memory',
         'memory_game',

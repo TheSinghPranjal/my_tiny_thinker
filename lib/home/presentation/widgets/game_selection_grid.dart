@@ -39,6 +39,7 @@ class GameSelectionGrid extends ConsumerWidget {
     GameId.shapeDropAdventure,
     GameId.shadowMatchAdventure,
     GameId.alphabetAdventureQuiz,
+    GameId.animalSounds,
     GameId.cloudPopGarden,
     GameId.magicalFlowerGarden,
     GameId.oceanFishAdventure,
@@ -164,6 +165,12 @@ class GameSelectionGrid extends ConsumerWidget {
       '🔤',
       'Alphabet Adventure Quiz',
       'Match letters with pictures!',
+      'Easy',
+    ),
+    GameId.animalSounds: (
+      '🔊',
+      'Animal Sounds',
+      'Listen and tap the matching animal!',
       'Easy',
     ),
     GameId.cloudPopGarden: (
