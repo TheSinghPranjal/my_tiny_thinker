@@ -9,6 +9,7 @@ void main() {
       minValue: 1,
       maxValue: 50,
       difficulty: Difficulty.easy,
+      randomNumbers: true,
     );
     expect(numbers.length, 10);
     expect(numbers.toSet().length, 10);
