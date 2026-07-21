@@ -370,6 +370,24 @@ abstract class AppLocalizations {
   /// **'Bubble Number Pop'**
   String get bubbleNumberPop;
 
+  /// No description provided for @ascendingBubbleNumberPop.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascending Bubble Number Pop'**
+  String get ascendingBubbleNumberPop;
+
+  /// No description provided for @descendingNumberPop.
+  ///
+  /// In en, this message translates to:
+  /// **'Descending Number Pop'**
+  String get descendingNumberPop;
+
+  /// No description provided for @numberWordPop.
+  ///
+  /// In en, this message translates to:
+  /// **'Number Word Pop'**
+  String get numberWordPop;
+
   /// No description provided for @memoryGame.
   ///
   /// In en, this message translates to:
