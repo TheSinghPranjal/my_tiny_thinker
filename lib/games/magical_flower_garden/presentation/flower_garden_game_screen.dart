@@ -114,12 +114,17 @@ class _FlowerGardenGameScreenState extends ConsumerState<FlowerGardenGameScreen>
 
   void _onTapFlower(String flowerId) {
     final settings = ref.read(flowerGardenSettingsProvider);
+    final before = ref.read(flowerGardenControllerProvider).flower;
+    final wasBud = before?.phase == FlowerPhase.bud;
     final ok =
         ref.read(flowerGardenControllerProvider.notifier).tapFlower(flowerId);
     if (!ok) return;
     if (settings.soundEnabled) {
       ref.read(audioServiceProvider).playSfx(SoundEffect.correct);
-      ref.read(audioServiceProvider).playSfx(SoundEffect.reward);
+      if (wasBud) {
+        ref.read(audioServiceProvider).playSfx(SoundEffect.reward);
+        ref.read(audioServiceProvider).playSfx(SoundEffect.coin);
+      }
     }
     if (settings.hapticsEnabled) {
       ref.read(hapticServiceProvider).trigger(HapticType.light);
@@ -127,9 +132,6 @@ class _FlowerGardenGameScreenState extends ConsumerState<FlowerGardenGameScreen>
     final flower = ref.read(flowerGardenControllerProvider).flower;
     if (flower != null) {
       _particleKey.currentState?.emit(origin: Offset(flower.x, flower.y));
-    }
-    if (settings.soundEnabled) {
-      ref.read(audioServiceProvider).playSfx(SoundEffect.coin);
     }
   }
 
@@ -274,7 +276,7 @@ class _GardenPlayArea extends ConsumerWidget {
         });
 
         final flowerSize =
-            math.min(constraints.maxWidth, constraints.maxHeight) * 0.48;
+            math.min(constraints.maxWidth, constraints.maxHeight) * 0.58;
 
         return ClipRect(
           child: Stack(

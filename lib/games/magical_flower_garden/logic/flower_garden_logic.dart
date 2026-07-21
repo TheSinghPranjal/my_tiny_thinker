@@ -44,9 +44,22 @@ abstract final class FlowerGardenLogic {
     return kBloomPalettes[idx];
   }
 
+  static int pickDifferentPaletteIndex(int current) {
+    if (kBloomPalettes.length <= 1) return current;
+    var next = current;
+    for (var i = 0; i < 8 && next == current; i++) {
+      next = random.nextInt(kBloomPalettes.length);
+    }
+    if (next == current) {
+      next = (current + 1) % kBloomPalettes.length;
+    }
+    return next;
+  }
+
   static int paletteIndexFor(BloomPalette palette) =>
       kBloomPalettes.indexWhere((p) => p.name == palette.name);
 
+  /// Toddlers get colourful butterflies that drink nectar then leave.
   static List<PollinatorEntity> spawnPollinators(
     Size area,
     String flowerId,
@@ -54,20 +67,18 @@ abstract final class FlowerGardenLogic {
     double fy,
   ) {
     final count = 1 + random.nextInt(2);
-    final kinds = <PollinatorKind>[PollinatorKind.bee, PollinatorKind.butterfly]
-      ..shuffle(random);
     return List.generate(count, (i) {
-      final kind = kinds[i % kinds.length];
       final edge = random.nextInt(4);
       final start = _edgePoint(area, edge);
       return PollinatorEntity(
         id: 'pollinator_${_pollinatorId++}',
         flowerId: flowerId,
-        kind: kind,
+        kind: PollinatorKind.butterfly,
         x: start.$1,
         y: start.$2,
         phase: PollinatorPhase.entering,
         rotation: _angleToward(start.$1, start.$2, fx, fy),
+        varietyIndex: random.nextInt(8),
       );
     });
   }
@@ -147,6 +158,20 @@ abstract final class FlowerGardenLogic {
       blinkTimer: f.blinkTimer + delta,
     );
 
+    // Slow colour morph when toddler retaps during bloom.
+    if (f.morphPaletteIndex != null &&
+        (f.phase == FlowerPhase.blooming || f.phase == FlowerPhase.open)) {
+      final morph = (f.colorMorph + delta * 0.55).clamp(0.0, 1.0);
+      if (morph >= 1.0) {
+        updated = updated.copyWith(
+          paletteIndex: f.morphPaletteIndex,
+          clearMorph: true,
+        );
+      } else {
+        updated = updated.copyWith(colorMorph: morph);
+      }
+    }
+
     switch (f.phase) {
       case FlowerPhase.bud:
         return updated.copyWith(
@@ -157,11 +182,13 @@ abstract final class FlowerGardenLogic {
       case FlowerPhase.blooming:
         final progress =
             (f.bloomProgress + delta * 0.45 * intensity).clamp(0.0, 1.0);
+        final opened = progress >= 1;
         return updated.copyWith(
           x: f.anchorX + sway * 0.5,
           y: f.anchorY,
           bloomProgress: progress,
-          phase: progress >= 1 ? FlowerPhase.open : FlowerPhase.blooming,
+          phase: opened ? FlowerPhase.open : FlowerPhase.blooming,
+          phaseTimer: opened ? 0 : f.phaseTimer,
         );
 
       case FlowerPhase.open:
@@ -169,23 +196,27 @@ abstract final class FlowerGardenLogic {
           x: f.anchorX + sway * 0.3,
           y: f.anchorY,
           bloomProgress: 1,
+          phaseTimer: f.phaseTimer + delta,
         );
 
       case FlowerPhase.cooldown:
         final timer = f.phaseTimer + delta;
-        const closeDuration = 1.4;
+        // Close petals, then return to a tappable bud for the next tap.
+        const closeDuration = 1.1;
         final bloom = (1.0 - (timer / closeDuration)).clamp(0.0, 1.0);
         if (bloom <= 0.02 || timer >= closeDuration) {
+          // Stay near the same spot so toddlers can tap again easily.
           final target = randomRelocateAnchor(
             area,
             f,
-            settings.maxMoveDistance,
+            settings.maxMoveDistance * 0.45,
           );
           return updated.copyWith(
             phase: FlowerPhase.relocating,
             bloomProgress: 0,
             opacity: 1,
             phaseTimer: 0,
+            clearMorph: true,
             targetAnchorX: target.$1,
             targetAnchorY: target.$2,
             petalCount: 5 + random.nextInt(4),
@@ -206,7 +237,7 @@ abstract final class FlowerGardenLogic {
         final dx = tx - f.anchorX;
         final dy = ty - f.anchorY;
         final dist = math.sqrt(dx * dx + dy * dy);
-        if (dist < 4) {
+        if (dist < 6) {
           return updated.copyWith(
             phase: FlowerPhase.bud,
             anchorX: tx,
@@ -214,11 +245,13 @@ abstract final class FlowerGardenLogic {
             x: tx,
             y: ty,
             clearTarget: true,
+            clearMorph: true,
             bloomProgress: 0,
           );
         }
-        final step = delta * 90 * moveMult * intensity;
-        final t = step / dist;
+        // Snap back quickly so the next tap is ready soon.
+        final step = delta * 160 * moveMult * intensity;
+        final t = (step / dist).clamp(0.0, 1.0);
         final nx = f.anchorX + dx * t;
         final ny = f.anchorY + dy * t;
         return updated.copyWith(
@@ -226,6 +259,7 @@ abstract final class FlowerGardenLogic {
           anchorY: ny,
           x: nx + sway * 0.2,
           y: ny,
+          bloomProgress: 0,
         );
     }
   }
@@ -245,31 +279,36 @@ abstract final class FlowerGardenLogic {
       PollinatorPhase.entering => _movePollinatorToward(
           p,
           flowerX,
-          flowerY,
-          delta * 120 * intensity,
+          flowerY - 18,
+          delta * 95 * intensity,
           wing,
           PollinatorPhase.collecting,
-          44,
+          40,
         ),
       PollinatorPhase.collecting => () {
           final prog = p.progress + delta;
-          if (prog >= 2.2) {
+          if (prog >= 2.6) {
             onNectarCollected(p);
+            // Lock a single leave direction (do not flip every frame).
+            final leaveAngle =
+                p.rotation + math.pi + (random.nextDouble() - 0.5) * 0.9;
             return p.copyWith(
               phase: PollinatorPhase.leaving,
               progress: 0,
               wingPhase: wing,
+              rotation: leaveAngle,
             );
           }
+          // Sip nectar with a gentle bob over the flower.
           return p.copyWith(
             progress: prog,
             wingPhase: wing,
-            x: flowerX + math.cos(prog * 3) * 8,
-            y: flowerY + math.sin(prog * 2.5) * 6,
+            x: flowerX + math.cos(prog * 2.4) * 10,
+            y: flowerY - 22 + math.sin(prog * 3.2) * 7,
           );
         }(),
       PollinatorPhase.leaving =>
-          _movePollinatorAway(p, flowerX, flowerY, delta * 140, wing),
+          _movePollinatorAway(p, flowerX, flowerY, delta * 160, wing),
       PollinatorPhase.gone => p,
     };
   }
@@ -311,16 +350,28 @@ abstract final class FlowerGardenLogic {
     double speed,
     double wing,
   ) {
-    final angle = p.rotation + math.pi + (random.nextDouble() - 0.5) * 0.6;
+    // Keep flying on the leave heading set when nectar finished.
+    final angle = p.rotation;
+    // [speed] is delta * 160 from the caller, so this advances in real seconds.
+    final leaveTime = p.progress + speed / 160.0;
     final nx = p.x + math.cos(angle) * speed;
     final ny = p.y + math.sin(angle) * speed;
     final dist = math.sqrt(
       (nx - fromX) * (nx - fromX) + (ny - fromY) * (ny - fromY),
     );
-    if (dist > 380) {
-      return p.copyWith(phase: PollinatorPhase.gone, wingPhase: wing);
+    if (leaveTime >= 1.6 || dist > 260) {
+      return p.copyWith(
+        phase: PollinatorPhase.gone,
+        wingPhase: wing,
+        progress: leaveTime,
+      );
     }
-    return p.copyWith(x: nx, y: ny, rotation: angle, wingPhase: wing);
+    return p.copyWith(
+      x: nx,
+      y: ny,
+      wingPhase: wing,
+      progress: leaveTime,
+    );
   }
 
   static BirdEntity updateBird({
