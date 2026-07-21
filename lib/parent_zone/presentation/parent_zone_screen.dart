@@ -69,6 +69,8 @@ import 'package:my_tiny_thinker/games/picture_bridge_adventure/repository/pictur
 import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/models/color_shape_bridge_models.dart';
 import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/repository/color_shape_bridge_settings_repository.dart';
 import 'package:my_tiny_thinker/games/moon_rescue_adventure/repository/moon_rescue_settings_repository.dart';
+import 'package:my_tiny_thinker/games/ascending_descending/models/bubble_pop_settings.dart';
+import 'package:my_tiny_thinker/games/ascending_descending/repository/bubble_pop_settings_repository.dart';
 import 'package:my_tiny_thinker/parent_zone/presentation/widgets/parent_game_settings_card.dart';
 
 class ParentZoneScreen extends ConsumerStatefulWidget {
@@ -486,6 +488,33 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ParentGameSettingsCard(
               gameId: GameId.colorBalloonPop,
               child: _ColorBalloonPopParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.bubbleNumberPop,
+              child: const Text(
+                'Numbers appear from 0 to 10. Pop the number shown on top. '
+                'A new set of bubbles appears when all are popped.',
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.ascendingBubbleNumberPop,
+              child: _OrderedBubblePopParentControls(
+                provider: ascendingBubblePopSettingsProvider,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.descendingNumberPop,
+              child: _OrderedBubblePopParentControls(
+                provider: descendingNumberPopSettingsProvider,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.numberWordPop,
+              child: const _NumberWordPopParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             ParentGameSettingsCard(
@@ -3372,6 +3401,211 @@ class _ColorBalloonPopParentControls extends ConsumerWidget {
                   ),
         ),
       ],
+    );
+  }
+}
+
+class _OrderedBubblePopParentControls extends ConsumerWidget {
+  const _OrderedBubblePopParentControls({required this.provider});
+
+  final StateNotifierProvider<OrderedBubblePopSettingsNotifier,
+      OrderedBubblePopSettings> provider;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(provider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Bubbles on screen: ${s.bubbleCount}'),
+        Slider(
+          value: s.bubbleCount.toDouble(),
+          min: 5,
+          max: 10,
+          divisions: 5,
+          label: '${s.bubbleCount}',
+          onChanged: (v) => ref.read(provider.notifier).patch(
+                (x) => x.copyWith(bubbleCount: v.round()),
+              ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Minimum number: ${s.minValue}'),
+        _SignedNumberField(
+          value: s.minValue,
+          min: OrderedBubblePopSettings.absoluteMin,
+          max: OrderedBubblePopSettings.absoluteMax,
+          onChanged: (v) => ref.read(provider.notifier).patch(
+                (x) => x.copyWith(minValue: v),
+              ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Maximum number: ${s.maxValue}'),
+        _SignedNumberField(
+          value: s.maxValue,
+          min: OrderedBubblePopSettings.absoluteMin,
+          max: OrderedBubblePopSettings.absoluteMax,
+          onChanged: (v) => ref.read(provider.notifier).patch(
+                (x) => x.copyWith(maxValue: v),
+              ),
+        ),
+        CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Random numbers'),
+          subtitle: Text(
+            s.randomNumbers
+                ? 'Bubbles use mixed numbers from the range (still in order).'
+                : 'Bubbles use a consecutive sequence within the range.',
+          ),
+          value: s.randomNumbers,
+          controlAffinity: ListTileControlAffinity.leading,
+          onChanged: (v) => ref.read(provider.notifier).patch(
+                (x) => x.copyWith(randomNumbers: v ?? false),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _NumberWordPopParentControls extends ConsumerWidget {
+  const _NumberWordPopParentControls();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(numberWordPopSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Bubbles on screen: ${s.bubbleCount}'),
+        Slider(
+          value: s.bubbleCount.toDouble(),
+          min: 5,
+          max: 10,
+          divisions: 5,
+          label: '${s.bubbleCount}',
+          onChanged: (v) =>
+              ref.read(numberWordPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(bubbleCount: v.round()),
+                  ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Minimum number: ${s.minValue}'),
+        _SignedNumberField(
+          value: s.minValue,
+          min: NumberWordPopSettings.absoluteMin,
+          max: NumberWordPopSettings.absoluteMax,
+          allowNegative: false,
+          onChanged: (v) =>
+              ref.read(numberWordPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(minValue: v),
+                  ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Maximum number: ${s.maxValue}'),
+        _SignedNumberField(
+          value: s.maxValue,
+          min: NumberWordPopSettings.absoluteMin,
+          max: NumberWordPopSettings.absoluteMax,
+          allowNegative: false,
+          onChanged: (v) =>
+              ref.read(numberWordPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(maxValue: v),
+                  ),
+        ),
+        CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Random numbers'),
+          subtitle: Text(
+            s.randomNumbers
+                ? 'Any number from the range can appear as the word target.'
+                : 'Bubbles use a consecutive sequence; the word is one of them.',
+          ),
+          value: s.randomNumbers,
+          controlAffinity: ListTileControlAffinity.leading,
+          onChanged: (v) =>
+              ref.read(numberWordPopSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(randomNumbers: v ?? true),
+                  ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SignedNumberField extends StatefulWidget {
+  const _SignedNumberField({
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+    this.allowNegative = true,
+  });
+
+  final int value;
+  final int min;
+  final int max;
+  final ValueChanged<int> onChanged;
+  final bool allowNegative;
+
+  @override
+  State<_SignedNumberField> createState() => _SignedNumberFieldState();
+}
+
+class _SignedNumberFieldState extends State<_SignedNumberField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: '${widget.value}');
+  }
+
+  @override
+  void didUpdateWidget(covariant _SignedNumberField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value &&
+        _controller.text != '${widget.value}') {
+      _controller.text = '${widget.value}';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _commit(String raw) {
+    final parsed = int.tryParse(raw.trim());
+    if (parsed == null) {
+      _controller.text = '${widget.value}';
+      return;
+    }
+    widget.onChanged(parsed.clamp(widget.min, widget.max));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _controller,
+      keyboardType: TextInputType.numberWithOptions(
+        signed: widget.allowNegative,
+      ),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(
+          RegExp(widget.allowNegative ? r'^-?\d{0,4}$' : r'^\d{0,4}$'),
+        ),
+      ],
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        isDense: true,
+        helperText: widget.allowNegative
+            ? 'From -9999 to 9999'
+            : 'From 0 to 9999',
+      ),
+      onSubmitted: _commit,
+      onEditingComplete: () => _commit(_controller.text),
+      onTapOutside: (_) => _commit(_controller.text),
     );
   }
 }

@@ -33,6 +33,7 @@ import 'package:my_tiny_thinker/games/pattern_match/repository/pattern_match_set
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
 import 'package:my_tiny_thinker/games/balloon_parade/repository/balloon_parade_settings_repository.dart';
 import 'package:my_tiny_thinker/games/color_balloon_pop/repository/color_balloon_pop_settings_repository.dart';
+import 'package:my_tiny_thinker/games/ascending_descending/repository/bubble_pop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/repository/peek_a_boo_animal_friends_settings_repository.dart';
 import 'package:my_tiny_thinker/games/picture_bridge_adventure/repository/picture_bridge_settings_repository.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/repository/shadow_match_settings_repository.dart';
@@ -100,6 +101,14 @@ class ParentGameSettingsCard extends ConsumerWidget {
         ref.watch(balloonParadeSettingsProvider).sessionSeconds,
       GameId.colorBalloonPop =>
         ref.watch(colorBalloonPopSettingsProvider).sessionSeconds,
+      GameId.bubbleNumberPop =>
+        ref.watch(bubbleNumberPopSettingsProvider).sessionSeconds,
+      GameId.ascendingBubbleNumberPop =>
+        ref.watch(ascendingBubblePopSettingsProvider).sessionSeconds,
+      GameId.descendingNumberPop =>
+        ref.watch(descendingNumberPopSettingsProvider).sessionSeconds,
+      GameId.numberWordPop =>
+        ref.watch(numberWordPopSettingsProvider).sessionSeconds,
       _ => GameDuration.defaultSeconds,
     };
   }
@@ -187,6 +196,18 @@ class ParentGameSettingsCard extends ConsumerWidget {
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.colorBalloonPop:
         ref.read(colorBalloonPopSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.bubbleNumberPop:
+        ref.read(bubbleNumberPopSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.ascendingBubbleNumberPop:
+        ref.read(ascendingBubblePopSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.descendingNumberPop:
+        ref.read(descendingNumberPopSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.numberWordPop:
+        ref.read(numberWordPopSettingsProvider.notifier)
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       default:
         break;
