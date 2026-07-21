@@ -57,6 +57,7 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
         'hungry_teddy_cupcake_party',
         'hungry_duck_pond_adventure',
         'catch_the_butterfly_garden',
+        'catch_the_fish_adventure',
         'hungry_monkey_banana_adventure',
         'peek_a_boo_animal_friends',
         'frog_pond_adventure',

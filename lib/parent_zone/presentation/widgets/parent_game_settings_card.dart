@@ -15,6 +15,7 @@ import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/repository/alpha
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/repository/bunny_hop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/candy_color_hunt/repository/candy_color_hunt_settings_repository.dart';
 import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/repository/butterfly_garden_settings_repository.dart';
+import 'package:my_tiny_thinker/games/catch_the_fish/repository/catch_the_fish_settings_repository.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/repository/cloud_pop_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/repository/color_school_bags_settings_repository.dart';
 import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/repository/color_shape_bridge_settings_repository.dart';
@@ -60,6 +61,8 @@ class ParentGameSettingsCard extends ConsumerWidget {
         ref.watch(hungryDuckSettingsProvider).sessionSeconds,
       GameId.catchTheButterflyGarden =>
         ref.watch(butterflyGardenSettingsProvider).sessionSeconds,
+      GameId.catchTheFishAdventure =>
+        ref.watch(catchTheFishSettingsProvider).sessionSeconds,
       GameId.hungryMonkeyBananaAdventure =>
         ref.watch(hungryMonkeySettingsProvider).sessionSeconds,
       GameId.feedTheFrogAdventure => ref.watch(feedFrogSettingsProvider).sessionSeconds,
@@ -115,6 +118,9 @@ class ParentGameSettingsCard extends ConsumerWidget {
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.catchTheButterflyGarden:
         ref.read(butterflyGardenSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.catchTheFishAdventure:
+        ref.read(catchTheFishSettingsProvider.notifier)
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.hungryMonkeyBananaAdventure:
         ref.read(hungryMonkeySettingsProvider.notifier)
