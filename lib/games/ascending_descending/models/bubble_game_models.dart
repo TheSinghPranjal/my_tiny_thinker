@@ -25,13 +25,16 @@ class BubbleGameConfig extends Equatable {
     this.difficulty = Difficulty.easy,
     this.timerMode = TimerMode.timed,
     this.timerSeconds = 60,
-    this.bubbleCount = 10,
-    this.minValue = 1,
+    this.bubbleCount = 8,
+    this.minValue = 0,
     this.maxValue = 20,
     this.hintsEnabled = true,
     this.bubbleSpeed = 1.0,
     this.theme = BubbleTheme.defaultTheme,
     this.toddlerMode = false,
+    this.randomNumbers = false,
+    this.wordMatchMode = false,
+    this.gameId = GameId.ascendingBubbleNumberPop,
   });
 
   final SortMode sortMode;
@@ -45,21 +48,98 @@ class BubbleGameConfig extends Equatable {
   final double bubbleSpeed;
   final BubbleTheme theme;
   final bool toddlerMode;
+  final bool randomNumbers;
+  /// When true, show a number word and pop the matching digit bubble.
+  final bool wordMatchMode;
+  final GameId gameId;
 
   bool get isValid => minValue <= maxValue;
 
-  /// Preset for ages 1–2: huge bubbles, slow motion, 60s timer, simple range.
-  factory BubbleGameConfig.toddler() => const BubbleGameConfig(
+  /// Little Explorers: huge bubbles, slow motion, 0–10 range.
+  factory BubbleGameConfig.littleExplorers({int timerSeconds = 60}) =>
+      BubbleGameConfig(
         sortMode: SortMode.ascending,
         difficulty: Difficulty.easy,
         timerMode: TimerMode.timed,
-        timerSeconds: 60,
+        timerSeconds: timerSeconds,
         bubbleCount: 8,
-        minValue: 1,
+        minValue: 0,
         maxValue: 10,
         hintsEnabled: true,
         bubbleSpeed: 0.35,
         toddlerMode: true,
+        randomNumbers: false,
+        wordMatchMode: false,
+        gameId: GameId.bubbleNumberPop,
+      );
+
+  factory BubbleGameConfig.ascending({
+    int timerSeconds = 60,
+    int minValue = 0,
+    int maxValue = 20,
+    int bubbleCount = 8,
+    bool randomNumbers = false,
+  }) =>
+      BubbleGameConfig(
+        sortMode: SortMode.ascending,
+        difficulty: Difficulty.easy,
+        timerMode: TimerMode.timed,
+        timerSeconds: timerSeconds,
+        bubbleCount: bubbleCount.clamp(5, 10),
+        minValue: minValue,
+        maxValue: maxValue,
+        hintsEnabled: true,
+        bubbleSpeed: 0.6,
+        toddlerMode: false,
+        randomNumbers: randomNumbers,
+        wordMatchMode: false,
+        gameId: GameId.ascendingBubbleNumberPop,
+      );
+
+  factory BubbleGameConfig.descending({
+    int timerSeconds = 60,
+    int minValue = 0,
+    int maxValue = 20,
+    int bubbleCount = 8,
+    bool randomNumbers = false,
+  }) =>
+      BubbleGameConfig(
+        sortMode: SortMode.descending,
+        difficulty: Difficulty.easy,
+        timerMode: TimerMode.timed,
+        timerSeconds: timerSeconds,
+        bubbleCount: bubbleCount.clamp(5, 10),
+        minValue: minValue,
+        maxValue: maxValue,
+        hintsEnabled: true,
+        bubbleSpeed: 0.6,
+        toddlerMode: false,
+        randomNumbers: randomNumbers,
+        wordMatchMode: false,
+        gameId: GameId.descendingNumberPop,
+      );
+
+  factory BubbleGameConfig.numberWord({
+    int timerSeconds = 60,
+    int minValue = 0,
+    int maxValue = 50,
+    int bubbleCount = 8,
+    bool randomNumbers = true,
+  }) =>
+      BubbleGameConfig(
+        sortMode: SortMode.ascending,
+        difficulty: Difficulty.easy,
+        timerMode: TimerMode.timed,
+        timerSeconds: timerSeconds,
+        bubbleCount: bubbleCount.clamp(5, 10),
+        minValue: minValue.clamp(0, 9999),
+        maxValue: maxValue.clamp(0, 9999),
+        hintsEnabled: true,
+        bubbleSpeed: 0.6,
+        toddlerMode: false,
+        randomNumbers: randomNumbers,
+        wordMatchMode: true,
+        gameId: GameId.numberWordPop,
       );
 
   BubbleGameConfig copyWith({
@@ -74,6 +154,9 @@ class BubbleGameConfig extends Equatable {
     double? bubbleSpeed,
     BubbleTheme? theme,
     bool? toddlerMode,
+    bool? randomNumbers,
+    bool? wordMatchMode,
+    GameId? gameId,
   }) =>
       BubbleGameConfig(
         sortMode: sortMode ?? this.sortMode,
@@ -87,6 +170,9 @@ class BubbleGameConfig extends Equatable {
         bubbleSpeed: bubbleSpeed ?? this.bubbleSpeed,
         theme: theme ?? this.theme,
         toddlerMode: toddlerMode ?? this.toddlerMode,
+        randomNumbers: randomNumbers ?? this.randomNumbers,
+        wordMatchMode: wordMatchMode ?? this.wordMatchMode,
+        gameId: gameId ?? this.gameId,
       );
 
   @override
@@ -102,6 +188,9 @@ class BubbleGameConfig extends Equatable {
         bubbleSpeed,
         theme,
         toddlerMode,
+        randomNumbers,
+        wordMatchMode,
+        gameId,
       ];
 }
 
@@ -197,6 +286,8 @@ class BubbleGameState extends Equatable {
     this.countdown = 3,
     this.feedbackMessage,
     this.lastPointsEarned = 0,
+    this.totalCorrectPops = 0,
+    this.wordTarget,
   });
 
   final GamePhase phase;
@@ -215,18 +306,25 @@ class BubbleGameState extends Equatable {
   final int countdown;
   final String? feedbackMessage;
   final int lastPointsEarned;
+  final int totalCorrectPops;
+  /// Explicit target for word-match mode (number matching the shown word).
+  final int? wordTarget;
 
-  int? get targetNumber =>
-      currentIndex < sortedNumbers.length ? sortedNumbers[currentIndex] : null;
+  int? get targetNumber {
+    if (config.wordMatchMode) return wordTarget;
+    return currentIndex < sortedNumbers.length
+        ? sortedNumbers[currentIndex]
+        : null;
+  }
 
   int get total => sortedNumbers.length;
 
   bool get isComplete => currentIndex >= sortedNumbers.length && total > 0;
 
   double get accuracy {
-    final totalAttempts = currentIndex + mistakes;
+    final totalAttempts = totalCorrectPops + mistakes;
     if (totalAttempts == 0) return 1;
-    return currentIndex / totalAttempts;
+    return totalCorrectPops / totalAttempts;
   }
 
   BubbleGameState copyWith({
@@ -246,7 +344,10 @@ class BubbleGameState extends Equatable {
     int? countdown,
     String? feedbackMessage,
     int? lastPointsEarned,
+    int? totalCorrectPops,
+    int? wordTarget,
     bool clearFeedback = false,
+    bool clearWordTarget = false,
   }) =>
       BubbleGameState(
         phase: phase ?? this.phase,
@@ -266,6 +367,8 @@ class BubbleGameState extends Equatable {
         feedbackMessage:
             clearFeedback ? null : (feedbackMessage ?? this.feedbackMessage),
         lastPointsEarned: lastPointsEarned ?? this.lastPointsEarned,
+        totalCorrectPops: totalCorrectPops ?? this.totalCorrectPops,
+        wordTarget: clearWordTarget ? null : (wordTarget ?? this.wordTarget),
       );
 
   @override
@@ -286,6 +389,8 @@ class BubbleGameState extends Equatable {
         countdown,
         feedbackMessage,
         lastPointsEarned,
+        totalCorrectPops,
+        wordTarget,
       ];
 }
 

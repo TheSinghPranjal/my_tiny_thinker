@@ -4,12 +4,13 @@ import 'package:my_tiny_thinker/core/models/reward_model.dart';
 
 void main() {
   group('BubbleNumberGenerator', () {
-    test('generates unique numbers within range', () {
+    test('generates unique numbers within range when random', () {
       final numbers = BubbleNumberGenerator.generate(
         count: 10,
         minValue: 1,
         maxValue: 50,
         difficulty: Difficulty.easy,
+        randomNumbers: true,
       );
       expect(numbers.length, 10);
       expect(numbers.toSet().length, 10);
@@ -18,12 +19,29 @@ void main() {
       }
     });
 
+    test('generates consecutive sequence when not random', () {
+      final numbers = BubbleNumberGenerator.generate(
+        count: 8,
+        minValue: 0,
+        maxValue: 20,
+        difficulty: Difficulty.easy,
+        randomNumbers: false,
+      );
+      expect(numbers.length, 8);
+      for (var i = 1; i < numbers.length; i++) {
+        expect(numbers[i], numbers[i - 1] + 1);
+      }
+      expect(numbers.first, greaterThanOrEqualTo(0));
+      expect(numbers.last, lessThanOrEqualTo(20));
+    });
+
     test('handles min equals max', () {
       final numbers = BubbleNumberGenerator.generate(
         count: 5,
         minValue: 7,
         maxValue: 7,
         difficulty: Difficulty.easy,
+        randomNumbers: false,
       );
       expect(numbers.every((n) => n == 7), isTrue);
     });
@@ -38,6 +56,33 @@ void main() {
         BubbleNumberGenerator.sortNumbers(nums, SortMode.descending),
         [5, 4, 3, 2, 1],
       );
+    });
+
+    test('random numbers still sort ascending for play order', () {
+      final numbers = BubbleNumberGenerator.generate(
+        count: 8,
+        minValue: 0,
+        maxValue: 20,
+        difficulty: Difficulty.easy,
+        randomNumbers: true,
+      );
+      final sorted =
+          BubbleNumberGenerator.sortNumbers(numbers, SortMode.ascending);
+      for (var i = 1; i < sorted.length; i++) {
+        expect(sorted[i], greaterThan(sorted[i - 1]));
+      }
+    });
+
+    test('word match round includes the target among bubbles', () {
+      final round = BubbleNumberGenerator.generateWordMatchRound(
+        count: 8,
+        minValue: 0,
+        maxValue: 50,
+        randomNumbers: true,
+      );
+      expect(round.numbers.length, 8);
+      expect(round.numbers, contains(round.target));
+      expect(round.target, inInclusiveRange(0, 50));
     });
   });
 
