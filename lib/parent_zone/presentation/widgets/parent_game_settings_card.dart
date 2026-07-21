@@ -11,6 +11,7 @@ import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_duration_slider.dart';
 import 'package:my_tiny_thinker/core/widgets/parent_game_card.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/repository/alphabet_quiz_settings_repository.dart';
+import 'package:my_tiny_thinker/games/animal_sounds/repository/animal_sounds_settings_repository.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/repository/alphabet_bridge_settings_repository.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/repository/bunny_hop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/candy_color_hunt/repository/candy_color_hunt_settings_repository.dart';
@@ -90,6 +91,8 @@ class ParentGameSettingsCard extends ConsumerWidget {
         ref.watch(shadowMatchSettingsProvider).sessionSeconds,
       GameId.alphabetAdventureQuiz =>
         ref.watch(alphabetQuizSettingsProvider).sessionSeconds,
+      GameId.animalSounds =>
+        ref.watch(animalSoundsSettingsProvider).sessionSeconds,
       GameId.cloudPopGarden =>
         ref.watch(cloudPopGardenSettingsProvider).sessionSeconds,
       GameId.oceanFishAdventure => ref.watch(oceanFishSettingsProvider).sessionSeconds,
@@ -169,6 +172,9 @@ class ParentGameSettingsCard extends ConsumerWidget {
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.alphabetAdventureQuiz:
         ref.read(alphabetQuizSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.animalSounds:
+        ref.read(animalSoundsSettingsProvider.notifier)
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.cloudPopGarden:
         ref.read(cloudPopGardenSettingsProvider.notifier)

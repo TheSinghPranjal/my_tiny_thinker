@@ -27,6 +27,7 @@ import 'package:my_tiny_thinker/games/balloon_parade/repository/balloon_parade_s
 import 'package:my_tiny_thinker/games/color_balloon_pop/repository/color_balloon_pop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/models/alphabet_quiz_models.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/repository/alphabet_quiz_settings_repository.dart';
+import 'package:my_tiny_thinker/games/animal_sounds/repository/animal_sounds_settings_repository.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/models/shadow_match_models.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/repository/shadow_match_settings_repository.dart';
 import 'package:my_tiny_thinker/games/odd_one_out/models/odd_one_out_models.dart';
@@ -460,6 +461,11 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ParentGameSettingsCard(
               gameId: GameId.alphabetAdventureQuiz,
               child: _AlphabetQuizParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.animalSounds,
+              child: _AnimalSoundsParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             ParentGameSettingsCard(
@@ -2425,6 +2431,60 @@ class _AlphabetQuizParentControls extends ConsumerWidget {
           onChanged: (v) => ref.read(alphabetQuizSettingsProvider.notifier).patch(
                 (x) => x.copyWith(reducedMotion: v),
               ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AnimalSoundsParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(animalSoundsSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              ref.read(animalSoundsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rewardMultiplier: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Auto-play animal sound',
+          value: s.autoPlaySound,
+          onChanged: (v) =>
+              ref.read(animalSoundsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(autoPlaySound: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              ref.read(animalSoundsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(soundEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              ref.read(animalSoundsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Haptics',
+          value: s.hapticsEnabled,
+          onChanged: (v) =>
+              ref.read(animalSoundsSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(hapticsEnabled: v),
+                  ),
         ),
       ],
     );
