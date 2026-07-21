@@ -31,6 +31,8 @@ import 'package:my_tiny_thinker/games/color_school_bags/presentation/color_schoo
 import 'package:my_tiny_thinker/games/color_school_bags/presentation/color_school_bags_game_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_setup_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_game_screen.dart';
+import 'package:my_tiny_thinker/games/animal_sounds/presentation/animal_sounds_setup_screen.dart';
+import 'package:my_tiny_thinker/games/animal_sounds/presentation/animal_sounds_game_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/alphabet_bridge_setup_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/alphabet_bridge_game_screen.dart';
 import 'package:my_tiny_thinker/games/number_bridge_adventure/presentation/number_bridge_setup_screen.dart';
@@ -126,6 +128,8 @@ abstract final class AppRoutes {
   static const colorSchoolBagsGame = '/games/color-school-bags/play';
   static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
   static const alphabetQuizGame = '/games/alphabet-adventure/play';
+  static const animalSoundsSetup = '/games/animal-sounds/setup';
+  static const animalSoundsGame = '/games/animal-sounds/play';
   static const alphabetBridgeSetup = '/games/alphabet-bridge/setup';
   static const alphabetBridgeGame = '/games/alphabet-bridge/play';
   static const numberBridgeSetup = '/games/number-bridge/setup';
@@ -435,6 +439,16 @@ final appRouter = GoRouter(
       path: AppRoutes.alphabetQuizGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const AlphabetQuizGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.animalSoundsSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const AnimalSoundsSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.animalSoundsGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const AnimalSoundsGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.alphabetBridgeSetup,

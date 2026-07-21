@@ -41,6 +41,7 @@ class AudioService {
   final Ref _ref;
   final AudioPlayer _sfxPlayer = AudioPlayer();
   final AudioPlayer _musicPlayer = AudioPlayer();
+  final AudioPlayer _clipPlayer = AudioPlayer();
   bool _initialized = false;
 
   /// Last requested loop track (kept so music can resume after toggle).
@@ -77,6 +78,26 @@ class AudioService {
         debugPrint('AudioService: Could not play ${effect.fileName}: $e');
       }
     }
+  }
+
+  /// Play a one-shot clip (mp3/wav) from assets, e.g. `audio/animals/dog.wav`.
+  /// Safe to call repeatedly — restarts the clip from the beginning.
+  Future<void> playClip(String assetPath, {double volume = 0.9}) async {
+    if (!_soundEnabled) return;
+    try {
+      await initialize();
+      await _clipPlayer.stop();
+      await _clipPlayer.setReleaseMode(ReleaseMode.stop);
+      await _clipPlayer.play(AssetSource(assetPath), volume: volume);
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('AudioService: Could not play clip $assetPath: $e');
+      }
+    }
+  }
+
+  Future<void> stopClip() async {
+    await _clipPlayer.stop();
   }
 
   Future<void> playHomeMusic() => playMusic(asset: AppMusic.home);
@@ -151,5 +172,6 @@ class AudioService {
   void dispose() {
     _sfxPlayer.dispose();
     _musicPlayer.dispose();
+    _clipPlayer.dispose();
   }
 }
