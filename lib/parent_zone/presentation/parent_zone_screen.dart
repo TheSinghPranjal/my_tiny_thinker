@@ -47,6 +47,7 @@ import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/models/hung
 import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/repository/hungry_monkey_settings_repository.dart';
 import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/models/butterfly_garden_models.dart';
 import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/repository/butterfly_garden_settings_repository.dart';
+import 'package:my_tiny_thinker/games/catch_the_fish/repository/catch_the_fish_settings_repository.dart';
 import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/models/hungry_duck_models.dart';
 import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/repository/hungry_duck_settings_repository.dart';
 import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/models/hungry_teddy_models.dart';
@@ -399,6 +400,11 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ParentGameSettingsCard(
               gameId: GameId.catchTheButterflyGarden,
               child: _ButterflyGardenParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.catchTheFishAdventure,
+              child: _CatchTheFishParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             ParentGameSettingsCard(
@@ -1175,6 +1181,73 @@ class _ButterflyGardenParentControls extends ConsumerWidget {
           onChanged: (v) => ref.read(butterflyGardenSettingsProvider.notifier).patch(
                 (x) => x.copyWith(largerTouchTargets: v),
               ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CatchTheFishParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(catchTheFishSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Fish on screen: ${s.fishCount}'),
+        Slider(
+          value: s.fishCount.toDouble(),
+          min: 5,
+          max: 10,
+          divisions: 5,
+          label: '${s.fishCount}',
+          onChanged: (v) =>
+              ref.read(catchTheFishSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(fishCount: v.round()),
+                  ),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              ref.read(catchTheFishSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rewardMultiplier: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              ref.read(catchTheFishSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(soundEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              ref.read(catchTheFishSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) =>
+              ref.read(catchTheFishSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(largerTouchTargets: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              ref.read(catchTheFishSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(reducedMotion: v),
+                  ),
         ),
       ],
     );
