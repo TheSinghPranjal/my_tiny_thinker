@@ -22,6 +22,11 @@ enum GameId {
     '🦋',
     'Catch the Butterfly Garden',
   ),
+  catchTheFishAdventure(
+    'catch_the_fish_adventure',
+    '🎣',
+    'Catch the Fish Adventure',
+  ),
   hungryDuckPondAdventure(
     'hungry_duck_pond_adventure',
     '🦆',
