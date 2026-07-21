@@ -384,14 +384,26 @@ abstract final class NumberWords {
     'Ninety',
   ];
 
+  /// Converts [n] (0–9999) to an English number word.
   static String word(int n) {
-    if (n < 0 || n > 100) return '$n';
-    if (n == 100) return 'One Hundred';
+    if (n < 0 || n > 9999) return '$n';
     if (n < 20) return _ones[n];
-    final t = n ~/ 10;
-    final o = n % 10;
-    if (o == 0) return _tens[t];
-    return '${_tens[t]}-${_ones[o].toLowerCase()}';
+    if (n < 100) {
+      final t = n ~/ 10;
+      final o = n % 10;
+      if (o == 0) return _tens[t];
+      return '${_tens[t]}-${_ones[o].toLowerCase()}';
+    }
+    if (n < 1000) {
+      final h = n ~/ 100;
+      final rest = n % 100;
+      if (rest == 0) return '${_ones[h]} Hundred';
+      return '${_ones[h]} Hundred ${word(rest)}';
+    }
+    final th = n ~/ 1000;
+    final rest = n % 1000;
+    if (rest == 0) return '${_ones[th]} Thousand';
+    return '${_ones[th]} Thousand ${word(rest)}';
   }
 }
 
