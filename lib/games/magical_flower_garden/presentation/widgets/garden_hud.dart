@@ -20,13 +20,8 @@ class GardenVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isBirdEnd = result.endReason == 'bird';
-    final title = isBirdEnd
-        ? "Let's Try Again!"
-        : 'Amazing Garden Adventure!';
-    final subtitle = isBirdEnd
-        ? 'Great job! Let\'s grow another flower!'
-        : 'You explored the magical garden!';
+    final title = 'Amazing Garden Adventure!';
+    final subtitle = 'You explored the magical garden!';
 
     return Container(
       color: const Color(0xFF2E7D32).withValues(alpha: 0.82),

@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/games/magical_flower_garden/models/flower_garden_models.dart';
+import 'package:my_tiny_thinker/games/shared/garden_butterflies.dart';
+import 'package:my_tiny_thinker/games/shared/garden_butterfly_painter.dart';
 
 class PollinatorWidget extends StatelessWidget {
   const PollinatorWidget({super.key, required this.pollinator});
@@ -10,7 +12,10 @@ class PollinatorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = pollinator.kind == PollinatorKind.butterfly ? 48.0 : 40.0;
+    final isButterfly = pollinator.kind == PollinatorKind.butterfly;
+    final size = isButterfly ? 88.0 : 44.0;
+    final sipping = pollinator.phase == PollinatorPhase.collecting;
+
     return Positioned(
       left: pollinator.x - size / 2,
       top: pollinator.y - size / 2,
@@ -18,13 +23,21 @@ class PollinatorWidget extends StatelessWidget {
       height: size,
       child: IgnorePointer(
         child: Transform.rotate(
-          angle: pollinator.rotation,
-          child: CustomPaint(
-            size: Size(size, size),
-            painter: pollinator.kind == PollinatorKind.butterfly
-                ? _ButterflyPainter(wingPhase: pollinator.wingPhase)
-                : _BeePainter(wingPhase: pollinator.wingPhase),
-          ),
+          angle: isButterfly ? 0 : pollinator.rotation,
+          child: isButterfly
+              ? CustomPaint(
+                  size: Size(size, size),
+                  painter: GardenButterflyPainter(
+                    def: GardenButterflies.byIndex(pollinator.varietyIndex),
+                    wingPhase: pollinator.wingPhase,
+                    fastFlap: sipping ||
+                        pollinator.phase == PollinatorPhase.entering,
+                  ),
+                )
+              : CustomPaint(
+                  size: Size(size, size),
+                  painter: _BeePainter(wingPhase: pollinator.wingPhase),
+                ),
         ),
       ),
     );
@@ -43,7 +56,7 @@ class BirdWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const size = 52.0;
+    const size = 56.0;
     return Positioned(
       left: bird.x - size / 2,
       top: bird.y - size / 2,
@@ -119,43 +132,6 @@ class _BeePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_BeePainter old) => old.wingPhase != wingPhase;
-}
-
-class _ButterflyPainter extends CustomPainter {
-  _ButterflyPainter({required this.wingPhase});
-
-  final double wingPhase;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final flap = math.sin(wingPhase) * 0.4;
-
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, cy + 2), width: 6, height: 16),
-      Paint()..color = const Color(0xFF5D4037),
-    );
-
-    for (final sign in [-1.0, 1.0]) {
-      final wingRect = Rect.fromCenter(
-        center: Offset(cx + sign * (14 + flap * 8), cy - 2),
-        width: 22 + flap.abs() * 10,
-        height: 18,
-      );
-      canvas.drawOval(
-        wingRect,
-        Paint()..color = sign < 0 ? const Color(0xFFAB47BC) : const Color(0xFF42A5F5),
-      );
-      canvas.drawOval(
-        wingRect.inflate(-4),
-        Paint()..color = sign < 0 ? const Color(0xFFCE93D8) : const Color(0xFF81D4FA),
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_ButterflyPainter old) => old.wingPhase != wingPhase;
 }
 
 class _BirdPainter extends CustomPainter {
