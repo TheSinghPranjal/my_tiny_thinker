@@ -2,6 +2,21 @@ import 'package:equatable/equatable.dart';
 
 enum GameId {
   bubbleNumberPop('bubble_number_pop', '🔵', 'Bubble Number Pop'),
+  ascendingBubbleNumberPop(
+    'ascending_bubble_number_pop',
+    '🔵',
+    'Ascending Bubble Number Pop',
+  ),
+  descendingNumberPop(
+    'descending_number_pop',
+    '🔻',
+    'Descending Number Pop',
+  ),
+  numberWordPop(
+    'number_word_pop',
+    '🔤',
+    'Number Word Pop',
+  ),
   memoryGame('memory_game', '🧠', 'Memory Game'),
   oddOneOut('odd_one_out', '👀', 'Odd One Out'),
   patternMatch('pattern_match', '🧩', 'Pattern Match'),

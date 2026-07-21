@@ -15,20 +15,17 @@ class VictoryDialog extends StatelessWidget {
     required this.result,
     required this.onPlayAgain,
     required this.onHome,
-    this.onNextDifficulty,
   });
 
   final BubbleGameResult result;
   final VoidCallback onPlayAgain;
   final VoidCallback onHome;
-  final VoidCallback? onNextDifficulty;
 
   static Future<void> show(
     BuildContext context, {
     required BubbleGameResult result,
     required VoidCallback onPlayAgain,
     required VoidCallback onHome,
-    VoidCallback? onNextDifficulty,
   }) {
     return showDialog(
       context: context,
@@ -37,7 +34,6 @@ class VictoryDialog extends StatelessWidget {
         result: result,
         onPlayAgain: onPlayAgain,
         onHome: onHome,
-        onNextDifficulty: onNextDifficulty,
       ),
     );
   }
@@ -59,7 +55,7 @@ class VictoryDialog extends StatelessWidget {
                 const MascotWidget(size: 80, waving: true),
                 Text(
                   result.isVictory
-                      ? (result.isPerfect ? 'Perfect!' : 'Level Complete!')
+                      ? (result.isPerfect ? 'Perfect!' : 'Time\'s Up!')
                       : 'Time\'s Up!',
                   style: context.textTheme.displaySmall,
                 ),
@@ -91,18 +87,6 @@ class VictoryDialog extends StatelessWidget {
                     onPlayAgain();
                   },
                 ),
-                if (onNextDifficulty != null) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  TTButton(
-                    label: 'Next Difficulty',
-                    variant: TTButtonVariant.secondary,
-                    expanded: true,
-                    onPressed: () {
-                      Navigator.pop(context);
-                      onNextDifficulty!();
-                    },
-                  ),
-                ],
                 const SizedBox(height: AppSpacing.sm),
                 TTButton(
                   label: 'Home',
