@@ -16,11 +16,11 @@ import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/controllers/bubble_game_controller.dart';
-import 'package:my_tiny_thinker/games/ascending_descending/logic/bubble_game_logic.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/models/bubble_game_models.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/presentation/widgets/bubble_widget.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/presentation/widgets/game_hud_widgets.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/presentation/widgets/victory_dialog.dart';
+import 'package:my_tiny_thinker/games/number_bridge_adventure/models/number_bridge_models.dart';
 
 class BubbleGameScreen extends ConsumerStatefulWidget {
   const BubbleGameScreen({super.key});
@@ -155,35 +155,7 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
         controller.reset();
         context.go(AppRoutes.home);
       },
-      onNextDifficulty: _canIncreaseDifficulty(state.config.difficulty)
-          ? () {
-              final next = _nextDifficulty(state.config.difficulty);
-              final range =
-                  BubbleNumberGenerator.defaultRangeForDifficulty(next);
-              controller.updateConfig(
-                state.config.copyWith(
-                  difficulty: next,
-                  minValue: range.$1,
-                  maxValue: range.$2,
-                  bubbleSpeed:
-                      BubbleNumberGenerator.speedForDifficulty(next),
-                  toddlerMode: false,
-                ),
-              );
-              _initGame();
-            }
-          : null,
     );
-  }
-
-  bool _canIncreaseDifficulty(Difficulty d) => d != Difficulty.expert;
-
-  Difficulty _nextDifficulty(Difficulty d) {
-    final index = Difficulty.values.indexOf(d);
-    if (index < Difficulty.values.length - 1) {
-      return Difficulty.values[index + 1];
-    }
-    return d;
   }
 
   @override
@@ -193,6 +165,9 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
     );
     final toddlerMode = ref.watch(
       bubbleGameControllerProvider.select((s) => s.config.toddlerMode),
+    );
+    final wordMatch = ref.watch(
+      bubbleGameControllerProvider.select((s) => s.config.wordMatchMode),
     );
 
     return PopScope(
@@ -236,17 +211,30 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                         horizontal: toddlerMode ? AppSpacing.sm : AppSpacing.md,
                         vertical: AppSpacing.xs,
                       ),
-                      child: TargetNumberCard(
-                        targetNumber: ref.watch(
-                          bubbleGameControllerProvider
-                              .select((s) => s.targetNumber),
-                        ),
-                        sortMode: ref.watch(
-                          bubbleGameControllerProvider
-                              .select((s) => s.config.sortMode),
-                        ),
-                        toddlerMode: toddlerMode,
-                        large: toddlerMode,
+                      child: Builder(
+                        builder: (context) {
+                          final target = ref.watch(
+                            bubbleGameControllerProvider
+                                .select((s) => s.targetNumber),
+                          );
+                          final wordMatch = ref.watch(
+                            bubbleGameControllerProvider
+                                .select((s) => s.config.wordMatchMode),
+                          );
+                          return TargetNumberCard(
+                            targetNumber: target,
+                            sortMode: ref.watch(
+                              bubbleGameControllerProvider
+                                  .select((s) => s.config.sortMode),
+                            ),
+                            toddlerMode: toddlerMode,
+                            large: toddlerMode || wordMatch,
+                            showAsWord: wordMatch,
+                            wordLabel: target != null && wordMatch
+                                ? NumberWords.word(target)
+                                : null,
+                          );
+                        },
                       ),
                     ),
                     Expanded(
@@ -262,7 +250,7 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                       ),
                   ],
                 ),
-                if (toddlerMode)
+                if (toddlerMode || wordMatch)
                   GameFeedbackOverlay(
                     message: ref.watch(
                       bubbleGameControllerProvider

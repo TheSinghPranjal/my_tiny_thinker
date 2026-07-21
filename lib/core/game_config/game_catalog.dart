@@ -178,9 +178,23 @@ abstract final class GameCatalog {
     ),
     GameCatalogEntry(
       gameId: GameId.bubbleNumberPop,
-      category: LearningCategory.smartExplorers,
-      subtitle: 'Pop bubbles in the right number order!',
-      hasParentControls: false,
+      category: LearningCategory.littleExplorers,
+      subtitle: 'Pop the number you see on top!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.ascendingBubbleNumberPop,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Pop bubbles from smallest to biggest!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.descendingNumberPop,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Pop bubbles from biggest to smallest!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.numberWordPop,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Read the number word and pop the matching bubble!',
     ),
     GameCatalogEntry(
       gameId: GameId.memoryGame,

@@ -14,16 +14,24 @@ class TargetNumberCard extends StatelessWidget {
     required this.sortMode,
     this.toddlerMode = false,
     this.large = false,
+    this.showAsWord = false,
+    this.wordLabel,
   });
 
   final int? targetNumber;
   final SortMode sortMode;
   final bool toddlerMode;
   final bool large;
+  final bool showAsWord;
+  final String? wordLabel;
 
   @override
   Widget build(BuildContext context) {
     if (targetNumber == null) return const SizedBox.shrink();
+
+    final display = showAsWord
+        ? (wordLabel ?? targetNumber.toString())
+        : targetNumber.toString();
 
     return PulseAnimation(
       child: TTCard(
@@ -35,7 +43,7 @@ class TargetNumberCard extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!toddlerMode) ...[
+            if (!toddlerMode && !showAsWord) ...[
               Icon(
                 sortMode == SortMode.ascending
                     ? Icons.arrow_upward_rounded
@@ -45,7 +53,7 @@ class TargetNumberCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
             ],
             Text(
-              'Find:',
+              showAsWord ? 'Find:' : 'Find:',
               style: (large
                       ? context.textTheme.headlineSmall
                       : context.textTheme.titleMedium)
@@ -54,14 +62,18 @@ class TargetNumberCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
-            Text(
-              targetNumber.toString(),
-              style: (large
-                      ? context.textTheme.displayMedium
-                      : context.textTheme.displaySmall)
-                  ?.copyWith(
-                color: AppColors.white,
-                fontWeight: FontWeight.w800,
+            Flexible(
+              child: Text(
+                display,
+                textAlign: TextAlign.center,
+                style: (large || showAsWord
+                        ? context.textTheme.displaySmall
+                        : context.textTheme.displaySmall)
+                    ?.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: showAsWord && display.length > 12 ? 28 : null,
+                ),
               ),
             ),
           ],
