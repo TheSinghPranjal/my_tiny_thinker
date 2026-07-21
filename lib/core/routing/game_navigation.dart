@@ -13,6 +13,12 @@ void navigateToGame(BuildContext context, GameId gameId) {
   switch (gameId) {
     case GameId.bubbleNumberPop:
       context.push(AppRoutes.bubbleSetup);
+    case GameId.ascendingBubbleNumberPop:
+      context.push(AppRoutes.ascendingBubbleSetup);
+    case GameId.descendingNumberPop:
+      context.push(AppRoutes.descendingBubbleSetup);
+    case GameId.numberWordPop:
+      context.push(AppRoutes.numberWordPopSetup);
     case GameId.memoryGame:
       context.push(AppRoutes.memoryHub);
     case GameId.oddOneOut:
