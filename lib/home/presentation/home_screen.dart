@@ -96,6 +96,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: GameSelectionGrid(
                   enabledGameIds: enabledIds,
                   largeLayout: useLargeLayoutForAge(ageGroup),
+                  showComingSoon: ageGroup != AgeGroup.smartExplorers &&
+                      ageGroup != AgeGroup.brainMasters &&
+                      ageGroup != AgeGroup.youngGeniuses,
                   onGameTap: (gameId) =>
                       navigateToGameGuarded(context, ref, gameId),
                 ),

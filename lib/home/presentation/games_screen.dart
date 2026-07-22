@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/models/age_group.dart';
+import 'package:my_tiny_thinker/core/providers/onboarding_provider.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
@@ -13,6 +15,9 @@ class GamesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final ageGroup = ref.watch(onboardingProvider).ageGroup;
+    final enabledIds = enabledGameIdsForAge(ageGroup);
+
     return AnimatedSkyBackground(
       landscapeAsset: 'assets/images/home_landscape.png',
       showGrass: false,
@@ -41,6 +46,11 @@ class GamesScreen extends ConsumerWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: GameSelectionGrid(
+                    enabledGameIds: enabledIds,
+                    largeLayout: useLargeLayoutForAge(ageGroup),
+                    showComingSoon: ageGroup != AgeGroup.smartExplorers &&
+                        ageGroup != AgeGroup.brainMasters &&
+                        ageGroup != AgeGroup.youngGeniuses,
                     onGameTap: (gameId) =>
                         navigateToGameGuarded(context, ref, gameId),
                   ),
