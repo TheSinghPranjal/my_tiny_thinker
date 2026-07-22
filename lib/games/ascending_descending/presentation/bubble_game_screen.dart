@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
@@ -47,6 +48,9 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
   }
 
   Future<void> _initGame() async {
+    final gameId = ref.read(bubbleGameConfigProvider).gameId;
+    if (!await ensureCanStartGame(context, ref, gameId)) return;
+    if (!mounted) return;
     _resultShown = false;
     ref.read(bubbleGameControllerProvider.notifier).reset();
     await ref.read(bubbleGameControllerProvider.notifier).startGame();
