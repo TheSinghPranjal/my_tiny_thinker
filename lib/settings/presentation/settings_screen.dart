@@ -6,6 +6,7 @@ import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/premium/premium_provider.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
@@ -28,7 +29,14 @@ class SettingsScreen extends ConsumerWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => context.pop(),
+            onPressed: () {
+              // Returning to shell / home — restore home music if not in a game.
+              final audio = ref.read(audioServiceProvider);
+              if (!audio.inGameplay) {
+                audio.playHomeMusic();
+              }
+              context.pop();
+            },
           ),
           title: const Text('Settings'),
         ),
@@ -43,16 +51,16 @@ class SettingsScreen extends ConsumerWidget {
                   : null,
               child: Column(
                 children: [
-                  // _SettingTile(
-                  //   icon: Icons.workspace_premium_rounded,
-                  //   title: 'Developer: Premium Mode',
-                  //   trailing: Switch(
-                  //     value: isPremium,
-                  //     activeThumbColor: AppColors.orange,
-                  //     onChanged: (v) =>
-                  //         ref.read(isPremiumProvider.notifier).setPremium(v),
-                  //   ),
-                  // ),
+                  _SettingTile(
+                    icon: Icons.workspace_premium_rounded,
+                    title: 'Developer: Premium Mode',
+                    trailing: Switch(
+                      value: isPremium,
+                      activeThumbColor: AppColors.orange,
+                      onChanged: (v) =>
+                          ref.read(isPremiumProvider.notifier).setPremium(v),
+                    ),
+                  ),
                   ListTile(
                     leading: const Icon(Icons.star_rounded, color: AppColors.orange),
                     title: const Text('TinyThink Premium'),

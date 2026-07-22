@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
@@ -150,14 +152,28 @@ class TTPauseDialog extends StatelessWidget {
     required VoidCallback onRestart,
     required VoidCallback onHome,
     FutureOr<void> Function()? onSettings,
-  }) {
-    return showDialog(
+  }) async {
+    // Silence game BGM/SFX while paused (no sound on the pause menu).
+    final audio = ProviderScope.containerOf(context).read(audioServiceProvider);
+    await audio.pauseGameplayAudio();
+
+    if (!context.mounted) return;
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => TTPauseDialog(
-        onResume: onResume,
-        onRestart: onRestart,
-        onHome: onHome,
+        onResume: () {
+          audio.resumeGameplayAudio();
+          onResume();
+        },
+        onRestart: () {
+          // Restart handlers call playGameMusic() again.
+          onRestart();
+        },
+        onHome: () {
+          audio.playHomeMusic();
+          onHome();
+        },
         onSettings: onSettings,
       ),
     );
