@@ -69,31 +69,6 @@ class ProfileScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                TTCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Unlocked Items', style: context.textTheme.titleLarge),
-                      const SizedBox(height: AppSpacing.md),
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.sm,
-                        children: [
-                          ...profile.unlockedAvatars.map(
-                            (a) => Chip(
-                              avatar: const Icon(Icons.face, size: 18),
-                              label: Text(a),
-                            ),
-                          ),
-                          ...profile.unlockedStickers.map(
-                            (s) => Chip(label: Text('🎨 $s')),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),

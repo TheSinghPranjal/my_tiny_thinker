@@ -28,6 +28,16 @@ enum GameId {
     '✏️',
     'Complete the Word Adventure',
   ),
+  recallPictureAdventure(
+    'recall_picture_adventure',
+    '🖼️',
+    'Recall Picture Adventure',
+  ),
+  numberMemory(
+    'number_memory',
+    '🔢',
+    'Number Memory',
+  ),
   oddOneOut('odd_one_out', '👀', 'Odd One Out'),
   patternMatch('pattern_match', '🧩', 'Pattern Match'),
   colorMemory('color_memory', '🌈', 'Color Memory'),
