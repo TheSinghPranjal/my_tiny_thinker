@@ -27,7 +27,7 @@ class ColorShapeBridgeBoard extends StatelessWidget {
       for (final c in promptCards) c.id: c,
       for (final c in visualCards) c.id: c,
     };
-    final cardSize = largerTouch ? 78.0 : 68.0;
+    final cardSize = largerTouch ? 86.0 : 74.0;
 
     return BridgeMatchBoard(
       leftIds: [for (final c in promptCards) c.id],
