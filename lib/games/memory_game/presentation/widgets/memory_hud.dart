@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
-import 'package:my_tiny_thinker/games/memory_game/logic/memory_game_logic.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
 
 class MemoryVictoryDialog extends StatelessWidget {
@@ -164,18 +164,6 @@ class MemorySetupSheet extends StatelessWidget {
             '${gameType.emoji} ${gameType.displayName}',
             style: context.textTheme.headlineMedium,
           ),
-          const SizedBox(height: AppSpacing.lg),
-          Text('Difficulty', style: context.textTheme.titleMedium),
-          Wrap(
-            spacing: AppSpacing.sm,
-            children: MemoryDifficulty.values.map((d) {
-              return ChoiceChip(
-                label: Text(MemoryDifficultyConfig.label(d)),
-                selected: config.difficulty == d,
-                onSelected: (_) => onConfigChanged(config.copyWith(difficulty: d)),
-              );
-            }).toList(),
-          ),
           if (gameType == MemoryMiniGameType.classicCard) ...[
             const SizedBox(height: AppSpacing.md),
             Text('Card Theme', style: context.textTheme.titleMedium),
@@ -191,11 +179,12 @@ class MemorySetupSheet extends StatelessWidget {
               }).toList(),
             ),
           ],
-          SwitchListTile(
-            title: const Text('Adaptive Learning'),
-            subtitle: const Text('Difficulty adjusts to your skill'),
-            value: config.adaptiveEnabled,
-            onChanged: (v) => onConfigChanged(config.copyWith(adaptiveEnabled: v)),
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            'Timer and difficulty are set in Parent Zone.',
+            style: context.textTheme.bodyMedium?.copyWith(
+              color: AppColors.textSecondary,
+            ),
           ),
           const SizedBox(height: AppSpacing.lg),
           TTButton(label: 'Start!', expanded: true, onPressed: onStart),

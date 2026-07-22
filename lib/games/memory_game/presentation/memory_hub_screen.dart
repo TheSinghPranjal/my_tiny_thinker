@@ -79,12 +79,12 @@ class MemoryHubScreen extends ConsumerWidget {
                 const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.lg)),
                 SliverToBoxAdapter(
                   child: ResponsiveGrid(
-                    itemCount: MemoryMiniGameType.values.length,
+                    itemCount: MemoryMiniGameType.hubGames.length,
                     phoneColumns: 2,
                     tabletColumns: 3,
                     childAspectRatio: 0.82,
                     itemBuilder: (context, index) {
-                      final type = MemoryMiniGameType.values[index];
+                      final type = MemoryMiniGameType.hubGames[index];
                       final miniStats = stats.statsFor(type);
                       final locked = !miniStats.isUnlocked;
 
