@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
@@ -28,7 +29,7 @@ class PatternMatchSetupScreen extends ConsumerWidget {
           titleShadows: const [
             Shadow(color: Color(0xFF5E35B1), blurRadius: 6),
           ],
-          onPlay: () => context.push(AppRoutes.patternMatchGame),
+          onPlay: () => pushGameGuarded(context, ref, GameId.patternMatch, AppRoutes.patternMatchGame),
         ),
       ),
     );

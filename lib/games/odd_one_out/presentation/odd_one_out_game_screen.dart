@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/animations/bounce_animation.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
@@ -48,7 +50,15 @@ class _OddOneOutGameScreenState extends ConsumerState<OddOneOutGameScreen>
     });
   }
 
-  void _start() {
+  Future<void> _start() async {
+    if (!await ensureCanStartGame(
+      context,
+      ref,
+      GameId.oddOneOut,
+    )) {
+      return;
+    }
+    if (!mounted) return;
     _saved = false;
     final settings = ref.read(oddOneOutSettingsProvider);
     ref.read(oddOneOutControllerProvider.notifier).reset();
