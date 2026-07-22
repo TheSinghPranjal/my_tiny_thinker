@@ -93,6 +93,15 @@ class ProfileNotifier extends StateNotifier<PlayerProfile> {
     await _save();
   }
 
+  /// Accumulates minutes shown as Play Time on the Parent Dashboard.
+  Future<void> addPlayTimeMinutes(int minutes) async {
+    if (minutes <= 0) return;
+    state = state.copyWith(
+      totalPlayTimeMinutes: state.totalPlayTimeMinutes + minutes,
+    );
+    await _save();
+  }
+
   Future<void> addCoins(int amount) async {
     state = state.copyWith(coins: state.coins + amount);
     await _save();

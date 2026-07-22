@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
@@ -47,6 +49,14 @@ class _RecallPictureGameScreenState
   }
 
   Future<void> _start() async {
+    if (!await ensureCanStartGame(
+      context,
+      ref,
+      GameId.recallPictureAdventure,
+    )) {
+      return;
+    }
+    if (!mounted) return;
     _saved = false;
     final settings = ref.read(recallPictureSettingsProvider);
     ref.read(recallPictureControllerProvider.notifier).reset();
