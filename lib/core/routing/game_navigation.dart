@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/play_limits/daily_play_limits.dart';
-import 'package:my_tiny_thinker/core/premium/premium_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
@@ -88,31 +87,59 @@ void navigateToGame(BuildContext context, GameId gameId) {
   }
 }
 
-/// Checks daily play limits (free tier) before launching a game.
+/// Shows the free-tier daily play limit dialog.
+Future<void> showDailyPlayLimitDialog(BuildContext context) {
+  return TTDialog.show(
+    context: context,
+    title: 'Play Limit Reached',
+    emoji: '🌟',
+    message:
+        'You have played this game $kFreeDailyPlayLimit times today. '
+        'TinyThink Premium unlocks unlimited play!',
+    primaryLabel: 'See Premium',
+    primaryAction: () => context.push(AppRoutes.premium),
+    secondaryLabel: 'Maybe Later',
+    secondaryAction: () {},
+  );
+}
+
+/// Returns `true` if [gameId] may start another session right now.
+///
+/// Call this before every session start (setup Play, first load, Play Again,
+/// pause Restart) so free-tier limits cannot be bypassed.
+Future<bool> ensureCanStartGame(
+  BuildContext context,
+  WidgetRef ref,
+  GameId gameId,
+) async {
+  if (canStartGame(ref, gameId)) return true;
+  if (!context.mounted) return false;
+  await showDailyPlayLimitDialog(context);
+  return false;
+}
+
+/// Checks daily play limits (free tier) before opening a game's setup screen.
 Future<void> navigateToGameGuarded(
   BuildContext context,
   WidgetRef ref,
   GameId gameId,
 ) async {
-  final isPremium = ref.read(isPremiumProvider);
-  final limits = ref.read(dailyPlayLimitsProvider);
-  if (!limits.canPlay(gameId, isPremium: isPremium)) {
-    await TTDialog.show(
-      context: context,
-      title: 'Play Limit Reached',
-      emoji: '🌟',
-      message:
-          'You have played this game $kFreeDailyPlayLimit times today. '
-          'TinyThink Premium unlocks unlimited play!',
-      primaryLabel: 'See Premium',
-      primaryAction: () => context.push(AppRoutes.premium),
-      secondaryLabel: 'Maybe Later',
-      secondaryAction: () {},
-    );
-    return;
-  }
+  if (!await ensureCanStartGame(context, ref, gameId)) return;
   if (!context.mounted) return;
   navigateToGame(context, gameId);
+}
+
+/// Checks daily play limits before pushing a play route (setup → game).
+Future<void> pushGameGuarded(
+  BuildContext context,
+  WidgetRef ref,
+  GameId gameId,
+  String route, {
+  Object? extra,
+}) async {
+  if (!await ensureCanStartGame(context, ref, gameId)) return;
+  if (!context.mounted) return;
+  context.push(route, extra: extra);
 }
 
 /// Compact premium upgrade chip used on locked surfaces.

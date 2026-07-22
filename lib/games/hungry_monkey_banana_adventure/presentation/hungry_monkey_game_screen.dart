@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
@@ -52,7 +54,15 @@ class _HungryMonkeyGameScreenState extends ConsumerState<HungryMonkeyGameScreen>
     });
   }
 
-  void _start() {
+  Future<void> _start() async {
+    if (!await ensureCanStartGame(
+      context,
+      ref,
+      GameId.hungryMonkeyBananaAdventure,
+    )) {
+      return;
+    }
+    if (!mounted) return;
     _saved = false;
     final settings = ref.read(hungryMonkeySettingsProvider);
     ref.read(hungryMonkeyControllerProvider.notifier).reset();
