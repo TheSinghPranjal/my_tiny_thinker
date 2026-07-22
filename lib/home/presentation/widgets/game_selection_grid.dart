@@ -13,11 +13,13 @@ class GameSelectionGrid extends ConsumerWidget {
     required this.onGameTap,
     this.enabledGameIds,
     this.largeLayout = false,
+    this.showComingSoon = true,
   });
 
   final void Function(GameId gameId) onGameTap;
   final List<String>? enabledGameIds;
   final bool largeLayout;
+  final bool showComingSoon;
 
   static const _allGames = [
     GameId.candyColorHunt,
@@ -51,6 +53,8 @@ class GameSelectionGrid extends ConsumerWidget {
     GameId.numberWordPop,
     GameId.classicCardMemory,
     GameId.completeTheWordAdventure,
+    GameId.recallPictureAdventure,
+    GameId.numberMemory,
     GameId.memoryGame,
     GameId.oddOneOut,
     GameId.patternMatch,
@@ -239,6 +243,18 @@ class GameSelectionGrid extends ConsumerWidget {
       'Tap letters to spell the word!',
       'Medium',
     ),
+    GameId.recallPictureAdventure: (
+      '🖼️',
+      'Recall Picture Adventure',
+      'Look, remember, then answer!',
+      'Medium',
+    ),
+    GameId.numberMemory: (
+      '🔢',
+      'Number Memory',
+      'Remember the number and type it back!',
+      'Medium',
+    ),
     GameId.memoryGame: ('🧠', 'Memory Game', null, 'Medium'),
     GameId.oddOneOut: ('👀', 'Odd One Out', 'Tap the one that is different!', 'Easy'),
     GameId.patternMatch: ('🧩', 'Pattern Match', 'Complete the pattern!', 'Medium'),
@@ -246,25 +262,33 @@ class GameSelectionGrid extends ConsumerWidget {
   };
 
   List<GameId> get _visibleGames {
-    if (enabledGameIds == null) return _allGames;
-    return _allGames
-        .where((g) => enabledGameIds!.contains(g.id))
-        .toList(growable: false);
+    final games = enabledGameIds == null
+        ? List<GameId>.from(_allGames)
+        : _allGames
+            .where((g) => enabledGameIds!.contains(g.id))
+            .toList();
+    games.sort((a, b) {
+      final aName = _meta[a]?.$2 ?? a.displayName;
+      final bName = _meta[b]?.$2 ?? b.displayName;
+      return aName.toLowerCase().compareTo(bName.toLowerCase());
+    });
+    return games;
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allStats = ref.watch(allGameStatsProvider);
     final games = _visibleGames;
-    final showComingSoon = !largeLayout && games.length < _allGames.length;
+    final includeComingSoon =
+        showComingSoon && !largeLayout && games.length < _allGames.length;
 
     return ResponsiveGrid(
-      itemCount: games.length + (showComingSoon ? 1 : 0),
+      itemCount: games.length + (includeComingSoon ? 1 : 0),
       phoneColumns: largeLayout ? 1 : 2,
       tabletColumns: largeLayout ? 2 : 3,
       childAspectRatio: largeLayout ? 2.4 : 0.78,
       itemBuilder: (context, index) {
-        if (showComingSoon && index == games.length) {
+        if (includeComingSoon && index == games.length) {
           return const TTGameCard(
             emoji: '✨',
             title: 'More Coming Soon!',

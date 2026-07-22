@@ -23,6 +23,10 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.classicCardMemorySetup);
     case GameId.completeTheWordAdventure:
       context.push(AppRoutes.completeTheWordSetup);
+    case GameId.recallPictureAdventure:
+      context.push(AppRoutes.recallPictureSetup);
+    case GameId.numberMemory:
+      context.push(AppRoutes.numberMemorySetup);
     case GameId.memoryGame:
       context.push(AppRoutes.memoryHub);
     case GameId.oddOneOut:
