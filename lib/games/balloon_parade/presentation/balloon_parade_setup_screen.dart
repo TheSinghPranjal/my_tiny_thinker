@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
@@ -27,7 +28,7 @@ class BalloonParadeSetupScreen extends ConsumerWidget {
             Shadow(color: Color(0xFF0277BD), blurRadius: 6),
           ],
           playLabel: 'Start Parade!',
-          onPlay: () => context.push(AppRoutes.balloonParadeGame),
+          onPlay: () => pushGameGuarded(context, ref, GameId.balloonParade, AppRoutes.balloonParadeGame),
         ),
       ),
     );

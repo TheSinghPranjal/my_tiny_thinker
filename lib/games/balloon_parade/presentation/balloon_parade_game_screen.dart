@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
@@ -49,7 +51,15 @@ class _BalloonParadeGameScreenState
     });
   }
 
-  void _start() {
+  Future<void> _start() async {
+    if (!await ensureCanStartGame(
+      context,
+      ref,
+      GameId.balloonParade,
+    )) {
+      return;
+    }
+    if (!mounted) return;
     _saved = false;
     final settings = ref.read(balloonParadeSettingsProvider);
     ref.read(balloonParadeControllerProvider.notifier).reset();
