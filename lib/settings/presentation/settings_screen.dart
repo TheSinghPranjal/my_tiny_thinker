@@ -51,16 +51,16 @@ class SettingsScreen extends ConsumerWidget {
                   : null,
               child: Column(
                 children: [
-                  _SettingTile(
-                    icon: Icons.workspace_premium_rounded,
-                    title: 'Developer: Premium Mode',
-                    trailing: Switch(
-                      value: isPremium,
-                      activeThumbColor: AppColors.orange,
-                      onChanged: (v) =>
-                          ref.read(isPremiumProvider.notifier).setPremium(v),
-                    ),
-                  ),
+                  // _SettingTile(
+                  //   icon: Icons.workspace_premium_rounded,
+                  //   title: 'Developer: Premium Mode',
+                  //   trailing: Switch(
+                  //     value: isPremium,
+                  //     activeThumbColor: AppColors.orange,
+                  //     onChanged: (v) =>
+                  //         ref.read(isPremiumProvider.notifier).setPremium(v),
+                  //   ),
+                  // ),
                   ListTile(
                     leading: const Icon(Icons.star_rounded, color: AppColors.orange),
                     title: const Text('TinyThink Premium'),
