@@ -71,6 +71,10 @@ import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/repository/co
 import 'package:my_tiny_thinker/games/moon_rescue_adventure/repository/moon_rescue_settings_repository.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/models/bubble_pop_settings.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/repository/bubble_pop_settings_repository.dart';
+import 'package:my_tiny_thinker/games/classic_card_memory/models/classic_card_memory_models.dart';
+import 'package:my_tiny_thinker/games/classic_card_memory/repository/classic_card_memory_settings_repository.dart';
+import 'package:my_tiny_thinker/games/complete_the_word_adventure/models/complete_word_models.dart';
+import 'package:my_tiny_thinker/games/complete_the_word_adventure/repository/complete_word_settings_repository.dart';
 import 'package:my_tiny_thinker/parent_zone/presentation/widgets/parent_game_settings_card.dart';
 
 class ParentZoneScreen extends ConsumerStatefulWidget {
@@ -515,6 +519,16 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ParentGameSettingsCard(
               gameId: GameId.numberWordPop,
               child: const _NumberWordPopParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.classicCardMemory,
+              child: const _ClassicCardMemoryParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.completeTheWordAdventure,
+              child: const _CompleteWordParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             ParentGameSettingsCard(
@@ -3606,6 +3620,102 @@ class _SignedNumberFieldState extends State<_SignedNumberField> {
       onSubmitted: _commit,
       onEditingComplete: () => _commit(_controller.text),
       onTapOutside: (_) => _commit(_controller.text),
+    );
+  }
+}
+
+class _ClassicCardMemoryParentControls extends ConsumerWidget {
+  const _ClassicCardMemoryParentControls();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(classicCardMemorySettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Number of pairs: ${s.pairCount}'),
+        Slider(
+          value: s.pairCount.toDouble(),
+          min: 2,
+          max: 12,
+          divisions: 10,
+          label: '${s.pairCount}',
+          onChanged: (v) =>
+              ref.read(classicCardMemorySettingsProvider.notifier).patch(
+                    (x) => x.copyWith(pairCount: v.round()),
+                  ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Card category: ${s.category.displayName}'),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: ClassicMemoryCategory.values.map((c) {
+            final selected = s.category == c;
+            return ChoiceChip(
+              label: Text('${c.emoji} ${c.displayName}'),
+              selected: selected,
+              onSelected: (_) =>
+                  ref.read(classicCardMemorySettingsProvider.notifier).patch(
+                        (x) => x.copyWith(category: c),
+                      ),
+            );
+          }).toList(),
+        ),
+        CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Rotate categories each round'),
+          subtitle: const Text(
+            'When on, every new round picks a random theme '
+            '(animals, fruits, shapes, emojis, and more).',
+          ),
+          value: s.rotateCategories,
+          controlAffinity: ListTileControlAffinity.leading,
+          onChanged: (v) =>
+              ref.read(classicCardMemorySettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rotateCategories: v ?? true),
+                  ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CompleteWordParentControls extends ConsumerWidget {
+  const _CompleteWordParentControls();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(completeWordSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Word length: ${s.wordLength.label}'),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: WordLengthDifficulty.values.map((w) {
+            final selected = s.wordLength == w;
+            return ChoiceChip(
+              label: Text(w.label),
+              selected: selected,
+              onSelected: (_) =>
+                  ref.read(completeWordSettingsProvider.notifier).patch(
+                        (x) => x.copyWith(wordLength: w),
+                      ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Default is 3-letter words. Longer lengths unlock harder spelling.',
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.black.withValues(alpha: 0.55),
+          ),
+        ),
+      ],
     );
   }
 }
