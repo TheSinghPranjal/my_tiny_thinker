@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/premium/premium_provider.dart';
+import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/services/storage_service.dart';
 
 /// Free-tier daily play cap per game.
@@ -64,17 +65,19 @@ class DailyPlayLimitsState extends Equatable {
 
 final dailyPlayLimitsProvider =
     StateNotifierProvider<DailyPlayLimitsNotifier, DailyPlayLimitsState>((ref) {
-  return DailyPlayLimitsNotifier(ref.watch(storageServiceProvider));
+  return DailyPlayLimitsNotifier(ref);
 });
 
 class DailyPlayLimitsNotifier extends StateNotifier<DailyPlayLimitsState> {
-  DailyPlayLimitsNotifier(this._storage) : super(const DailyPlayLimitsState()) {
+  DailyPlayLimitsNotifier(this._ref) : super(const DailyPlayLimitsState()) {
+    _storage = _ref.read(storageServiceProvider);
     _load();
   }
 
   static const _key = 'daily_play_limits_v1';
 
-  final StorageService _storage;
+  final Ref _ref;
+  late final StorageService _storage;
 
   static String _todayKey([DateTime? now]) {
     final d = now ?? DateTime.now();
@@ -99,10 +102,12 @@ class DailyPlayLimitsNotifier extends StateNotifier<DailyPlayLimitsState> {
     }
   }
 
-  void _ensureToday() {
+  /// Resets counters when the calendar day changes (e.g. app left open overnight).
+  void ensureToday() {
     final today = _todayKey();
     if (state.dayKey != today) {
       state = DailyPlayLimitsState(dayKey: today);
+      _save();
     }
   }
 
@@ -111,12 +116,17 @@ class DailyPlayLimitsNotifier extends StateNotifier<DailyPlayLimitsState> {
   }
 
   /// Call after a completed play session.
-  Future<void> recordPlay(GameId gameId) async {
-    _ensureToday();
+  Future<void> recordPlay(GameId gameId, {int durationSeconds = 0}) async {
+    ensureToday();
     final next = Map<String, int>.from(state.counts);
     next[gameId.id] = (next[gameId.id] ?? 0) + 1;
     state = state.copyWith(counts: next);
     await _save();
+
+    // Parent Dashboard "Play Time" — at least 1 minute per completed session.
+    final minutes =
+        durationSeconds > 0 ? (durationSeconds / 60).ceil().clamp(1, 180) : 1;
+    await _ref.read(profileProvider.notifier).addPlayTimeMinutes(minutes);
   }
 
   Future<void> resetAll() async {
@@ -127,6 +137,7 @@ class DailyPlayLimitsNotifier extends StateNotifier<DailyPlayLimitsState> {
 
 /// Convenience: whether [gameId] can be started right now.
 bool canStartGame(WidgetRef ref, GameId gameId) {
+  ref.read(dailyPlayLimitsProvider.notifier).ensureToday();
   final isPremium = ref.read(isPremiumProvider);
   return ref.read(dailyPlayLimitsProvider).canPlay(gameId, isPremium: isPremium);
 }
