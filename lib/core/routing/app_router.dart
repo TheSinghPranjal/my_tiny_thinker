@@ -5,6 +5,10 @@ import 'package:my_tiny_thinker/core/widgets/app_loading_gate.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/memory_hub_screen.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/memory_play_screen.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
+import 'package:my_tiny_thinker/games/classic_card_memory/presentation/classic_card_memory_setup_screen.dart';
+import 'package:my_tiny_thinker/games/classic_card_memory/presentation/classic_card_memory_game_screen.dart';
+import 'package:my_tiny_thinker/games/complete_the_word_adventure/presentation/complete_word_setup_screen.dart';
+import 'package:my_tiny_thinker/games/complete_the_word_adventure/presentation/complete_word_game_screen.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/presentation/bubble_game_setup_screen.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/presentation/bubble_game_screen.dart';
 import 'package:my_tiny_thinker/home/presentation/games_screen.dart';
@@ -95,6 +99,10 @@ abstract final class AppRoutes {
   static const numberWordPopGame = '/games/number-word-pop/play';
   static const memoryHub = '/games/memory-game';
   static const memoryPlay = '/games/memory-game/play';
+  static const classicCardMemorySetup = '/games/classic-card-memory/setup';
+  static const classicCardMemoryGame = '/games/classic-card-memory/play';
+  static const completeTheWordSetup = '/games/complete-the-word/setup';
+  static const completeTheWordGame = '/games/complete-the-word/play';
   static const oddOneOutSetup = '/games/odd-one-out/setup';
   static const oddOneOutGame = '/games/odd-one-out/play';
   static const patternMatchSetup = '/games/pattern-match/setup';
@@ -284,6 +292,26 @@ final appRouter = GoRouter(
           initialConfig: state.extra as MemoryGameConfig?,
         ),
       ),
+    ),
+    GoRoute(
+      path: AppRoutes.classicCardMemorySetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ClassicCardMemorySetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.classicCardMemoryGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ClassicCardMemoryGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.completeTheWordSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CompleteWordSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.completeTheWordGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CompleteWordGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.oddOneOutSetup,

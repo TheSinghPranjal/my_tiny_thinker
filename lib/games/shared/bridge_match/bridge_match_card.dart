@@ -16,6 +16,7 @@ class BridgeMatchCard extends StatelessWidget {
     this.hintPulse = false,
     this.celebrate = false,
     this.shakePhase = 0,
+    this.vividFill = false,
   });
 
   final double size;
@@ -29,6 +30,8 @@ class BridgeMatchCard extends StatelessWidget {
   final bool hintPulse;
   final bool celebrate;
   final double shakePhase;
+  /// Stronger solid color fill (word prompts that name a color).
+  final bool vividFill;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +40,18 @@ class BridgeMatchCard extends StatelessWidget {
         ? 1.05
         : (hintPulse ? 1.03 : 1.0);
     final shakeX = shake ? math.sin(shakePhase * 18) * 5 : 0.0;
+
+    final gradientColors = vividFill
+        ? <Color>[
+            Color.lerp(color, Colors.white, 0.22)!,
+            color,
+            Color.lerp(color, Colors.black, 0.1)!,
+          ]
+        : <Color>[
+            Colors.white,
+            color.withValues(alpha: 0.85),
+            color,
+          ];
 
     // Outer box owns layout; transforms stay inside and cannot shift siblings.
     return SizedBox(
@@ -55,23 +70,19 @@ class BridgeMatchCard extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Colors.white,
-                  color.withValues(alpha: 0.85),
-                  color,
-                ],
+                colors: gradientColors,
               ),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: matched || selected || celebrate
                     ? Colors.white
-                    : color.withValues(alpha: 0.9),
+                    : color.withValues(alpha: vividFill ? 1 : 0.9),
                 width: 3,
               ),
               boxShadow: [
                 BoxShadow(
                   color: color.withValues(
-                    alpha: celebrate || selected ? 0.55 : 0.28,
+                    alpha: celebrate || selected ? 0.55 : (vividFill ? 0.38 : 0.28),
                   ),
                   blurRadius: celebrate || selected ? 14 : 8,
                   offset: const Offset(0, 4),
