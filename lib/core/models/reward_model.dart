@@ -18,6 +18,16 @@ enum GameId {
     'Number Word Pop',
   ),
   memoryGame('memory_game', '🧠', 'Memory Game'),
+  classicCardMemory(
+    'classic_card_memory',
+    '🃏',
+    'Classic Card Memory',
+  ),
+  completeTheWordAdventure(
+    'complete_the_word_adventure',
+    '✏️',
+    'Complete the Word Adventure',
+  ),
   oddOneOut('odd_one_out', '👀', 'Odd One Out'),
   patternMatch('pattern_match', '🧩', 'Pattern Match'),
   colorMemory('color_memory', '🌈', 'Color Memory'),
