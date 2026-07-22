@@ -158,6 +158,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get numberWordPop => 'Number Word Pop';
 
   @override
+  String get classicCardMemory => 'Classic Card Memory';
+
+  @override
+  String get completeTheWordAdventure => 'Complete the Word Adventure';
+
+  @override
   String get memoryGame => 'Memory Game';
 
   @override

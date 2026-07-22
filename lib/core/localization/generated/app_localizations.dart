@@ -388,6 +388,18 @@ abstract class AppLocalizations {
   /// **'Number Word Pop'**
   String get numberWordPop;
 
+  /// No description provided for @classicCardMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic Card Memory'**
+  String get classicCardMemory;
+
+  /// No description provided for @completeTheWordAdventure.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the Word Adventure'**
+  String get completeTheWordAdventure;
+
   /// No description provided for @memoryGame.
   ///
   /// In en, this message translates to:
