@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
@@ -36,13 +38,20 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_started) {
         _started = true;
-        _audio = ref.read(audioServiceProvider);
-        _audio?.playGameMusic();
-        ref.read(colorMemoryControllerProvider.notifier).start(
-              ref.read(colorMemoryConfigProvider),
-            );
+        _beginSession();
       }
     });
+  }
+
+  Future<void> _beginSession() async {
+    if (!await ensureCanStartGame(context, ref, GameId.colorMemory)) return;
+    if (!mounted) return;
+    _resultShown = false;
+    _audio ??= ref.read(audioServiceProvider);
+    _audio?.playGameMusic();
+    ref.read(colorMemoryControllerProvider.notifier).start(
+          ref.read(colorMemoryConfigProvider),
+        );
   }
 
   @override
@@ -56,10 +65,7 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
       context,
       onResume: () {},
       onRestart: () {
-        _resultShown = false;
-        ref.read(colorMemoryControllerProvider.notifier).start(
-              ref.read(colorMemoryConfigProvider),
-            );
+        _beginSession();
       },
       onHome: () {
         ref.read(colorMemoryControllerProvider.notifier).reset();
@@ -265,7 +271,11 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
           'Score: ${result.score}\nStars: ${result.stars}\nCoins: +${result.coins}',
       primaryLabel: 'Play Again',
       secondaryLabel: 'Home',
-      primaryAction: () {
+      primaryAction: () async {
+        if (!await ensureCanStartGame(context, ref, GameId.colorMemory)) {
+          return;
+        }
+        if (!mounted) return;
         _resultShown = false;
         ref.read(colorMemoryControllerProvider.notifier).start(
               ref.read(colorMemoryConfigProvider),

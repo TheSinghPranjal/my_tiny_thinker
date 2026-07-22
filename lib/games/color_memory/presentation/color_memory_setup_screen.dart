@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
@@ -80,7 +82,15 @@ class ColorMemorySetupScreen extends ConsumerWidget {
                 label: 'Start Game!',
                 expanded: true,
                 size: TTButtonSize.large,
-                onPressed: () {
+                onPressed: () async {
+                  if (!await ensureCanStartGame(
+                    context,
+                    ref,
+                    GameId.colorMemory,
+                  )) {
+                    return;
+                  }
+                  if (!context.mounted) return;
                   ref.read(colorMemoryConfigProvider.notifier).state =
                       config.copyWith(hintsEnabled: hints);
                   context.push(AppRoutes.colorMemoryGame);
