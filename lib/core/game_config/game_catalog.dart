@@ -207,6 +207,16 @@ abstract final class GameCatalog {
       subtitle: 'Tap scrambled letters to spell the word!',
     ),
     GameCatalogEntry(
+      gameId: GameId.recallPictureAdventure,
+      category: LearningCategory.brainMasters,
+      subtitle: 'Look at the picture, then answer from memory!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.numberMemory,
+      category: LearningCategory.brainMasters,
+      subtitle: 'Remember the number and type it back!',
+    ),
+    GameCatalogEntry(
       gameId: GameId.memoryGame,
       category: LearningCategory.smartExplorers,
       subtitle: 'Find matching pairs!',
@@ -214,12 +224,12 @@ abstract final class GameCatalog {
     ),
     GameCatalogEntry(
       gameId: GameId.patternMatch,
-      category: LearningCategory.smartExplorers,
+      category: LearningCategory.youngGeniuses,
       subtitle: 'Look at the pattern and pick what comes next!',
     ),
     GameCatalogEntry(
       gameId: GameId.colorMemory,
-      category: LearningCategory.smartExplorers,
+      category: LearningCategory.youngGeniuses,
       subtitle: 'Remember the colors!',
       hasParentControls: false,
     ),

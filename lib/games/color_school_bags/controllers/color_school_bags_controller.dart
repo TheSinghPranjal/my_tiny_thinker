@@ -223,6 +223,10 @@ class ColorSchoolBagsController extends StateNotifier<SortBagsState> {
       phase: SortBagsPhase.playing,
       showSparkles: false,
       showMilestone: false,
+      clearFeedback: true,
+      clearReward: true,
+      clearSpoken: true,
+      showMascot: false,
     );
     if (state.pendingEnd) _endSession();
   }
@@ -233,6 +237,7 @@ class ColorSchoolBagsController extends StateNotifier<SortBagsState> {
       if (mounted) {
         state = state.copyWith(
           clearFeedback: true,
+          clearReward: true,
           clearSpoken: true,
           showMascot: false,
         );
