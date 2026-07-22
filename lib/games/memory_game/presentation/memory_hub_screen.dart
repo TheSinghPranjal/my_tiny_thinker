@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
@@ -122,7 +124,15 @@ class MemoryHubScreen extends ConsumerWidget {
               gameType: type,
               config: config,
               onConfigChanged: (c) => setSheetState(() => config = c),
-              onStart: () {
+              onStart: () async {
+                if (!await ensureCanStartGame(
+                  context,
+                  ref,
+                  GameId.memoryGame,
+                )) {
+                  return;
+                }
+                if (!context.mounted) return;
                 Navigator.pop(sheetContext);
                 ref.read(memorySessionProvider.notifier).reset();
                 context.push(AppRoutes.memoryPlay, extra: config);

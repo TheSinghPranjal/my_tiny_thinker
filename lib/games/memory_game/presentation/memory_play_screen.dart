@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
@@ -69,7 +71,9 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
     await TTPauseDialog.show(
       context,
       onResume: () => ref.read(memorySessionProvider.notifier).resume(),
-      onRestart: () {
+      onRestart: () async {
+        if (!await ensureCanStartGame(context, ref, GameId.memoryGame)) return;
+        if (!mounted) return;
         _resultShown = false;
         final config = ref.read(memorySessionProvider).config;
         if (config != null) {
@@ -101,7 +105,9 @@ class _MemoryPlayScreenState extends ConsumerState<MemoryPlayScreen>
     MemoryVictoryDialog.show(
       context,
       result: controller.getResult(),
-      onPlayAgain: () {
+      onPlayAgain: () async {
+        if (!await ensureCanStartGame(context, ref, GameId.memoryGame)) return;
+        if (!mounted) return;
         _resultShown = false;
         final config = state.config;
         if (config != null) {
