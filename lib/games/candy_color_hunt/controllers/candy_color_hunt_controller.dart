@@ -194,6 +194,7 @@ class CandyColorHuntController extends StateNotifier<CandyHuntState> {
       if (mounted) {
         state = state.copyWith(
           clearFeedback: true,
+          clearReward: true,
           clearSpoken: true,
           showMascot: false,
         );

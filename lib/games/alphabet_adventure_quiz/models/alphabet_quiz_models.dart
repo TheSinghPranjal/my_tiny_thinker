@@ -234,7 +234,8 @@ class AlphabetQuizState extends Equatable {
         lettersCompleted: lettersCompleted ?? this.lettersCompleted,
         feedbackMessage:
             clearFeedback ? null : (feedbackMessage ?? this.feedbackMessage),
-        lastRewardText: lastRewardText ?? this.lastRewardText,
+        lastRewardText:
+            clearFeedback ? null : (lastRewardText ?? this.lastRewardText),
         showMascot: showMascot ?? this.showMascot,
         showSparkles: showSparkles ?? this.showSparkles,
         pendingEnd: pendingEnd ?? this.pendingEnd,

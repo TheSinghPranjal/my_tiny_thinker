@@ -168,7 +168,8 @@ class AnimalSoundsController extends StateNotifier<AnimalSoundsState> {
     _feedbackTimer?.cancel();
     _feedbackTimer = Timer(const Duration(milliseconds: 1200), () {
       if (mounted) {
-        state = state.copyWith(clearFeedback: true, showSparkles: false);
+        state = state.copyWith(clearFeedback: true,
+          clearReward: true, showSparkles: false);
       }
     });
   }
