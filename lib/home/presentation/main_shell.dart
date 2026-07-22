@@ -5,6 +5,7 @@ import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
+import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_badge.dart';
 
@@ -65,7 +66,10 @@ class MainShell extends ConsumerWidget {
                   badge: index == 2 && profile.stars > 0
                       ? '${profile.stars}'
                       : null,
-                  onTap: () => context.go(route),
+                  onTap: () {
+                    ref.read(audioServiceProvider).playHomeMusic();
+                    context.go(route);
+                  },
                 );
               }),
             ),

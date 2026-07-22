@@ -7,21 +7,22 @@ abstract final class HungryMonkeyLogic {
   static final random = math.Random();
 
   /// Normalized canopy slot positions (x, y) within play area.
+  /// Y values sit lower so fruit stays inside the shifted-down canopy.
   static const canopySlots = <(double, double)>[
-    (0.22, 0.10),
-    (0.36, 0.07),
-    (0.50, 0.05),
-    (0.64, 0.07),
-    (0.78, 0.10),
-    (0.18, 0.20),
-    (0.32, 0.17),
-    (0.50, 0.15),
-    (0.68, 0.17),
-    (0.82, 0.20),
-    (0.26, 0.30),
-    (0.42, 0.28),
-    (0.58, 0.28),
-    (0.74, 0.30),
+    (0.22, 0.18),
+    (0.36, 0.15),
+    (0.50, 0.13),
+    (0.64, 0.15),
+    (0.78, 0.18),
+    (0.18, 0.28),
+    (0.32, 0.25),
+    (0.50, 0.23),
+    (0.68, 0.25),
+    (0.82, 0.28),
+    (0.26, 0.38),
+    (0.42, 0.36),
+    (0.58, 0.36),
+    (0.74, 0.38),
   ];
 
   static const minSlotDistance = 0.08;
@@ -303,11 +304,9 @@ abstract final class HungryMonkeyLogic {
       actionTimer = 0;
       idleAction = random.nextInt(4);
     }
-    final breathe = math.sin(m.animPhase * 2) * 2;
     return m.copyWith(
       actionTimer: actionTimer,
       idleAction: idleAction,
-      y: m.y + breathe * 0.15,
       earDroop: 0,
       headShake: 0,
     );
@@ -318,7 +317,8 @@ abstract final class HungryMonkeyLogic {
     if (reach >= 1) {
       return m.copyWith(phase: MonkeyPhase.catching, reachProgress: 1);
     }
-    return m.copyWith(reachProgress: reach, y: m.y - reach * 12);
+    // Stay planted at the trunk base — only arm/face animates via reachProgress.
+    return m.copyWith(reachProgress: reach);
   }
 
   static MonkeyEntity _updateCatch(MonkeyEntity m, double delta, double speed) {
@@ -338,7 +338,7 @@ abstract final class HungryMonkeyLogic {
         actionTimer: 0,
       );
     }
-    return m.copyWith(eatProgress: eat, y: m.y + math.sin(eat * math.pi * 6) * 1.5);
+    return m.copyWith(eatProgress: eat);
   }
 
   static MonkeyEntity _updateSad(MonkeyEntity m, double delta, double speed) {
