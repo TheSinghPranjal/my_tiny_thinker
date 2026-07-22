@@ -8,11 +8,14 @@ class AlphabetGardenBackground extends StatelessWidget {
     required this.child,
     this.envPhase = 0,
     this.reducedMotion = false,
+    this.showFloatingDecor = true,
   });
 
   final Widget child;
   final double envPhase;
   final bool reducedMotion;
+  /// Floating crayon / alphabet-block doodles. Off for cleaner bridge boards.
+  final bool showFloatingDecor;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +40,7 @@ class AlphabetGardenBackground extends StatelessWidget {
         CustomPaint(
           painter: _GardenPainter(
             phase: reducedMotion ? 0 : envPhase,
+            showFloatingDecor: showFloatingDecor,
           ),
           size: Size.infinite,
         ),
@@ -47,16 +51,22 @@ class AlphabetGardenBackground extends StatelessWidget {
 }
 
 class _GardenPainter extends CustomPainter {
-  _GardenPainter({required this.phase});
+  _GardenPainter({
+    required this.phase,
+    this.showFloatingDecor = true,
+  });
 
   final double phase;
+  final bool showFloatingDecor;
 
   @override
   void paint(Canvas canvas, Size size) {
     _drawRainbow(canvas, size);
     _drawClouds(canvas, size);
     _drawGrass(canvas, size);
-    _drawDecor(canvas, size);
+    if (showFloatingDecor) {
+      _drawDecor(canvas, size);
+    }
   }
 
   void _drawRainbow(Canvas canvas, Size size) {
@@ -171,5 +181,6 @@ class _GardenPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _GardenPainter oldDelegate) =>
-      oldDelegate.phase != phase;
+      oldDelegate.phase != phase ||
+      oldDelegate.showFloatingDecor != showFloatingDecor;
 }
