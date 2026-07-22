@@ -36,7 +36,14 @@ Future<void> finishGameSession(
     continueLabel: inPath
         ? (path.hasNext ? 'Next Game' : 'See Journey')
         : 'Continue',
-    onPlayAgain: inPath ? null : onPlayAgain,
+    onPlayAgain: inPath || onPlayAgain == null
+        ? null
+        : () async {
+            if (!await ensureCanStartGame(context, ref, summary.gameId)) {
+              return;
+            }
+            onPlayAgain();
+          },
     onContinue: () {
       if (!context.mounted) return;
       if (!inPath) {
@@ -45,7 +52,7 @@ Future<void> finishGameSession(
       }
       final next = ref.read(learningPathSessionProvider.notifier).advance();
       if (next != null) {
-        navigateToGame(context, next);
+        navigateToGameGuarded(context, ref, next);
         return;
       }
       final summarySession =

@@ -84,7 +84,7 @@ class LearningPathCard extends ConsumerWidget {
                       if (!ok) return;
                       final first = ref.read(learningPathSessionProvider).currentGame;
                       if (first == null) return;
-                      navigateToGame(context, first);
+                      navigateToGameGuarded(context, ref, first);
                     },
             ),
           ),
