@@ -201,7 +201,11 @@ class OceanFishController extends StateNotifier<OceanFishState> {
     _feedbackTimer?.cancel();
     _feedbackTimer = Timer(const Duration(milliseconds: 1400), () {
       if (mounted) {
-        state = state.copyWith(clearFeedback: true, showMascotCelebrate: false);
+        state = state.copyWith(
+          clearFeedback: true,
+          clearReward: true,
+          showMascotCelebrate: false,
+        );
       }
     });
 

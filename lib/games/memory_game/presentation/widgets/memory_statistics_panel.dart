@@ -48,7 +48,7 @@ class MemoryStatisticsPanel extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
               Text('Per Game', style: context.textTheme.titleLarge),
               const SizedBox(height: AppSpacing.sm),
-              ...MemoryMiniGameType.values.map((type) {
+              ...MemoryMiniGameType.hubGames.map((type) {
                 final s = stats.statsFor(type);
                 return Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.sm),
