@@ -88,18 +88,22 @@ List<String> enabledGameIdsForAge(AgeGroup group) {
       ],
     AgeGroup.smartExplorers => [
         'color_shape_bridge_adventure',
+        'classic_card_memory',
         'memory_game',
         'odd_one_out',
         'pattern_match',
         'color_memory',
       ],
     AgeGroup.brainMasters => [
+        'complete_the_word_adventure',
+        'classic_card_memory',
         'memory_game',
         'odd_one_out',
         'pattern_match',
         'color_memory',
       ],
     AgeGroup.youngGeniuses => [
+        'classic_card_memory',
         'memory_game',
         'odd_one_out',
         'pattern_match',
