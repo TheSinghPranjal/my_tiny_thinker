@@ -36,6 +36,8 @@ import 'package:my_tiny_thinker/games/color_balloon_pop/repository/color_balloon
 import 'package:my_tiny_thinker/games/ascending_descending/repository/bubble_pop_settings_repository.dart';
 import 'package:my_tiny_thinker/games/classic_card_memory/repository/classic_card_memory_settings_repository.dart';
 import 'package:my_tiny_thinker/games/complete_the_word_adventure/repository/complete_word_settings_repository.dart';
+import 'package:my_tiny_thinker/games/number_memory/repository/number_memory_settings_repository.dart';
+import 'package:my_tiny_thinker/games/recall_picture_adventure/repository/recall_picture_settings_repository.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/repository/peek_a_boo_animal_friends_settings_repository.dart';
 import 'package:my_tiny_thinker/games/picture_bridge_adventure/repository/picture_bridge_settings_repository.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/repository/shadow_match_settings_repository.dart';
@@ -115,6 +117,10 @@ class ParentGameSettingsCard extends ConsumerWidget {
         ref.watch(classicCardMemorySettingsProvider).sessionSeconds,
       GameId.completeTheWordAdventure =>
         ref.watch(completeWordSettingsProvider).sessionSeconds,
+      GameId.recallPictureAdventure =>
+        ref.watch(recallPictureSettingsProvider).sessionSeconds,
+      GameId.numberMemory =>
+        ref.watch(numberMemorySettingsProvider).sessionSeconds,
       _ => GameDuration.defaultSeconds,
     };
   }
@@ -220,6 +226,12 @@ class ParentGameSettingsCard extends ConsumerWidget {
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.completeTheWordAdventure:
         ref.read(completeWordSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.recallPictureAdventure:
+        ref.read(recallPictureSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.numberMemory:
+        ref.read(numberMemorySettingsProvider.notifier)
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       default:
         break;

@@ -75,6 +75,7 @@ import 'package:my_tiny_thinker/games/classic_card_memory/models/classic_card_me
 import 'package:my_tiny_thinker/games/classic_card_memory/repository/classic_card_memory_settings_repository.dart';
 import 'package:my_tiny_thinker/games/complete_the_word_adventure/models/complete_word_models.dart';
 import 'package:my_tiny_thinker/games/complete_the_word_adventure/repository/complete_word_settings_repository.dart';
+import 'package:my_tiny_thinker/games/number_memory/repository/number_memory_settings_repository.dart';
 import 'package:my_tiny_thinker/parent_zone/presentation/widgets/parent_game_settings_card.dart';
 
 class ParentZoneScreen extends ConsumerStatefulWidget {
@@ -529,6 +530,16 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ParentGameSettingsCard(
               gameId: GameId.completeTheWordAdventure,
               child: const _CompleteWordParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.recallPictureAdventure,
+              child: const SizedBox.shrink(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.numberMemory,
+              child: const _NumberMemoryParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             ParentGameSettingsCard(
@@ -3710,6 +3721,39 @@ class _CompleteWordParentControls extends ConsumerWidget {
         const SizedBox(height: AppSpacing.sm),
         Text(
           'Default is 3-letter words. Longer lengths unlock harder spelling.',
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.black.withValues(alpha: 0.55),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _NumberMemoryParentControls extends ConsumerWidget {
+  const _NumberMemoryParentControls();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(numberMemorySettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Digits to show: ${s.digitCount}'),
+        Slider(
+          value: s.digitCount.toDouble(),
+          min: 1,
+          max: 10,
+          divisions: 9,
+          label: '${s.digitCount}',
+          onChanged: (v) =>
+              ref.read(numberMemorySettingsProvider.notifier).patch(
+                    (x) => x.copyWith(digitCount: v.round()),
+                  ),
+        ),
+        Text(
+          'Default is 4 digits (0–9999). Higher values show longer numbers.',
           style: TextStyle(
             fontSize: 13,
             color: Colors.black.withValues(alpha: 0.55),
