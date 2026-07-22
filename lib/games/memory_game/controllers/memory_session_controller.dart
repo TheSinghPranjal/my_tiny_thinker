@@ -64,14 +64,7 @@ class MemorySessionController extends StateNotifier<MemorySessionState> {
     return switch (config.gameType) {
       MemoryMiniGameType.classicCard => _initClassicCard(config, d),
       MemoryMiniGameType.sequence => _initSequence(d, round),
-      MemoryMiniGameType.position => _initPosition(d),
-      MemoryMiniGameType.pictureRecall => _initPictureRecall(d),
-      MemoryMiniGameType.sound => _initSound(d, round),
-      MemoryMiniGameType.flash => _initFlash(d),
-      MemoryMiniGameType.number => _initNumber(d, round),
       MemoryMiniGameType.color => _initColor(d, round),
-      MemoryMiniGameType.emojiMemory => _initEmoji(d),
-      MemoryMiniGameType.objectTray => _initObjectTray(d),
     };
   }
 
@@ -106,60 +99,6 @@ class MemorySessionController extends StateNotifier<MemorySessionState> {
     };
   }
 
-  Map<String, dynamic> _initPosition(MemoryDifficulty d) {
-    final grid = MemoryDifficultyConfig.positionGridSize(d);
-    final count = MemoryDifficultyConfig.positionCount(d);
-    final positions = MemoryContent.randomGridPositions(grid, count);
-    return {
-      'gridSize': grid,
-      'positions': positions,
-      'tapped': <int>[],
-      'displayMs': MemoryDifficultyConfig.positionDisplayMs(d),
-    };
-  }
-
-  Map<String, dynamic> _initPictureRecall(MemoryDifficulty d) {
-    final scene = MemoryContent.generatePictureScene();
-    final q = MemoryContent.pictureQuestion(scene);
-    return {
-      'scene': scene,
-      'question': q.$1,
-      'answer': q.$2,
-      'options': q.$3,
-      'displayMs': MemoryDifficultyConfig.pictureDisplayMs(d),
-    };
-  }
-
-  Map<String, dynamic> _initSound(MemoryDifficulty d, int round) {
-    final len = MemoryDifficultyConfig.soundSequenceLength(d, round);
-    final seq = MemoryContent.randomSequence(len, MemoryContent.sounds.length);
-    return {
-      'sequence': seq,
-      'playerInput': <int>[],
-      'showIndex': 0,
-      'mode': 'show',
-    };
-  }
-
-  Map<String, dynamic> _initFlash(MemoryDifficulty d) {
-    final count = MemoryDifficultyConfig.flashItemCount(d);
-    final items = MemoryContent.themeItems(MemoryCardTheme.animals, count + 1);
-    final shown = items.take(count).toList();
-    final missing = items[count];
-    return {
-      'shown': shown,
-      'missing': missing,
-      'options': (List<String>.from(shown)..add(missing))..shuffle(_random),
-      'displayMs': 3000,
-    };
-  }
-
-  Map<String, dynamic> _initNumber(MemoryDifficulty d, int round) {
-    final digits = MemoryDifficultyConfig.numberDigits(d, round);
-    final number = MemoryContent.randomNumber(digits);
-    return {'number': number, 'digits': digits, 'input': ''};
-  }
-
   Map<String, dynamic> _initColor(MemoryDifficulty d, int round) {
     final len = MemoryDifficultyConfig.colorSequenceLength(d, round);
     final seq = MemoryContent.randomSequence(len, MemoryContent.sequenceColors.length);
@@ -168,52 +107,6 @@ class MemorySessionController extends StateNotifier<MemorySessionState> {
       'playerInput': <int>[],
       'showIndex': 0,
       'mode': 'show',
-    };
-  }
-
-  Map<String, dynamic> _initEmoji(MemoryDifficulty d) {
-    final count = MemoryDifficultyConfig.emojiCount(d);
-    final emojis = List<String>.from(MemoryContent.emojis.take(count));
-    final mode = _random.nextBool() ? 'missing' : 'order';
-    if (mode == 'missing') {
-      final missing = emojis.removeAt(_random.nextInt(emojis.length));
-      return {
-        'mode': 'missing',
-        'shown': List<String>.from(emojis),
-        'missing': missing,
-        'options': ([...emojis, missing]..shuffle(_random)),
-        'displayMs': 3000,
-      };
-    }
-    final pool = List<String>.from(emojis);
-    final len = pool.length;
-    final seq = MemoryContent.randomSequence(len, pool.length);
-    return {
-      'mode': 'order',
-      'emojis': pool,
-      'sequence': seq,
-      'playerInput': <int>[],
-      'showIndex': 0,
-    };
-  }
-
-  Map<String, dynamic> _initObjectTray(MemoryDifficulty d) {
-    final count = MemoryDifficultyConfig.objectTrayCount(d);
-    final objs = List<MapEntry<String, String>>.from(MemoryContent.objects)
-      ..shuffle(_random);
-    final shown = objs.take(count).toList();
-    final allOptions = List<MapEntry<String, String>>.from(MemoryContent.objects)
-      ..shuffle(_random);
-    return {
-      'shown': shown
-          .map((e) => {'emoji': e.key, 'label': e.value})
-          .toList(),
-      'selected': <String>[],
-      'options': allOptions
-          .take(count + 4)
-          .map((e) => {'emoji': e.key, 'label': e.value})
-          .toList(),
-      'displayMs': 4000,
     };
   }
 
@@ -234,27 +127,7 @@ class MemorySessionController extends StateNotifier<MemorySessionState> {
     state = state.copyWith(phase: MemoryPhase.showing);
     _startElapsedTimer();
 
-    final displayMs = switch (config.gameType) {
-      MemoryMiniGameType.position =>
-        state.gameData['displayMs'] as int? ?? 3000,
-      MemoryMiniGameType.pictureRecall =>
-        state.gameData['displayMs'] as int? ?? 4000,
-      MemoryMiniGameType.flash => state.gameData['displayMs'] as int? ?? 3000,
-      MemoryMiniGameType.emojiMemory when state.gameData['mode'] == 'missing' =>
-        state.gameData['displayMs'] as int? ?? 3000,
-      MemoryMiniGameType.objectTray =>
-        state.gameData['displayMs'] as int? ?? 4000,
-      MemoryMiniGameType.number => 2000,
-      _ => 0,
-    };
-
-    if (displayMs > 0) {
-      _showTimer?.cancel();
-      _showTimer = Timer(Duration(milliseconds: displayMs), () {
-        if (!mounted) return;
-        _transitionToInput();
-      });
-    } else if (_isSequenceGame(config.gameType)) {
+    if (_isSequenceGame(config.gameType)) {
       _playSequenceStep();
     } else {
       _transitionToInput();
@@ -262,12 +135,7 @@ class MemorySessionController extends StateNotifier<MemorySessionState> {
   }
 
   bool _isSequenceGame(MemoryMiniGameType t) {
-    if (t == MemoryMiniGameType.emojiMemory) {
-      return state.gameData['mode'] == 'order';
-    }
-    return t == MemoryMiniGameType.sequence ||
-        t == MemoryMiniGameType.sound ||
-        t == MemoryMiniGameType.color;
+    return t == MemoryMiniGameType.sequence || t == MemoryMiniGameType.color;
   }
 
   void _playSequenceStep() {
@@ -381,8 +249,6 @@ class MemorySessionController extends StateNotifier<MemorySessionState> {
     _handleSequenceInput(index);
   }
 
-  void tapSound(int index) => _handleSequenceInput(index);
-
   void tapColor(int index) => _handleSequenceInput(index);
 
   void _handleSequenceInput(int index) {
@@ -412,123 +278,6 @@ class MemorySessionController extends StateNotifier<MemorySessionState> {
         if (!mounted) return;
         _onRoundComplete(success: true);
       });
-    }
-  }
-
-  void tapGridCell(int cellIndex) {
-    if (state.phase != MemoryPhase.input) return;
-    final data = Map<String, dynamic>.from(state.gameData);
-    final positions = data['positions'] as List<int>;
-    final tapped = List<int>.from(data['tapped'] as List<int>? ?? []);
-
-    if (tapped.contains(cellIndex)) return;
-    tapped.add(cellIndex);
-
-    if (!positions.contains(cellIndex)) {
-      data['tapped'] = tapped;
-      state = state.copyWith(gameData: data);
-      _onWrong();
-      Future.delayed(const Duration(milliseconds: 600), () {
-        if (!mounted) return;
-        _onRoundComplete(success: false);
-      });
-      return;
-    }
-
-    data['tapped'] = tapped;
-    state = state.copyWith(gameData: data);
-
-    if (tapped.length == positions.length) {
-      _onCorrect(bonus: positions.length * 5);
-      Future.delayed(const Duration(milliseconds: 400), () {
-        if (!mounted) return;
-        _onRoundComplete(success: true);
-      });
-    }
-  }
-
-  void answerQuestion(String answer) {
-    if (state.phase != MemoryPhase.input) return;
-    final data = state.gameData;
-    final correct = data['answer'] as String;
-    if (answer == correct) {
-      _onCorrect();
-      _onRoundComplete(success: true);
-    } else {
-      _onWrong();
-      _onRoundComplete(success: false);
-    }
-  }
-
-  void selectFlashItem(String item) {
-    if (state.phase != MemoryPhase.input) return;
-    if (item == state.gameData['missing']) {
-      _onCorrect();
-      _onRoundComplete(success: true);
-    } else {
-      _onWrong();
-      _onRoundComplete(success: false);
-    }
-  }
-
-  void submitNumber(String input) {
-    if (state.phase != MemoryPhase.input && state.phase != MemoryPhase.playing) return;
-    if (input == state.gameData['number']) {
-      _onCorrect();
-      _onRoundComplete(success: true);
-    } else {
-      _onWrong();
-      _onRoundComplete(success: false);
-    }
-  }
-
-  void selectEmoji(String emoji) {
-    if (state.phase != MemoryPhase.input) return;
-    final mode = state.gameData['mode'] as String?;
-    if (mode == 'missing') {
-      if (emoji == state.gameData['missing']) {
-        _onCorrect();
-        _onRoundComplete(success: true);
-      } else {
-        _onWrong();
-        _onRoundComplete(success: false);
-      }
-    }
-  }
-
-  void tapEmojiOrder(int index) => _handleSequenceInput(index);
-
-  void toggleObject(String emoji) {
-    if (state.phase != MemoryPhase.input) return;
-    final data = Map<String, dynamic>.from(state.gameData);
-    final selected = List<String>.from(data['selected'] as List<String>? ?? []);
-    if (selected.contains(emoji)) {
-      selected.remove(emoji);
-    } else {
-      selected.add(emoji);
-    }
-    data['selected'] = selected;
-    state = state.copyWith(gameData: data);
-  }
-
-  void submitObjectTray() {
-    if (state.phase != MemoryPhase.input) return;
-    final data = state.gameData;
-    final shown = (data['shown'] as List)
-        .map((e) => (e as Map)['emoji'] as String)
-        .toList();
-    final selected = List<String>.from(data['selected'] as List? ?? []);
-
-    final shownSet = shown.toSet();
-    final correct = selected.length == shownSet.length &&
-        selected.every(shownSet.contains);
-
-    if (correct) {
-      _onCorrect(bonus: shown.length * 3);
-      _onRoundComplete(success: true);
-    } else {
-      _onWrong();
-      _onRoundComplete(success: false);
     }
   }
 

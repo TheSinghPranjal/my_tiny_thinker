@@ -19,14 +19,7 @@ enum MemoryPhase {
 enum MemoryMiniGameType {
   classicCard('classic_card', '🃏', 'Classic Card Memory', 0),
   sequence('sequence', '🔴', 'Sequence Memory', 0),
-  position('position', '📍', 'Position Memory', 50),
-  pictureRecall('picture_recall', '🖼️', 'Picture Recall', 100),
-  sound('sound', '🔊', 'Sound Memory', 150),
-  flash('flash', '⚡', 'Flash Memory', 200),
-  number('number', '🔢', 'Number Memory', 0),
-  color('color', '🎨', 'Color Memory', 0),
-  emojiMemory('emoji', '😊', 'Emoji Memory', 75),
-  objectTray('object_tray', '🧺', 'Object Tray', 125);
+  color('color', '🎨', 'Color Memory', 0);
 
   const MemoryMiniGameType(this.id, this.emoji, this.displayName, this.unlockCost);
   final String id;
