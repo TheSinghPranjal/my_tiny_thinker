@@ -9,6 +9,10 @@ import 'package:my_tiny_thinker/games/classic_card_memory/presentation/classic_c
 import 'package:my_tiny_thinker/games/classic_card_memory/presentation/classic_card_memory_game_screen.dart';
 import 'package:my_tiny_thinker/games/complete_the_word_adventure/presentation/complete_word_setup_screen.dart';
 import 'package:my_tiny_thinker/games/complete_the_word_adventure/presentation/complete_word_game_screen.dart';
+import 'package:my_tiny_thinker/games/recall_picture_adventure/presentation/recall_picture_setup_screen.dart';
+import 'package:my_tiny_thinker/games/recall_picture_adventure/presentation/recall_picture_game_screen.dart';
+import 'package:my_tiny_thinker/games/number_memory/presentation/number_memory_setup_screen.dart';
+import 'package:my_tiny_thinker/games/number_memory/presentation/number_memory_game_screen.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/presentation/bubble_game_setup_screen.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/presentation/bubble_game_screen.dart';
 import 'package:my_tiny_thinker/home/presentation/games_screen.dart';
@@ -103,6 +107,10 @@ abstract final class AppRoutes {
   static const classicCardMemoryGame = '/games/classic-card-memory/play';
   static const completeTheWordSetup = '/games/complete-the-word/setup';
   static const completeTheWordGame = '/games/complete-the-word/play';
+  static const recallPictureSetup = '/games/recall-picture/setup';
+  static const recallPictureGame = '/games/recall-picture/play';
+  static const numberMemorySetup = '/games/number-memory/setup';
+  static const numberMemoryGame = '/games/number-memory/play';
   static const oddOneOutSetup = '/games/odd-one-out/setup';
   static const oddOneOutGame = '/games/odd-one-out/play';
   static const patternMatchSetup = '/games/pattern-match/setup';
@@ -312,6 +320,26 @@ final appRouter = GoRouter(
       path: AppRoutes.completeTheWordGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const CompleteWordGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.recallPictureSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const RecallPictureSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.recallPictureGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const RecallPictureGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.numberMemorySetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const NumberMemorySetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.numberMemoryGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const NumberMemoryGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.oddOneOutSetup,
