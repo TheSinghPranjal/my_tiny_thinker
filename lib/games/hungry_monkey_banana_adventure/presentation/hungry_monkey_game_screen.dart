@@ -276,7 +276,8 @@ class _JunglePlayArea extends ConsumerWidget {
             children: [
               Positioned(
                 left: w * 0.02,
-                top: 0,
+                // Sit the tree lower so the canopy crown isn't clipped by the HUD.
+                top: h * 0.10,
                 child: BananaTreeWidget(
                   width: w * 0.96,
                   height: h * 0.78,

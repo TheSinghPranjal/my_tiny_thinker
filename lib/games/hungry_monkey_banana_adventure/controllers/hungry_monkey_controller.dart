@@ -99,6 +99,9 @@ class HungryMonkeyController extends StateNotifier<HungryMonkeyState> {
     var envPhase = state.envPhase + delta * 0.4;
 
     monkey = HungryMonkeyLogic.updateMonkey(monkey, delta, state.settings);
+    // Keep the monkey planted at the trunk base — never climb the tree.
+    final (mx, my) = HungryMonkeyLogic.monkeyAnchor(_playArea);
+    monkey = monkey.copyWith(x: mx, y: my);
 
     for (var i = 0; i < bananas.length; i++) {
       final prev = bananas[i];
