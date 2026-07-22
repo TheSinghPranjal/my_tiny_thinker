@@ -33,6 +33,13 @@ enum MemoryMiniGameType {
   final String emoji;
   final String displayName;
   final int unlockCost;
+
+  /// Hub-visible games after standalone extraction / removals.
+  static const hubGames = <MemoryMiniGameType>[
+    MemoryMiniGameType.classicCard,
+    MemoryMiniGameType.sequence,
+    MemoryMiniGameType.color,
+  ];
 }
 
 enum MemoryCardTheme {
@@ -73,7 +80,7 @@ class MemoryGameConfig extends Equatable {
     required this.gameType,
     this.difficulty = MemoryDifficulty.easy,
     this.cardTheme = MemoryCardTheme.animals,
-    this.adaptiveEnabled = true,
+    this.adaptiveEnabled = false,
   });
 
   final MemoryMiniGameType gameType;
