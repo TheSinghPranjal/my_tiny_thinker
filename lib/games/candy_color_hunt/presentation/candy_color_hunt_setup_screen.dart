@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:my_tiny_thinker/core/models/reward_model.dart';
+import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/candy_color_hunt/models/candy_color_hunt_models.dart';
@@ -26,7 +27,7 @@ class CandyColorHuntSetupScreen extends ConsumerWidget {
           titleShadows: const [
                       Shadow(color: Colors.white, blurRadius: 8),
                     ],
-          onPlay: () => context.push(AppRoutes.candyColorHuntGame),
+          onPlay: () => pushGameGuarded(context, ref, GameId.candyColorHunt, AppRoutes.candyColorHuntGame),
         ),
       ),
     );
