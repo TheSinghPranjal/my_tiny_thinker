@@ -309,7 +309,8 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
     _feedbackTimer?.cancel();
     _feedbackTimer = Timer(const Duration(milliseconds: 1400), () {
       if (mounted) {
-        state = state.copyWith(clearFeedback: true, showMascot: false);
+        state = state.copyWith(clearFeedback: true,
+          clearReward: true, showMascot: false);
       }
     });
   }

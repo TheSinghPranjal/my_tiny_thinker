@@ -280,7 +280,8 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
     _feedbackTimer?.cancel();
     _feedbackTimer = Timer(const Duration(milliseconds: 1500), () {
       if (mounted) {
-        state = state.copyWith(clearFeedback: true, showMascot: false);
+        state = state.copyWith(clearFeedback: true,
+          clearReward: true, showMascot: false);
       }
     });
   }
