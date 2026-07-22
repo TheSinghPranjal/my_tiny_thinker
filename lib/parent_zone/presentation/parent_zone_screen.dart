@@ -20,7 +20,6 @@ import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
-import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/models/ocean_fish_models.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/repository/ocean_fish_settings_repository.dart';
 import 'package:my_tiny_thinker/games/balloon_parade/repository/balloon_parade_settings_repository.dart';
@@ -251,7 +250,6 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
 
   Widget _buildParentDashboard() {
     final profile = ref.watch(profileProvider);
-    final memoryStats = ref.watch(memoryHubStatsProvider);
     final gameStats = ref.watch(allGameStatsProvider);
     final onboarding = ref.watch(onboardingProvider);
 
@@ -339,19 +337,6 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                       ),
                     );
                   }),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Memory Games', style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  _StatRow('Games Played', '${memoryStats.gamesPlayed}'),
-                  _StatRow('Perfect Games', '${memoryStats.perfectGames}'),
-                  _StatRow('Highest Combo', '${memoryStats.highestCombo}'),
                 ],
               ),
             ),
