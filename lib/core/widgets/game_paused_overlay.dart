@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
+import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 
@@ -55,7 +57,12 @@ class GamePausedOverlay extends StatelessWidget {
                     label: 'Resume',
                     expanded: true,
                     size: TTButtonSize.large,
-                    onPressed: onResume,
+                    onPressed: () {
+                      ProviderScope.containerOf(context)
+                          .read(audioServiceProvider)
+                          .resumeGameplayAudio();
+                      onResume();
+                    },
                   ),
                   if (onOpenMenu != null) ...[
                     const SizedBox(height: AppSpacing.md),

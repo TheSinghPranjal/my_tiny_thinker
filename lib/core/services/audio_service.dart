@@ -20,11 +20,11 @@ enum SoundEffect {
 
 /// Soothing loop tracks for TinyThink.
 abstract final class AppMusic {
-  /// Home, settings, parent zone, onboarding — everywhere outside games.
+  /// Home, settings, parent zone, onboarding — everywhere outside active gameplay.
   /// Controlled by Settings → Music.
   static const home = 'audio/home_music.mp3';
 
-  /// Shared background loop while any game is open.
+  /// Background loop while a game is actively running (not paused, not on home).
   /// Controlled by Settings → Game sound.
   static const game = 'audio/game_music.mp3';
 }
@@ -44,9 +44,18 @@ class AudioService {
   final AudioPlayer _clipPlayer = AudioPlayer();
   bool _initialized = false;
 
-  /// Last requested loop track (kept so music can resume after toggle).
+  /// True while a game screen has entered gameplay (until [playHomeMusic]/exit).
+  bool _inGameplay = false;
+
+  /// True while the in-game pause menu is open (game BGM must stay silent).
+  bool _gameAudioPaused = false;
+
+  /// Last requested loop track.
   String _activeTrack = AppMusic.home;
   String? _playingTrack;
+
+  bool get inGameplay => _inGameplay;
+  bool get gameAudioPaused => _gameAudioPaused;
 
   Future<void> initialize() async {
     if (_initialized) return;
@@ -60,13 +69,21 @@ class AudioService {
   bool get _musicEnabled => _ref.read(settingsProvider).musicEnabled;
 
   bool _isTrackAllowed(String asset) {
-    if (asset == AppMusic.home) return _musicEnabled;
-    if (asset == AppMusic.game) return _soundEnabled;
-    return _musicEnabled;
+    if (asset == AppMusic.home) {
+      // Home music only outside active gameplay.
+      return !_inGameplay && _musicEnabled;
+    }
+    if (asset == AppMusic.game) {
+      // Game BGM only while playing and not paused, and game sound is on.
+      return _inGameplay && !_gameAudioPaused && _soundEnabled;
+    }
+    return false;
   }
 
   Future<void> playSfx(SoundEffect effect) async {
     if (!_soundEnabled) return;
+    // Silence all game audio while the pause menu is open.
+    if (_gameAudioPaused) return;
     try {
       await _sfxPlayer.stop();
       await _sfxPlayer.play(
@@ -81,9 +98,9 @@ class AudioService {
   }
 
   /// Play a one-shot clip (mp3/wav) from assets, e.g. `audio/animals/dog.wav`.
-  /// Safe to call repeatedly — restarts the clip from the beginning.
   Future<void> playClip(String assetPath, {double volume = 0.9}) async {
     if (!_soundEnabled) return;
+    if (_gameAudioPaused) return;
     try {
       await initialize();
       await _clipPlayer.stop();
@@ -100,9 +117,35 @@ class AudioService {
     await _clipPlayer.stop();
   }
 
-  Future<void> playHomeMusic() => playMusic(asset: AppMusic.home);
+  /// Leave gameplay and start the home loop (if Music is enabled).
+  Future<void> playHomeMusic() async {
+    _inGameplay = false;
+    _gameAudioPaused = false;
+    await stopClip();
+    await playMusic(asset: AppMusic.home);
+  }
 
-  Future<void> playGameMusic() => playMusic(asset: AppMusic.game);
+  /// Enter / resume active gameplay BGM (if Game sound is enabled).
+  Future<void> playGameMusic() async {
+    _inGameplay = true;
+    _gameAudioPaused = false;
+    await playMusic(asset: AppMusic.game);
+  }
+
+  /// Silence game BGM + SFX while the pause menu is open.
+  Future<void> pauseGameplayAudio() async {
+    if (!_inGameplay) return;
+    _gameAudioPaused = true;
+    await stopClip();
+    await stopMusic();
+  }
+
+  /// Restore game BGM after Resume (respects Game sound toggle).
+  Future<void> resumeGameplayAudio() async {
+    if (!_inGameplay) return;
+    _gameAudioPaused = false;
+    await playMusic(asset: AppMusic.game);
+  }
 
   Future<void> playMusic({String asset = AppMusic.home}) async {
     await initialize();
@@ -112,7 +155,6 @@ class AudioService {
       return;
     }
 
-    // Keep looping without restarting the same track.
     if (_playingTrack == asset &&
         _musicPlayer.state == PlayerState.playing) {
       return;
@@ -149,9 +191,9 @@ class AudioService {
     await playMusic(asset: _activeTrack);
   }
 
-  /// Settings → Music (home loop only).
+  /// Settings → Music (home loop only; ignored during gameplay).
   Future<void> onMusicEnabledChanged(bool enabled) async {
-    if (_activeTrack != AppMusic.home) return;
+    if (_inGameplay) return;
     if (enabled) {
       await playHomeMusic();
     } else {
@@ -159,9 +201,15 @@ class AudioService {
     }
   }
 
-  /// Settings → Game sound (in-game loop + SFX).
+  /// Settings → Game sound (SFX + in-game BGM only while actively playing).
   Future<void> onGameSoundEnabledChanged(bool enabled) async {
-    if (_activeTrack != AppMusic.game) return;
+    // Never start game BGM on the home screen / settings.
+    if (!_inGameplay || _gameAudioPaused) {
+      if (_playingTrack == AppMusic.game) {
+        await stopMusic();
+      }
+      return;
+    }
     if (enabled) {
       await playGameMusic();
     } else {
