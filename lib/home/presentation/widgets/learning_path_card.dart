@@ -9,6 +9,7 @@ import 'package:my_tiny_thinker/core/providers/onboarding_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
+import 'package:my_tiny_thinker/core/widgets/tt_badge.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 
@@ -18,8 +19,6 @@ class LearningPathCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPremium = ref.watch(isPremiumProvider);
-    if (!isPremium) return const SizedBox.shrink();
-
     final age = ref.watch(onboardingProvider.select((s) => s.ageGroup));
     final category = LearningCategory.fromAgeGroup(age);
     ref.watch(learningPathPrefsProvider);
@@ -72,20 +71,38 @@ class LearningPathCard extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.lg),
           Center(
-            child: TTButton(
-              label: 'Start Learning Path',
-              size: TTButtonSize.large,
-              onPressed: queue.isEmpty
-                  ? null
-                  : () {
-                      final ok = ref
-                          .read(learningPathSessionProvider.notifier)
-                          .start(category);
-                      if (!ok) return;
-                      final first = ref.read(learningPathSessionProvider).currentGame;
-                      if (first == null) return;
-                      navigateToGameGuarded(context, ref, first);
-                    },
+            child: Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                TTButton(
+                  label: 'Start Learning Path',
+                  size: TTButtonSize.large,
+                  enabled: isPremium && queue.isNotEmpty,
+                  onPressed: !isPremium || queue.isEmpty
+                      ? null
+                      : () {
+                          final ok = ref
+                              .read(learningPathSessionProvider.notifier)
+                              .start(category);
+                          if (!ok) return;
+                          final first =
+                              ref.read(learningPathSessionProvider).currentGame;
+                          if (first == null) return;
+                          navigateToGameGuarded(context, ref, first);
+                        },
+                ),
+                if (!isPremium)
+                  const Positioned(
+                    top: -10,
+                    right: -6,
+                    child: TTBadge(
+                      label: 'Premium coming soon',
+                      color: Color(0xFF7E57C2),
+                      textColor: AppColors.white,
+                    ),
+                  ),
+              ],
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
