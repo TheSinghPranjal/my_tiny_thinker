@@ -150,6 +150,7 @@ class _ColorShapeBridgeGameScreenState
       child: AlphabetGardenBackground(
         envPhase: envPhase,
         reducedMotion: settings.reducedMotion,
+        showFloatingDecor: false,
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: SafeArea(

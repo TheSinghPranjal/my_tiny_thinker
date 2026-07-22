@@ -11,6 +11,7 @@ class ColorShapeBridgeSetupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlphabetGardenBackground(
+      showFloatingDecor: false,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
