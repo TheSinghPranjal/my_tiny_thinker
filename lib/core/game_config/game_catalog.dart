@@ -197,6 +197,16 @@ abstract final class GameCatalog {
       subtitle: 'Read the number word and pop the matching bubble!',
     ),
     GameCatalogEntry(
+      gameId: GameId.classicCardMemory,
+      category: LearningCategory.smartExplorers,
+      subtitle: 'Flip cards and match pairs again and again!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.completeTheWordAdventure,
+      category: LearningCategory.brainMasters,
+      subtitle: 'Tap scrambled letters to spell the word!',
+    ),
+    GameCatalogEntry(
       gameId: GameId.memoryGame,
       category: LearningCategory.smartExplorers,
       subtitle: 'Find matching pairs!',

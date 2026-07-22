@@ -19,6 +19,10 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.descendingBubbleSetup);
     case GameId.numberWordPop:
       context.push(AppRoutes.numberWordPopSetup);
+    case GameId.classicCardMemory:
+      context.push(AppRoutes.classicCardMemorySetup);
+    case GameId.completeTheWordAdventure:
+      context.push(AppRoutes.completeTheWordSetup);
     case GameId.memoryGame:
       context.push(AppRoutes.memoryHub);
     case GameId.oddOneOut:
