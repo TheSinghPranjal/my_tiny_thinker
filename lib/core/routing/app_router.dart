@@ -38,6 +38,16 @@ import 'package:my_tiny_thinker/games/candy_color_hunt/presentation/candy_color_
 import 'package:my_tiny_thinker/games/candy_color_hunt/presentation/candy_color_hunt_game_screen.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/presentation/color_school_bags_setup_screen.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/presentation/color_school_bags_game_screen.dart';
+import 'package:my_tiny_thinker/games/learn_to_sort_food/presentation/learn_to_sort_food_setup_screen.dart';
+import 'package:my_tiny_thinker/games/learn_to_sort_food/presentation/learn_to_sort_food_game_screen.dart';
+import 'package:my_tiny_thinker/games/clean_dirty_clothes_sort/presentation/clean_dirty_clothes_sort_setup_screen.dart';
+import 'package:my_tiny_thinker/games/clean_dirty_clothes_sort/presentation/clean_dirty_clothes_sort_game_screen.dart';
+import 'package:my_tiny_thinker/games/whack_a_mole/presentation/whack_a_mole_setup_screen.dart';
+import 'package:my_tiny_thinker/games/whack_a_mole/presentation/whack_a_mole_game_screen.dart';
+import 'package:my_tiny_thinker/games/catch_the_falling_stars/presentation/catch_the_falling_stars_setup_screen.dart';
+import 'package:my_tiny_thinker/games/catch_the_falling_stars/presentation/catch_the_falling_stars_game_screen.dart';
+import 'package:my_tiny_thinker/games/butterfly_web_matching/presentation/butterfly_web_matching_setup_screen.dart';
+import 'package:my_tiny_thinker/games/butterfly_web_matching/presentation/butterfly_web_matching_game_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_setup_screen.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/alphabet_quiz_game_screen.dart';
 import 'package:my_tiny_thinker/games/animal_sounds/presentation/animal_sounds_setup_screen.dart';
@@ -149,6 +159,18 @@ abstract final class AppRoutes {
   static const candyColorHuntGame = '/games/candy-color-hunt/play';
   static const colorSchoolBagsSetup = '/games/color-school-bags/setup';
   static const colorSchoolBagsGame = '/games/color-school-bags/play';
+  static const learnToSortFoodSetup = '/games/learn-to-sort-food/setup';
+  static const learnToSortFoodGame = '/games/learn-to-sort-food/play';
+  static const cleanDirtyClothesSortSetup =
+      '/games/clean-dirty-clothes-sort/setup';
+  static const cleanDirtyClothesSortGame =
+      '/games/clean-dirty-clothes-sort/play';
+  static const whackAMoleSetup = '/games/whack-a-mole/setup';
+  static const whackAMoleGame = '/games/whack-a-mole/play';
+  static const catchTheFallingStarsSetup = '/games/catch-the-falling-stars/setup';
+  static const catchTheFallingStarsGame = '/games/catch-the-falling-stars/play';
+  static const butterflyWebMatchingSetup = '/games/butterfly-web-matching/setup';
+  static const butterflyWebMatchingGame = '/games/butterfly-web-matching/play';
   static const alphabetQuizSetup = '/games/alphabet-adventure/setup';
   static const alphabetQuizGame = '/games/alphabet-adventure/play';
   static const animalSoundsSetup = '/games/animal-sounds/setup';
@@ -530,6 +552,56 @@ final appRouter = GoRouter(
       path: AppRoutes.colorSchoolBagsGame,
       pageBuilder: (context, state) =>
           _slidePage(state, const ColorSchoolBagsGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.learnToSortFoodSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const LearnToSortFoodSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.learnToSortFoodGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const LearnToSortFoodGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.cleanDirtyClothesSortSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CleanDirtyClothesSortSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.cleanDirtyClothesSortGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CleanDirtyClothesSortGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.whackAMoleSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const WhackAMoleSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.whackAMoleGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const WhackAMoleGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.catchTheFallingStarsSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CatchTheFallingStarsSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.catchTheFallingStarsGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const CatchTheFallingStarsGameScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.butterflyWebMatchingSetup,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ButterflyWebMatchingSetupScreen()),
+    ),
+    GoRoute(
+      path: AppRoutes.butterflyWebMatchingGame,
+      pageBuilder: (context, state) =>
+          _slidePage(state, const ButterflyWebMatchingGameScreen()),
     ),
     GoRoute(
       path: AppRoutes.alphabetQuizSetup,

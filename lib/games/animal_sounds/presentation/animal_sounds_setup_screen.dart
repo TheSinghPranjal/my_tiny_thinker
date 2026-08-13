@@ -6,15 +6,13 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/animal_sounds/models/animal_sounds_models.dart';
-import 'package:my_tiny_thinker/games/animal_sounds/presentation/widgets/animal_sounds_background.dart';
 
 class AnimalSoundsSetupScreen extends ConsumerWidget {
   const AnimalSoundsSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AnimalSoundsBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🔊🐾',
@@ -30,7 +28,6 @@ class AnimalSoundsSetupScreen extends ConsumerWidget {
           ],
           onPlay: () => pushGameGuarded(context, ref, GameId.animalSounds, AppRoutes.animalSoundsGame),
         ),
-      ),
-    );
+      );
   }
 }

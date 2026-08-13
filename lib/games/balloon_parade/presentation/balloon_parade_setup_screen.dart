@@ -6,15 +6,13 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/balloon_parade/models/balloon_parade_models.dart';
-import 'package:my_tiny_thinker/games/shared/balloon/balloon_festival_background.dart';
 
 class BalloonParadeSetupScreen extends ConsumerWidget {
   const BalloonParadeSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return BalloonFestivalBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🎈',
@@ -30,7 +28,6 @@ class BalloonParadeSetupScreen extends ConsumerWidget {
           playLabel: 'Start Parade!',
           onPlay: () => pushGameGuarded(context, ref, GameId.balloonParade, AppRoutes.balloonParadeGame),
         ),
-      ),
-    );
+      );
   }
 }
