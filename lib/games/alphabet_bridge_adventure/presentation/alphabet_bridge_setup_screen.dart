@@ -5,15 +5,13 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/models/alphabet_bridge_models.dart';
-import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_garden_background.dart';
 
 class AlphabetBridgeSetupScreen extends ConsumerWidget {
   const AlphabetBridgeSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AlphabetGardenBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🔤🌉🌈',
@@ -29,7 +27,6 @@ class AlphabetBridgeSetupScreen extends ConsumerWidget {
                     ],
           onPlay: () => pushGameGuarded(context, ref, GameId.alphabetBridgeAdventure, AppRoutes.alphabetBridgeGame),
         ),
-      ),
-    );
+      );
   }
 }
