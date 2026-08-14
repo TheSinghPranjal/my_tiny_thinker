@@ -110,16 +110,15 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
   }
 
   void _handleBubbleTap(String bubbleId, BubbleEntity bubble) {
-    final result =
-        ref.read(bubbleGameControllerProvider.notifier).tapBubble(bubbleId);
+    final result = ref
+        .read(bubbleGameControllerProvider.notifier)
+        .tapBubble(bubbleId);
 
     if (result == BubbleTapResult.correct) {
       ref.read(audioServiceProvider).playSfx(SoundEffect.bubblePop);
       ref.read(audioServiceProvider).playSfx(SoundEffect.correct);
       ref.read(hapticServiceProvider).trigger(HapticType.light);
-      _particleKey.currentState?.emit(
-        origin: Offset(bubble.x, bubble.y),
-      );
+      _particleKey.currentState?.emit(origin: Offset(bubble.x, bubble.y));
       final combo = ref.read(bubbleGameControllerProvider).combo;
       if (combo >= 2) {
         ref.read(audioServiceProvider).playSfx(SoundEffect.combo);
@@ -139,7 +138,9 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
 
     _resultShown = true;
     _ticker?.stop();
-    ref.read(audioServiceProvider).playSfx(
+    ref
+        .read(audioServiceProvider)
+        .playSfx(
           state.phase == GamePhase.victory
               ? SoundEffect.victory
               : SoundEffect.wrong,
@@ -154,6 +155,8 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
     VictoryDialog.show(
       context,
       result: result,
+      title:
+          '${ref.read(bubbleGameConfigProvider).gameId.displayName} Celebration!',
       onPlayAgain: () => _initGame(),
       onHome: () {
         controller.reset();
@@ -191,8 +194,9 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                   children: [
                     GameSessionHud(
                       remainingSeconds: ref.watch(
-                        bubbleGameControllerProvider
-                            .select((s) => s.remainingSeconds),
+                        bubbleGameControllerProvider.select(
+                          (s) => s.remainingSeconds,
+                        ),
                       ),
                       unlimitedTime: ref.watch(
                         bubbleGameControllerProvider.select(
@@ -218,18 +222,21 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                       child: Builder(
                         builder: (context) {
                           final target = ref.watch(
-                            bubbleGameControllerProvider
-                                .select((s) => s.targetNumber),
+                            bubbleGameControllerProvider.select(
+                              (s) => s.targetNumber,
+                            ),
                           );
                           final wordMatch = ref.watch(
-                            bubbleGameControllerProvider
-                                .select((s) => s.config.wordMatchMode),
+                            bubbleGameControllerProvider.select(
+                              (s) => s.config.wordMatchMode,
+                            ),
                           );
                           return TargetNumberCard(
                             targetNumber: target,
                             sortMode: ref.watch(
-                              bubbleGameControllerProvider
-                                  .select((s) => s.config.sortMode),
+                              bubbleGameControllerProvider.select(
+                                (s) => s.config.sortMode,
+                              ),
                             ),
                             toddlerMode: toddlerMode,
                             large: toddlerMode || wordMatch,
@@ -257,8 +264,9 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                 if (toddlerMode || wordMatch)
                   GameFeedbackOverlay(
                     message: ref.watch(
-                      bubbleGameControllerProvider
-                          .select((s) => s.feedbackMessage),
+                      bubbleGameControllerProvider.select(
+                        (s) => s.feedbackMessage,
+                      ),
                     ),
                     top: 96,
                   ),
@@ -267,8 +275,9 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
                 if (phase == GamePhase.paused)
                   GamePausedOverlay(
                     scrimColor: AppColors.skyBlueDark,
-                    onResume: () =>
-                        ref.read(bubbleGameControllerProvider.notifier).resume(),
+                    onResume: () => ref
+                        .read(bubbleGameControllerProvider.notifier)
+                        .resume(),
                     onOpenMenu: _onWillPop,
                   ),
               ],
@@ -280,12 +289,8 @@ class _BubbleGameScreenState extends ConsumerState<BubbleGameScreen>
   }
 }
 
-
 class _BubblePlayArea extends ConsumerWidget {
-  const _BubblePlayArea({
-    required this.particleKey,
-    required this.onTap,
-  });
+  const _BubblePlayArea({required this.particleKey, required this.onTap});
 
   final GlobalKey<ParticleSystemState> particleKey;
   final void Function(String id, BubbleEntity bubble) onTap;
@@ -318,9 +323,9 @@ class _BubblePlayArea extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(bubbleGameControllerProvider.notifier).setPlayArea(
-                Size(constraints.maxWidth, constraints.maxHeight),
-              );
+          ref
+              .read(bubbleGameControllerProvider.notifier)
+              .setPlayArea(Size(constraints.maxWidth, constraints.maxHeight));
         });
 
         return ClipRect(
