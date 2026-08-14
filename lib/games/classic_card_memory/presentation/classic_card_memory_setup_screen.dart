@@ -6,7 +6,6 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/classic_card_memory/models/classic_card_memory_models.dart';
-import 'package:my_tiny_thinker/games/classic_card_memory/presentation/widgets/classic_memory_background.dart';
 import 'package:my_tiny_thinker/games/classic_card_memory/repository/classic_card_memory_settings_repository.dart';
 
 class ClassicCardMemorySetupScreen extends ConsumerWidget {
@@ -16,8 +15,7 @@ class ClassicCardMemorySetupScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(classicCardMemorySettingsProvider);
 
-    return ClassicMemoryPlaygroundBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🃏🧠',
@@ -35,7 +33,6 @@ class ClassicCardMemorySetupScreen extends ConsumerWidget {
           playLabel: 'Play!',
           onPlay: () => pushGameGuarded(context, ref, GameId.classicCardMemory, AppRoutes.classicCardMemoryGame),
         ),
-      ),
-    );
+      );
   }
 }

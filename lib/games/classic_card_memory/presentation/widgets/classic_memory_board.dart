@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
-import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/classic_card_memory/logic/classic_card_memory_logic.dart';
 import 'package:my_tiny_thinker/games/classic_card_memory/models/classic_card_memory_models.dart';
 import 'package:my_tiny_thinker/games/classic_card_memory/presentation/widgets/classic_memory_card.dart';
@@ -31,7 +27,10 @@ class ClassicMemoryBoard extends StatelessWidget {
         const gap = 10.0;
         final cellW = (constraints.maxWidth - gap * (cols - 1)) / cols;
         final cellH = (constraints.maxHeight - gap * (rows - 1)) / rows;
-        final side = (cellW < cellH ? cellW : cellH).clamp(48.0, double.infinity);
+        final side = (cellW < cellH ? cellW : cellH).clamp(
+          48.0,
+          double.infinity,
+        );
 
         return Center(
           child: SizedBox(
@@ -78,61 +77,25 @@ class ClassicMemoryVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black45,
-      alignment: Alignment.center,
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: TTCard(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('🎉', style: context.textTheme.displayMedium),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                "Time's Up!",
-                style: context.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.softPurple,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              _row('Score', '${result.score}'),
-              _row('Matches', '${result.matches}'),
-              _row('Rounds', '${result.roundsCompleted}'),
-              _row('Coins', '+${result.coins}'),
-              _row('XP', '+${result.xp}'),
-              const SizedBox(height: AppSpacing.xl),
-              TTButton(
-                label: 'Play Again',
-                expanded: true,
-                onPressed: onPlayAgain,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              TTButton(
-                label: 'Home',
-                expanded: true,
-                variant: TTButtonVariant.ghost,
-                onPressed: onHome,
-              ),
-            ],
-          ),
+    return GameCelebrationOverlay(
+      title: 'Classic Card Memory Celebration!',
+      stats: [
+        CelebrationStat(icon: '⭐', label: 'Score', value: '${result.score}'),
+        CelebrationStat(
+          icon: '✅',
+          label: 'Matches',
+          value: '${result.matches}',
         ),
-      ),
-    );
-  }
-
-  Widget _row(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w800)),
-        ],
-      ),
+        CelebrationStat(
+          icon: '🏁',
+          label: 'Rounds',
+          value: '${result.roundsCompleted}',
+        ),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+      ],
+      onPlayAgain: onPlayAgain,
+      onHome: onHome,
     );
   }
 }
