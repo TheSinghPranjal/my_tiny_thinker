@@ -5,7 +5,6 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/models/peek_a_boo_animal_friends_models.dart';
-import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/presentation/widgets/peek_a_boo_background.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 
 class PeekABooSetupScreen extends ConsumerWidget {
@@ -13,8 +12,7 @@ class PeekABooSetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PeekABooBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🐾🌿',
@@ -30,7 +28,6 @@ class PeekABooSetupScreen extends ConsumerWidget {
                     ],
           onPlay: () => pushGameGuarded(context, ref, GameId.peekABooAnimalFriends, AppRoutes.peekABooGame),
         ),
-      ),
-    );
+      );
   }
 }

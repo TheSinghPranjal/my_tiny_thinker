@@ -4,7 +4,6 @@ import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
-import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_garden_background.dart';
 import 'package:my_tiny_thinker/games/picture_bridge_adventure/models/picture_bridge_models.dart';
 
 class PictureBridgeSetupScreen extends ConsumerWidget {
@@ -12,8 +11,7 @@ class PictureBridgeSetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AlphabetGardenBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🖼️🌉🌈',
@@ -34,7 +32,6 @@ class PictureBridgeSetupScreen extends ConsumerWidget {
             AppRoutes.pictureBridgeGame,
           ),
         ),
-      ),
-    );
+      );
   }
 }

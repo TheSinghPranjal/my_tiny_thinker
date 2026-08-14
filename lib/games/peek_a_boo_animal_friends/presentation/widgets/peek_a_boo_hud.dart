@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/peek_a_boo_animal_friends/models/peek_a_boo_animal_friends_models.dart';
 
 class PeekABooVictoryOverlay extends StatelessWidget {
@@ -20,77 +19,30 @@ class PeekABooVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF1565C0).withValues(alpha: 0.82),
-      child: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🎆🐾🦋', style: TextStyle(fontSize: 56)),
-                const MascotWidget(size: 96, waving: true),
-                Text(
-                  'Amazing Peek-a-Boo Adventure!',
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.headlineMedium?.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                _Row('🐾 Animals Found', '${result.discoveriesCount}'),
-                _Row('🌿 Bushes Explored', '${result.bushesExplored}'),
-                _Row('⭐ Points', '+${result.points}'),
-                _Row('🪙 Coins', '+${result.coins}'),
-                _Row('✨ XP', '+${result.xp}'),
-                _Row('🌟 Happy Stars', '+${result.stars}'),
-                const SizedBox(height: AppSpacing.xl),
-                TTButton(
-                  label: 'Play Again!',
-                  expanded: true,
-                  size: TTButtonSize.large,
-                  onPressed: onPlayAgain,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                TTButton(
-                  label: 'Home',
-                  variant: TTButtonVariant.ghost,
-                  expanded: true,
-                  onPressed: onHome,
-                ),
-              ],
-            ),
-          ),
+    return GameCelebrationOverlay(
+      title: 'Peek-a-Boo Celebration!',
+      stats: [
+        CelebrationStat(
+          icon: '🐾',
+          label: 'Animals Found',
+          value: '${result.discoveriesCount}',
         ),
-      ),
-    );
-  }
-}
-
-class _Row extends StatelessWidget {
-  const _Row(this.label, this.value);
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: context.textTheme.titleMedium?.copyWith(color: AppColors.white),
-          ),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(color: AppColors.sunYellow),
-          ),
-        ],
-      ),
+        CelebrationStat(
+          icon: '🌿',
+          label: 'Bushes Explored',
+          value: '${result.bushesExplored}',
+        ),
+        CelebrationStat(icon: '⭐', label: 'Points', value: '+${result.points}'),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+        CelebrationStat(
+          icon: '🌟',
+          label: 'Happy Stars',
+          value: '+${result.stars}',
+        ),
+      ],
+      onPlayAgain: onPlayAgain,
+      onHome: onHome,
     );
   }
 }
