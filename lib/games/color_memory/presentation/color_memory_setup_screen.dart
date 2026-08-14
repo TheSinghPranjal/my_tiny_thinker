@@ -7,7 +7,7 @@ import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
-import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
+import 'package:my_tiny_thinker/core/widgets/setup_meadow_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/games/color_memory/controllers/color_memory_controller.dart';
@@ -21,8 +21,7 @@ class ColorMemorySetupScreen extends ConsumerWidget {
     var config = ref.watch(colorMemoryConfigProvider);
     final hints = ref.watch(settingsProvider).hintsEnabled;
 
-    return AnimatedSkyBackground(
-      showGrass: false,
+    return SetupMeadowBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(

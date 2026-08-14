@@ -14,6 +14,7 @@ import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/color_memory/controllers/color_memory_controller.dart';
 import 'package:my_tiny_thinker/games/color_memory/models/color_memory_models.dart';
@@ -49,9 +50,9 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
     _resultShown = false;
     _audio ??= ref.read(audioServiceProvider);
     _audio?.playGameMusic();
-    ref.read(colorMemoryControllerProvider.notifier).start(
-          ref.read(colorMemoryConfigProvider),
-        );
+    ref
+        .read(colorMemoryControllerProvider.notifier)
+        .start(ref.read(colorMemoryConfigProvider));
   }
 
   @override
@@ -168,7 +169,11 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
           backgroundColor: Colors.transparent,
           body: Stack(
             children: [
-              ParticleSystem(key: _particleKey, particleCount: 24, autoStart: false),
+              ParticleSystem(
+                key: _particleKey,
+                particleCount: 24,
+                autoStart: false,
+              ),
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.lg),
@@ -188,7 +193,9 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
                             icon: Badge(
                               label: Text('${state.hintsRemaining}'),
                               isLabelVisible: state.hintsRemaining > 0,
-                              child: const Icon(Icons.lightbulb_outline_rounded),
+                              child: const Icon(
+                                Icons.lightbulb_outline_rounded,
+                              ),
                             ),
                             onPressed: _showHintMenu,
                           ),
@@ -202,10 +209,10 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
                               physics: const NeverScrollableScrollPhysics(),
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: state.gridSize,
-                                crossAxisSpacing: AppSpacing.sm,
-                                mainAxisSpacing: AppSpacing.sm,
-                              ),
+                                    crossAxisCount: state.gridSize,
+                                    crossAxisSpacing: AppSpacing.sm,
+                                    mainAxisSpacing: AppSpacing.sm,
+                                  ),
                               itemCount: state.tileCount,
                               itemBuilder: (context, index) {
                                 final isActive = state.activeTile == index;
@@ -213,11 +220,14 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
                                 return _ColorTile(
                                   emoji: emoji,
                                   isActive: isActive,
-                                  enabled: state.phase == ColorMemoryPhase.input,
+                                  enabled:
+                                      state.phase == ColorMemoryPhase.input,
                                   onTap: () {
                                     ref
-                                        .read(colorMemoryControllerProvider
-                                            .notifier)
+                                        .read(
+                                          colorMemoryControllerProvider
+                                              .notifier,
+                                        )
                                         .onTileTap(index);
                                     ref
                                         .read(hapticServiceProvider)
@@ -263,25 +273,36 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
   }
 
   Future<void> _showVictory(ColorMemoryResult result) async {
-    await TTDialog.show(
-      context: context,
-      title: 'Amazing!',
-      emoji: '🎉',
-      message:
-          'Score: ${result.score}\nStars: ${result.stars}\nCoins: +${result.coins}',
-      primaryLabel: 'Play Again',
-      secondaryLabel: 'Home',
-      primaryAction: () async {
+    await GameCelebrationOverlay.showDialog(
+      context,
+      title: 'Color Memory Celebration!',
+      stats: [
+        CelebrationStat(icon: '⭐', label: 'Score', value: '${result.score}'),
+        CelebrationStat(
+          icon: '🌟',
+          label: 'Happy Stars',
+          value: '+${result.stars}',
+        ),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+        CelebrationStat(icon: '🏁', label: 'Level', value: '${result.level}'),
+        CelebrationStat(
+          icon: '🔥',
+          label: 'Best Streak',
+          value: '${result.longestStreak}',
+        ),
+      ],
+      onPlayAgain: () async {
         if (!await ensureCanStartGame(context, ref, GameId.colorMemory)) {
           return;
         }
         if (!mounted) return;
         _resultShown = false;
-        ref.read(colorMemoryControllerProvider.notifier).start(
-              ref.read(colorMemoryConfigProvider),
-            );
+        ref
+            .read(colorMemoryControllerProvider.notifier)
+            .start(ref.read(colorMemoryConfigProvider));
       },
-      secondaryAction: () {
+      onHome: () {
         ref.read(colorMemoryControllerProvider.notifier).reset();
         context.go(AppRoutes.home);
       },
@@ -329,9 +350,7 @@ class _ColorTile extends StatelessWidget {
             ),
           ],
         ),
-        child: Center(
-          child: Text(emoji, style: const TextStyle(fontSize: 36)),
-        ),
+        child: Center(child: Text(emoji, style: const TextStyle(fontSize: 36))),
       ),
     );
   }
