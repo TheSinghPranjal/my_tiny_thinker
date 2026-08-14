@@ -5,7 +5,6 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/models/frog_pond_models.dart';
-import 'package:my_tiny_thinker/games/frog_pond_adventure/presentation/widgets/pond_background.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 
 class FrogPondSetupScreen extends ConsumerWidget {
@@ -13,8 +12,7 @@ class FrogPondSetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PondBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🐸💧',
@@ -30,7 +28,6 @@ class FrogPondSetupScreen extends ConsumerWidget {
                     ],
           onPlay: () => pushGameGuarded(context, ref, GameId.frogPondAdventure, AppRoutes.frogPondGame),
         ),
-      ),
-    );
+      );
   }
 }

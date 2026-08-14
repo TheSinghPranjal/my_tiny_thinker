@@ -122,6 +122,31 @@ abstract final class GameCatalog {
       subtitle: 'Drag books into matching backpacks!',
     ),
     GameCatalogEntry(
+      gameId: GameId.learnToSortFood,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Sort healthy and junk foods with friends!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.cleanDirtyClothesSort,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Sort clean and dirty clothes in the laundry room!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.whackAMole,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Tap friendly moles as they pop up in the meadow!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.catchTheFallingStars,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Catch smiling stars in a magical night sky!',
+    ),
+    GameCatalogEntry(
+      gameId: GameId.butterflyWebMatching,
+      category: LearningCategory.tinyLearners,
+      subtitle: 'Match butterfly friends on a magical sparkling web!',
+    ),
+    GameCatalogEntry(
       gameId: GameId.colorBalloonPop,
       category: LearningCategory.tinyLearners,
       subtitle: 'Find and pop the matching color balloon!',
