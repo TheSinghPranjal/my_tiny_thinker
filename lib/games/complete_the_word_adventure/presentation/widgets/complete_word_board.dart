@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/complete_the_word_adventure/models/complete_word_models.dart';
 
 class WordIllustrationBanner extends StatelessWidget {
@@ -22,7 +22,8 @@ class WordIllustrationBanner extends StatelessWidget {
       tween: Tween(begin: 0.85, end: celebrating ? 1.12 : 1.0),
       duration: const Duration(milliseconds: 420),
       curve: Curves.elasticOut,
-      builder: (context, scale, child) => Transform.scale(scale: scale, child: child),
+      builder: (context, scale, child) =>
+          Transform.scale(scale: scale, child: child),
       child: Container(
         width: 120,
         height: 120,
@@ -97,8 +98,8 @@ class _BlankSlot extends StatelessWidget {
           color: filled
               ? AppColors.mintGreen
               : isNext
-                  ? AppColors.softPurple
-                  : Colors.white70,
+              ? AppColors.softPurple
+              : Colors.white70,
           width: isNext ? 3.5 : 2.5,
         ),
         boxShadow: [
@@ -202,7 +203,8 @@ class _AlphabetOptionTileState extends State<AlphabetOptionTile>
     return AnimatedBuilder(
       animation: _wobble,
       builder: (context, child) {
-        final shake = math.sin(_wobble.value * math.pi * 6) * 6 * (1 - _wobble.value);
+        final shake =
+            math.sin(_wobble.value * math.pi * 6) * 6 * (1 - _wobble.value);
         return Transform.translate(offset: Offset(shake, 0), child: child);
       },
       child: GestureDetector(
@@ -219,14 +221,13 @@ class _AlphabetOptionTileState extends State<AlphabetOptionTile>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color.lerp(color, Colors.white, 0.25)!,
-                  color,
-                ],
+                colors: [Color.lerp(color, Colors.white, 0.25)!, color],
               ),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: widget.isHint ? Colors.white : color.withValues(alpha: 0.9),
+                color: widget.isHint
+                    ? Colors.white
+                    : color.withValues(alpha: 0.9),
                 width: widget.isHint ? 4 : 3,
               ),
               boxShadow: [
@@ -267,97 +268,39 @@ class CompleteWordVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black45,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFFFFF), Color(0xFFE8EAF6)],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.softPurple.withValues(alpha: 0.35),
-                blurRadius: 24,
-              ),
-            ],
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🏆', style: TextStyle(fontSize: 56)),
-                const SizedBox(height: 8),
-                Text(
-                  result.encouragement,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF4527A0),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _row('Words completed', '${result.wordsCompleted}'),
-                _row('Letters correct', '${result.lettersCorrect}'),
-                _row(
-                  'Accuracy',
-                  '${(result.accuracy * 100).round()}%',
-                ),
-                _row('Coins', '+${result.coins}'),
-                _row('XP', '+${result.xp}'),
-                _row('Stars', '⭐ ${result.stars}'),
-                _row('Best combo', '${result.maxCombo}'),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: onPlayAgain,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.softPurple,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      'Play Again',
-                      style: TextStyle(fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: onHome,
-                  child: const Text(
-                    'Home',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            ),
-          ),
+    return GameCelebrationOverlay(
+      title: 'Complete the Word Celebration!',
+      stats: [
+        CelebrationStat(
+          icon: '✏️',
+          label: 'Words Completed',
+          value: '${result.wordsCompleted}',
         ),
-      ),
-    );
-  }
-
-  Widget _row(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
-        ],
-      ),
+        CelebrationStat(
+          icon: '🔤',
+          label: 'Letters Correct',
+          value: '${result.lettersCorrect}',
+        ),
+        CelebrationStat(
+          icon: '🎯',
+          label: 'Accuracy',
+          value: '${(result.accuracy * 100).round()}%',
+        ),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+        CelebrationStat(
+          icon: '🌟',
+          label: 'Happy Stars',
+          value: '+${result.stars}',
+        ),
+        CelebrationStat(
+          icon: '🔥',
+          label: 'Best Combo',
+          value: '${result.maxCombo}',
+        ),
+      ],
+      onPlayAgain: onPlayAgain,
+      onHome: onHome,
     );
   }
 }
