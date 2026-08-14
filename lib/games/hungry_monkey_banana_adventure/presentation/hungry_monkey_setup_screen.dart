@@ -5,7 +5,6 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/models/hungry_monkey_models.dart';
-import 'package:my_tiny_thinker/games/hungry_monkey_banana_adventure/presentation/widgets/jungle_background.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 
 class HungryMonkeySetupScreen extends ConsumerWidget {
@@ -13,8 +12,7 @@ class HungryMonkeySetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return JungleBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🐵🍌',
@@ -30,7 +28,6 @@ class HungryMonkeySetupScreen extends ConsumerWidget {
                     ],
           onPlay: () => pushGameGuarded(context, ref, GameId.hungryMonkeyBananaAdventure, AppRoutes.hungryMonkeyGame),
         ),
-      ),
-    );
+      );
   }
 }

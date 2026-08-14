@@ -14,7 +14,7 @@ import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/memory_game/controllers/memory_session_controller.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
-import 'package:my_tiny_thinker/games/memory_game/presentation/widgets/animated_toy_room_background.dart';
+import 'package:my_tiny_thinker/core/widgets/setup_meadow_background.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/widgets/memory_game_widgets.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/widgets/memory_hud.dart';
 import 'package:my_tiny_thinker/games/memory_game/presentation/widgets/memory_statistics_panel.dart';
@@ -27,7 +27,7 @@ class MemoryHubScreen extends ConsumerWidget {
     final stats = ref.watch(memoryHubStatsProvider);
     final profile = ref.watch(profileProvider);
 
-    return AnimatedToyRoomBackground(
+    return SetupMeadowBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(

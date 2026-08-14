@@ -5,7 +5,6 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/models/hungry_teddy_models.dart';
-import 'package:my_tiny_thinker/games/hungry_teddy_cupcake_party/presentation/widgets/party_background.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 
 class HungryTeddySetupScreen extends ConsumerWidget {
@@ -13,8 +12,7 @@ class HungryTeddySetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PartyBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🧸🧁',
@@ -28,7 +26,6 @@ class HungryTeddySetupScreen extends ConsumerWidget {
           titleShadows: const [Shadow(color: Color(0xFFAB47BC), blurRadius: 6)],
           onPlay: () => pushGameGuarded(context, ref, GameId.hungryTeddyCupcakeParty, AppRoutes.hungryTeddyGame),
         ),
-      ),
-    );
+      );
   }
 }

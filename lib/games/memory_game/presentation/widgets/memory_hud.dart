@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
-import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
 
 class MemoryVictoryDialog extends StatelessWidget {
@@ -42,70 +39,48 @@ class MemoryVictoryDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          const IgnorePointer(child: ConfettiWidget()),
-          TTCard(
-            gradient: AppGradients.welcomeCard,
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const MascotWidget(size: 80),
-                Text(
-                  result.isPerfect ? 'Perfect Memory!' : 'Great Job!',
-                  style: context.textTheme.headlineMedium,
-                ),
-                Text('${result.gameType.emoji} ${result.gameType.displayName}'),
-                if (result.isNewBest)
-                  Text('🏆 New Best!', style: context.textTheme.titleMedium),
-                const SizedBox(height: AppSpacing.lg),
-                _Row('Score', '${result.score}'),
-                _Row('Stars', '⭐' * result.stars),
-                _Row('Coins', '+${result.coins}'),
-                _Row('XP', '+${result.xp}'),
-                _Row('Accuracy', '${(result.accuracy * 100).round()}%'),
-                _Row('Combo', '${result.longestCombo}'),
-                const SizedBox(height: AppSpacing.xl),
-                TTButton(label: 'Play Again', expanded: true, onPressed: () {
-                  Navigator.pop(context);
-                  onPlayAgain();
-                }),
-                const SizedBox(height: AppSpacing.sm),
-                TTButton(
-                  label: 'Back to Hub',
-                  variant: TTButtonVariant.ghost,
-                  expanded: true,
-                  onPressed: () {
-                    Navigator.pop(context);
-                    onHome();
-                  },
-                ),
-              ],
+      insetPadding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
+      child: SingleChildScrollView(
+        child: GameCelebrationCard(
+          title: '${result.gameType.displayName} Celebration!',
+          stats: [
+            CelebrationStat(
+              icon: '⭐',
+              label: 'Score',
+              value: '${result.score}',
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Row extends StatelessWidget {
-  const _Row(this.label, this.value);
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: context.textTheme.bodyMedium),
-          Text(value, style: context.textTheme.titleMedium),
-        ],
+            CelebrationStat(
+              icon: '🌟',
+              label: 'Happy Stars',
+              value: '+${result.stars}',
+            ),
+            CelebrationStat(
+              icon: '🪙',
+              label: 'Coins',
+              value: '+${result.coins}',
+            ),
+            CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+            CelebrationStat(
+              icon: '🎯',
+              label: 'Accuracy',
+              value: '${(result.accuracy * 100).round()}%',
+            ),
+            CelebrationStat(
+              icon: '🔥',
+              label: 'Combo',
+              value: '${result.longestCombo}',
+            ),
+          ],
+          onPlayAgain: () {
+            Navigator.pop(context);
+            onPlayAgain();
+          },
+          onHome: () {
+            Navigator.pop(context);
+            onHome();
+          },
+          homeLabel: 'Back to Hub',
+        ),
       ),
     );
   }
@@ -136,7 +111,9 @@ class MemorySetupSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusXl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.radiusXl),
+        ),
       ),
       builder: (context) => MemorySetupSheet(
         gameType: gameType,
@@ -174,7 +151,8 @@ class MemorySetupSheet extends StatelessWidget {
                 return ChoiceChip(
                   label: Text('${t.emoji} ${t.displayName}'),
                   selected: config.cardTheme == t,
-                  onSelected: (_) => onConfigChanged(config.copyWith(cardTheme: t)),
+                  onSelected: (_) =>
+                      onConfigChanged(config.copyWith(cardTheme: t)),
                 );
               }).toList(),
             ),
