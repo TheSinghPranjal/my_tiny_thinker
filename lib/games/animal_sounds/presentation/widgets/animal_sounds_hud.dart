@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
-import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/animal_sounds/models/animal_sounds_models.dart';
 
 class AnimalSoundsVictoryOverlay extends StatelessWidget {
@@ -20,80 +16,29 @@ class AnimalSoundsVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF2E7D32).withValues(alpha: 0.9),
-      child: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🔊🎉🐾', style: TextStyle(fontSize: 56)),
-                const MascotWidget(size: 96, waving: true),
-                Text(
-                  'Super Listener!',
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.headlineMedium?.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                _Row('✅ Correct', '${result.correctCount}'),
-                _Row('🎯 Tries', '${result.attempts}'),
-                _Row('🪙 Coins', '+${result.coins}'),
-                _Row('⭐ Stars', '+${result.stars}'),
-                _Row('✨ XP', '+${result.xp}'),
-                const SizedBox(height: AppSpacing.xl),
-                TTButton(
-                  label: 'Play Again!',
-                  expanded: true,
-                  size: TTButtonSize.large,
-                  onPressed: onPlayAgain,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                TTButton(
-                  label: 'Home',
-                  variant: TTButtonVariant.ghost,
-                  expanded: true,
-                  onPressed: onHome,
-                ),
-              ],
-            ),
-          ),
+    return GameCelebrationOverlay(
+      title: 'Animal Sounds Celebration!',
+      stats: [
+        CelebrationStat(
+          icon: '✅',
+          label: 'Correct',
+          value: '${result.correctCount}',
         ),
-      ),
-    );
-  }
-}
-
-class _Row extends StatelessWidget {
-  const _Row(this.label, this.value);
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: context.textTheme.titleMedium?.copyWith(
-              color: AppColors.white,
-            ),
-          ),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(
-              color: AppColors.sunYellow,
-            ),
-          ),
-        ],
-      ),
+        CelebrationStat(
+          icon: '🎯',
+          label: 'Tries',
+          value: '${result.attempts}',
+        ),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(
+          icon: '🌟',
+          label: 'Happy Stars',
+          value: '+${result.stars}',
+        ),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+      ],
+      onPlayAgain: onPlayAgain,
+      onHome: onHome,
     );
   }
 }
