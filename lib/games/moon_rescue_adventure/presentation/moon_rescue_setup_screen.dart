@@ -5,15 +5,13 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/moon_rescue_adventure/models/moon_rescue_models.dart';
-import 'package:my_tiny_thinker/games/moon_rescue_adventure/presentation/widgets/space_background.dart';
 
 class MoonRescueSetupScreen extends ConsumerWidget {
   const MoonRescueSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SpaceBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🚀🌙🌍',
@@ -29,7 +27,6 @@ class MoonRescueSetupScreen extends ConsumerWidget {
                     ],
           onPlay: () => pushGameGuarded(context, ref, GameId.moonRescueAdventure, AppRoutes.moonRescueGame),
         ),
-      ),
-    );
+      );
   }
 }

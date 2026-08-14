@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
-import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/moon_rescue_adventure/models/moon_rescue_models.dart';
 
 class MoonRescueVictoryOverlay extends StatelessWidget {
@@ -20,88 +16,35 @@ class MoonRescueVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF311B92).withValues(alpha: 0.93),
-      child: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🚀🌙🎉', style: TextStyle(fontSize: 56)),
-                const MascotWidget(size: 96, waving: true),
-                Text(
-                  'Moon Rescue Celebration!',
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.headlineMedium?.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                _Row('⭐ Score', '${result.score}'),
-                _Row('🧑‍🚀 Rescued', '${result.astronautsRescued}'),
-                _Row('🚀 Rockets Launched', '${result.rocketsLaunched}'),
-                _Row('🔥 Best Streak', '${result.maxStreak}'),
-                _Row('🪙 Coins', '${result.coins}'),
-                _Row('✨ XP', '${result.xp}'),
-                _Row('🌟 Stars', '${result.stars}'),
-                const SizedBox(height: AppSpacing.xl),
-                TTButton(
-                  label: 'Play Again',
-                  expanded: true,
-                  size: TTButtonSize.large,
-                  onPressed: onPlayAgain,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                TTButton(
-                  label: 'Home',
-                  expanded: true,
-                  variant: TTButtonVariant.ghost,
-                  onPressed: onHome,
-                ),
-              ],
-            ),
-          ),
+    return GameCelebrationOverlay(
+      title: 'Moon Rescue Celebration!',
+      stats: [
+        CelebrationStat(icon: '⭐', label: 'Score', value: '${result.score}'),
+        CelebrationStat(
+          icon: '🧑‍🚀',
+          label: 'Rescued',
+          value: '${result.astronautsRescued}',
         ),
-      ),
-    );
-  }
-}
-
-class _Row extends StatelessWidget {
-  const _Row(this.label, this.value);
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Color(0xFFFFF176),
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
+        CelebrationStat(
+          icon: '🚀',
+          label: 'Rockets Launched',
+          value: '${result.rocketsLaunched}',
+        ),
+        CelebrationStat(
+          icon: '🔥',
+          label: 'Best Streak',
+          value: '${result.maxStreak}',
+        ),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+        CelebrationStat(
+          icon: '🌟',
+          label: 'Happy Stars',
+          value: '+${result.stars}',
+        ),
+      ],
+      onPlayAgain: onPlayAgain,
+      onHome: onHome,
     );
   }
 }
