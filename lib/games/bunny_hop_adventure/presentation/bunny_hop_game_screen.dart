@@ -10,7 +10,6 @@ import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
@@ -175,88 +174,82 @@ class _BunnyHopGameScreenState extends ConsumerState<BunnyHopGameScreen>
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFB3E5FC),
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  GameSessionHud(
-                    remainingSeconds: ref.watch(
-                      bunnyHopControllerProvider.select((s) => s.remainingSeconds),
-                    ),
-                    coinsEarned: ref.watch(
-                      bunnyHopControllerProvider.select((s) => s.coinsEarned),
-                    ),
-                    starsEarned: ref.watch(
-                      bunnyHopControllerProvider.select((s) => s.starsEarned),
-                    ),
-                    largerFonts: settings.largerTouchTargets,
-                    onPause: _showPauseMenu,
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: _onTapWithFeedback,
-                      child: _PlayArea(
-                        envPhase: envPhase,
-                        reducedMotion: settings.reducedMotion,
-                        intensity: settings.animationIntensity,
-                      ),
-                    ),
-                  ),
-                ],
+        backgroundColor: const Color(0xFF64B5F6),
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _onTapWithFeedback,
+              child: _PlayArea(
+                envPhase: envPhase,
+                reducedMotion: settings.reducedMotion,
+                intensity: settings.animationIntensity,
               ),
-              Positioned(
-                top: 72,
-                left: 0,
-                right: 0,
-                child: GameFeedbackOverlay(
-                  message: ref.watch(
-                    bunnyHopControllerProvider.select((s) => s.feedbackMessage),
-                  ),
-                  rewardText: ref.watch(
-                    bunnyHopControllerProvider.select((s) => s.lastRewardText),
-                  ),
-                  showMascot: ref.watch(
-                    bunnyHopControllerProvider.select((s) => s.showMascot),
-                  ),
+            ),
+            Positioned(
+              top: MediaQuery.paddingOf(context).top,
+              left: 0,
+              right: 0,
+              child: GameSessionHud(
+                remainingSeconds: ref.watch(
+                  bunnyHopControllerProvider.select((s) => s.remainingSeconds),
                 ),
+                coinsEarned: ref.watch(
+                  bunnyHopControllerProvider.select((s) => s.coinsEarned),
+                ),
+                starsEarned: ref.watch(
+                  bunnyHopControllerProvider.select((s) => s.starsEarned),
+                ),
+                largerFonts: settings.largerTouchTargets,
+                onPause: _showPauseMenu,
               ),
-              if (showCarrot)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: Container(
-                      color: AppColors.sunYellow.withValues(alpha: 0.1),
-                    ),
-                  ),
-                ),
+            ),
+            GameFeedbackOverlay(
+              top: MediaQuery.paddingOf(context).top + 56,
+              message: ref.watch(
+                bunnyHopControllerProvider.select((s) => s.feedbackMessage),
+              ),
+              rewardText: ref.watch(
+                bunnyHopControllerProvider.select((s) => s.lastRewardText),
+              ),
+              showMascot: ref.watch(
+                bunnyHopControllerProvider.select((s) => s.showMascot),
+              ),
+            ),
+            if (showCarrot)
               Positioned.fill(
                 child: IgnorePointer(
-                  child: ParticleSystem(
-                    key: _particleKey,
-                    particleCount: 36,
-                    autoStart: false,
+                  child: Container(
+                    color: AppColors.sunYellow.withValues(alpha: 0.1),
                   ),
                 ),
               ),
-              if (sessionPhase == BunnyHopSessionPhase.paused)
-                GamePausedOverlay(
-                  onResume: () =>
-                      ref.read(bunnyHopControllerProvider.notifier).resume(),
-                  onOpenMenu: _showPauseMenu,
+            Positioned.fill(
+              child: IgnorePointer(
+                child: ParticleSystem(
+                  key: _particleKey,
+                  particleCount: 36,
+                  autoStart: false,
                 ),
-              if (sessionPhase == BunnyHopSessionPhase.finished)
-                BunnyHopVictoryOverlay(
-                  result: ref.read(bunnyHopControllerProvider.notifier).getResult(),
-                  onPlayAgain: _start,
-                  onHome: () {
-                    ref.read(bunnyHopControllerProvider.notifier).reset();
-                    context.go(AppRoutes.home);
-                  },
-                ),
-            ],
-          ),
+              ),
+            ),
+            if (sessionPhase == BunnyHopSessionPhase.paused)
+              GamePausedOverlay(
+                onResume: () =>
+                    ref.read(bunnyHopControllerProvider.notifier).resume(),
+                onOpenMenu: _showPauseMenu,
+              ),
+            if (sessionPhase == BunnyHopSessionPhase.finished)
+              BunnyHopVictoryOverlay(
+                result: ref.read(bunnyHopControllerProvider.notifier).getResult(),
+                onPlayAgain: _start,
+                onHome: () {
+                  ref.read(bunnyHopControllerProvider.notifier).reset();
+                  context.go(AppRoutes.home);
+                },
+              ),
+          ],
         ),
       ),
     );
@@ -280,7 +273,6 @@ class _PlayArea extends ConsumerWidget {
     final bunny = ref.watch(bunnyHopControllerProvider.select((s) => s.bunny));
     final carrot = ref.watch(bunnyHopControllerProvider.select((s) => s.carrot));
     final settings = ref.watch(bunnyHopSettingsProvider);
-    final showMascot = ref.watch(bunnyHopControllerProvider.select((s) => s.showMascot));
     final inactivity = ref.watch(bunnyHopControllerProvider.select((s) => s.inactivityTimer));
     final canTap = ref.watch(bunnyHopControllerProvider.select((s) => s.canTap));
     final sessionPhase = ref.watch(
@@ -312,23 +304,14 @@ class _PlayArea extends ConsumerWidget {
             ),
             if (sessionPhase == BunnyHopSessionPhase.playing && canTap)
               Positioned(
-                left: 0,
-                right: 0,
-                bottom: 28,
+                left: 28,
+                right: 28,
+                bottom: 22 + MediaQuery.paddingOf(context).bottom,
                 child: Center(
                   child: _TapHint(
                     hopping: bunny.phase == BunnyPhase.hopping,
                     pulse: inactivity > 3,
                   ),
-                ),
-              ),
-            if (showMascot || inactivity > 8)
-              Positioned(
-                left: 16,
-                bottom: 80,
-                child: MascotWidget(
-                  size: 64,
-                  waving: showMascot || inactivity > 12,
                 ),
               ),
           ],
@@ -346,31 +329,45 @@ class _TapHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scale = pulse ? 1.06 : 1.0;
+    final scale = pulse ? 1.04 : 1.0;
     return AnimatedScale(
       scale: scale,
       duration: const Duration(milliseconds: 600),
       curve: Curves.easeInOut,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        width: 280,
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.92),
-          borderRadius: BorderRadius.circular(24),
+          color: const Color(0xFFFFF8E7),
+          borderRadius: BorderRadius.circular(40),
+          border: Border.all(color: const Color(0xFFFFD54F), width: 3),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF43A047).withValues(alpha: 0.25),
+              color: const Color(0xFFFFEB3B).withValues(alpha: 0.55),
+              blurRadius: 18,
+              spreadRadius: 2,
+            ),
+            BoxShadow(
+              color: const Color(0xFFF9A825).withValues(alpha: 0.28),
               blurRadius: 8,
-              offset: const Offset(0, 3),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Text(
-          hopping ? 'Hop hop! 🐰' : 'Tap to hop! 👆',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF2E7D32),
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              hopping ? 'Hop hop!' : 'Tap to hop!',
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF43A047),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Text('👉', style: TextStyle(fontSize: 20)),
+          ],
         ),
       ),
     );
