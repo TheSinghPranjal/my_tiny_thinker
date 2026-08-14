@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/number_memory/models/number_memory_models.dart';
 
 class NumberMemoryBoard extends StatelessWidget {
@@ -38,7 +37,8 @@ class NumberMemoryBoard extends StatelessWidget {
   Widget build(BuildContext context) {
     final showing = phase == NumberMemoryPhase.showing;
     final inputPhase =
-        phase == NumberMemoryPhase.input || phase == NumberMemoryPhase.celebrating;
+        phase == NumberMemoryPhase.input ||
+        phase == NumberMemoryPhase.celebrating;
 
     return Column(
       children: [
@@ -211,7 +211,10 @@ class _NumberMemoryInputFieldState extends State<NumberMemoryInputField>
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: borderColor, width: widget.errorBorder ? 4 : 3),
+          border: Border.all(
+            color: borderColor,
+            width: widget.errorBorder ? 4 : 3,
+          ),
           boxShadow: [
             BoxShadow(
               color: borderColor.withValues(alpha: 0.35),
@@ -311,8 +314,8 @@ class _KeypadButton extends StatelessWidget {
     final colors = isSubmit
         ? const [Color(0xFF66BB6A), Color(0xFF43A047)]
         : isClear
-            ? const [Color(0xFFFF8A80), Color(0xFFEF5350)]
-            : const [Color(0xFFB39DDB), Color(0xFF7E57C2)];
+        ? const [Color(0xFFFF8A80), Color(0xFFEF5350)]
+        : const [Color(0xFFB39DDB), Color(0xFF7E57C2)];
 
     return GestureDetector(
       onTap: enabled ? onTap : null,
@@ -324,13 +327,13 @@ class _KeypadButton extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color.lerp(colors[0], Colors.white, 0.2)!,
-              colors[1],
-            ],
+            colors: [Color.lerp(colors[0], Colors.white, 0.2)!, colors[1]],
           ),
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.85), width: 3),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.85),
+            width: 3,
+          ),
           boxShadow: [
             BoxShadow(
               color: colors[1].withValues(alpha: 0.4),
@@ -367,67 +370,35 @@ class NumberMemoryVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black45,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Material(
-        color: Colors.transparent,
-        child: TTCard(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('🏆', style: context.textTheme.displayMedium),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  result.encouragement,
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: const Color(0xFF4527A0),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                _row('Score', '${result.score}'),
-                _row('Correct', '${result.correctCount}'),
-                _row('Accuracy', '${(result.accuracy * 100).round()}%'),
-                _row('Coins', '+${result.coins}'),
-                _row('XP', '+${result.xp}'),
-                _row('Stars', '⭐ ${result.stars}'),
-                _row('Best combo', '${result.maxCombo}'),
-                const SizedBox(height: AppSpacing.xl),
-                TTButton(
-                  label: 'Play Again',
-                  expanded: true,
-                  onPressed: onPlayAgain,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                TTButton(
-                  label: 'Home',
-                  expanded: true,
-                  variant: TTButtonVariant.ghost,
-                  onPressed: onHome,
-                ),
-              ],
-            ),
-          ),
+    return GameCelebrationOverlay(
+      title: 'Number Memory Celebration!',
+      stats: [
+        CelebrationStat(icon: '⭐', label: 'Score', value: '${result.score}'),
+        CelebrationStat(
+          icon: '✅',
+          label: 'Correct',
+          value: '${result.correctCount}',
         ),
-      ),
-    );
-  }
-
-  Widget _row(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
-        ],
-      ),
+        CelebrationStat(
+          icon: '🎯',
+          label: 'Accuracy',
+          value: '${(result.accuracy * 100).round()}%',
+        ),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+        CelebrationStat(
+          icon: '🌟',
+          label: 'Happy Stars',
+          value: '+${result.stars}',
+        ),
+        CelebrationStat(
+          icon: '🔥',
+          label: 'Best Combo',
+          value: '${result.maxCombo}',
+        ),
+      ],
+      onPlayAgain: onPlayAgain,
+      onHome: onHome,
     );
   }
 }

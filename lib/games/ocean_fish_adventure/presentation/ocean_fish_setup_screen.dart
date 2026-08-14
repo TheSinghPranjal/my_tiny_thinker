@@ -5,15 +5,13 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/games/ocean_fish_adventure/presentation/widgets/ocean_background.dart';
 
 class OceanFishSetupScreen extends ConsumerWidget {
   const OceanFishSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return OceanBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🐠',
@@ -30,7 +28,6 @@ class OceanFishSetupScreen extends ConsumerWidget {
           playLabel: 'Dive In!',
           onPlay: () => pushGameGuarded(context, ref, GameId.oceanFishAdventure, AppRoutes.oceanFishGame),
         ),
-      ),
-    );
+      );
   }
 }

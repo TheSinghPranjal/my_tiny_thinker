@@ -6,7 +6,6 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/number_memory/models/number_memory_models.dart';
-import 'package:my_tiny_thinker/games/number_memory/presentation/widgets/number_memory_background.dart';
 import 'package:my_tiny_thinker/games/number_memory/repository/number_memory_settings_repository.dart';
 
 class NumberMemorySetupScreen extends ConsumerWidget {
@@ -16,8 +15,7 @@ class NumberMemorySetupScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(numberMemorySettingsProvider);
 
-    return NumberMemoryBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🔢🧠',
@@ -36,7 +34,6 @@ class NumberMemorySetupScreen extends ConsumerWidget {
           playLabel: 'Play!',
           onPlay: () => pushGameGuarded(context, ref, GameId.numberMemory, AppRoutes.numberMemoryGame),
         ),
-      ),
-    );
+      );
   }
 }
