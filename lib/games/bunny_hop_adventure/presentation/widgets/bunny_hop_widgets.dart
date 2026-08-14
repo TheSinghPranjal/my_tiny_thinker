@@ -15,7 +15,7 @@ class BunnyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = largerTouch ? 100.0 : 88.0;
+    final size = largerTouch ? 118.0 : 104.0;
     final blink = (bunny.blinkTimer % 3.5) < 0.12;
 
     return Positioned(
@@ -44,13 +44,16 @@ class _BunnyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
-    final cy = size.height / 2 + 6;
-    final breathe = math.sin(bunny.animPhase * 2) * 1.5;
+    final cy = size.height / 2 + 8;
+    final breathe = math.sin(bunny.animPhase * 2) * 1.8;
     final celebrate = bunny.celebrateProgress;
     final wet = bunny.phase == BunnyPhase.swimming || bunny.shakeWater > 0;
+    final waving = bunny.phase == BunnyPhase.celebrating ||
+        bunny.idleAction == 1 ||
+        bunny.phase == BunnyPhase.idle;
 
     canvas.save();
-    canvas.translate(0, breathe - celebrate * 6);
+    canvas.translate(0, breathe - celebrate * 8);
 
     if (!bunny.facingRight) {
       canvas.translate(cx, 0);
@@ -58,57 +61,87 @@ class _BunnyPainter extends CustomPainter {
       canvas.translate(-cx, 0);
     }
 
+    // Soft ground shadow
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, cy + 18), width: 36, height: 28),
-      Paint()..color = const Color(0xFFEFEBE9),
+      Rect.fromCenter(center: Offset(cx, cy + 34), width: 44, height: 12),
+      Paint()..color = const Color(0xFF33691E).withValues(alpha: 0.18),
     );
 
-    canvas.drawCircle(Offset(cx, cy - 2), 22, Paint()..color = const Color(0xFFEFEBE9));
-    canvas.drawCircle(Offset(cx - 14, cy - 18), 10, Paint()..color = const Color(0xFFEFEBE9));
-    canvas.drawCircle(Offset(cx + 14, cy - 18), 10, Paint()..color = const Color(0xFFEFEBE9));
-    canvas.drawCircle(Offset(cx - 14, cy - 18), 5, Paint()..color = const Color(0xFFF48FB1));
-    canvas.drawCircle(Offset(cx + 14, cy - 18), 5, Paint()..color = const Color(0xFFF48FB1));
+    // Body
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx, cy + 20), width: 46, height: 34),
+      Paint()..color = const Color(0xFFFFF8E7),
+    );
 
-    _drawEye(canvas, cx - 8, cy - 4, blink);
-    _drawEye(canvas, cx + 8, cy - 4, blink);
+    // Head
+    canvas.drawCircle(
+      Offset(cx, cy - 4),
+      26,
+      Paint()..color = const Color(0xFFFFF8E7),
+    );
 
-    canvas.drawCircle(Offset(cx, cy + 2), 3, Paint()..color = const Color(0xFFF48FB1));
+    // Ears
+    void ear(double dx) {
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset(cx + dx, cy - 30), width: 16, height: 26),
+        Paint()..color = const Color(0xFFFFF8E7),
+      );
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset(cx + dx, cy - 30), width: 8, height: 16),
+        Paint()..color = const Color(0xFFF8BBD0),
+      );
+    }
+
+    ear(-16);
+    ear(16);
+
+    // Cheeks
+    canvas.drawCircle(
+      Offset(cx - 16, cy + 4),
+      6,
+      Paint()..color = const Color(0xFFF8BBD0).withValues(alpha: 0.7),
+    );
+    canvas.drawCircle(
+      Offset(cx + 16, cy + 4),
+      6,
+      Paint()..color = const Color(0xFFF8BBD0).withValues(alpha: 0.7),
+    );
+
+    _drawEye(canvas, cx - 9, cy - 6, blink);
+    _drawEye(canvas, cx + 9, cy - 6, blink);
+
+    canvas.drawCircle(Offset(cx, cy + 2), 3.2, Paint()..color = const Color(0xFFF48FB1));
     canvas.drawArc(
-      Rect.fromCenter(center: Offset(cx, cy + 8), width: 12, height: 8),
-      0.2,
-      math.pi - 0.4,
+      Rect.fromCenter(center: Offset(cx, cy + 8), width: 14, height: 9),
+      0.15,
+      math.pi - 0.3,
       false,
       Paint()
         ..color = const Color(0xFF5D4037)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.8
+        ..strokeWidth = 2
         ..strokeCap = StrokeCap.round,
     );
 
-    canvas.drawCircle(Offset(cx + 20, cy + 14), 8, Paint()..color = Colors.white);
+    // Paw / wave
+    final wave = waving ? math.sin(bunny.animPhase * 4) * 0.35 : 0.0;
+    canvas.save();
+    canvas.translate(cx + 24, cy + 10);
+    canvas.rotate(-0.4 + wave);
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset.zero, width: 16, height: 14),
+      Paint()..color = const Color(0xFFFFF8E7),
+    );
+    canvas.restore();
 
     if (wet) {
       for (var i = 0; i < 4; i++) {
         canvas.drawCircle(
-          Offset(cx - 16 + i * 10, cy + 22),
-          2,
-          Paint()..color = const Color(0xFF4FC3F7).withValues(alpha: 0.7),
+          Offset(cx - 16 + i * 10, cy + 26),
+          2.2,
+          Paint()..color = const Color(0xFF4FC3F7).withValues(alpha: 0.75),
         );
       }
-    }
-
-    if (bunny.phase == BunnyPhase.celebrating) {
-      canvas.drawArc(
-        Rect.fromCenter(center: Offset(cx - 22, cy + 2), width: 14, height: 18),
-        -0.5,
-        1.0,
-        false,
-        Paint()
-          ..color = const Color(0xFFEFEBE9)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 4
-          ..strokeCap = StrokeCap.round,
-      );
     }
 
     canvas.restore();
@@ -117,13 +150,17 @@ class _BunnyPainter extends CustomPainter {
   void _drawEye(Canvas canvas, double x, double y, bool blink) {
     if (blink) {
       canvas.drawLine(
-        Offset(x - 4, y),
-        Offset(x + 4, y),
-        Paint()..color = const Color(0xFF3E2723)..strokeWidth = 2,
+        Offset(x - 5, y),
+        Offset(x + 5, y),
+        Paint()
+          ..color = const Color(0xFF3E2723)
+          ..strokeWidth = 2.4
+          ..strokeCap = StrokeCap.round,
       );
     } else {
-      canvas.drawCircle(Offset(x, y), 3.5, Paint()..color = const Color(0xFF3E2723));
-      canvas.drawCircle(Offset(x - 1, y - 1), 1.2, Paint()..color = Colors.white);
+      canvas.drawCircle(Offset(x, y), 6.2, Paint()..color = Colors.white);
+      canvas.drawCircle(Offset(x, y + 0.5), 4.2, Paint()..color = const Color(0xFF3E2723));
+      canvas.drawCircle(Offset(x - 1.4, y - 1.4), 1.5, Paint()..color = Colors.white);
     }
   }
 
@@ -140,14 +177,14 @@ class CarrotWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!carrot.visible) return const SizedBox.shrink();
-    final bounce = math.sin(carrot.bouncePhase) * 6;
+    final bounce = math.sin(carrot.bouncePhase) * 4;
 
     return Positioned(
-      left: carrot.x - 28,
+      left: carrot.x - 36,
       top: carrot.y - 36 + bounce,
       child: SizedBox(
-        width: 56,
-        height: 64,
+        width: 72,
+        height: 72,
         child: CustomPaint(
           painter: _CarrotPainter(carrot: carrot),
         ),
@@ -163,42 +200,55 @@ class _CarrotPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2 + 8;
+    final c = Offset(size.width / 2, size.height / 2);
 
-    if (carrot.glow > 0) {
-      canvas.drawCircle(
-        Offset(cx, cy),
-        28,
-        Paint()..color = const Color(0xFFFF9800).withValues(alpha: carrot.glow * 0.35),
-      );
-    }
+    canvas.drawCircle(
+      c,
+      32,
+      Paint()..color = const Color(0xFFFFF176).withValues(alpha: 0.28 + carrot.glow * 0.2),
+    );
+    canvas.drawCircle(
+      c,
+      26,
+      Paint()
+        ..shader = const RadialGradient(
+          colors: [Color(0xFFFFF8E1), Color(0xFFFFE082)],
+        ).createShader(Rect.fromCircle(center: c, radius: 26)),
+    );
+    canvas.drawCircle(
+      c,
+      26,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3
+        ..color = const Color(0xFFFFB300),
+    );
 
     final path = Path()
-      ..moveTo(cx - 10, cy - 16)
-      ..lineTo(cx + 10, cy - 16)
-      ..lineTo(cx + 6, cy + 22)
-      ..quadraticBezierTo(cx, cy + 28, cx - 6, cy + 22)
+      ..moveTo(c.dx - 9, c.dy - 10)
+      ..lineTo(c.dx + 9, c.dy - 10)
+      ..lineTo(c.dx + 5, c.dy + 16)
+      ..quadraticBezierTo(c.dx, c.dy + 22, c.dx - 5, c.dy + 16)
       ..close();
     canvas.drawPath(path, Paint()..color = const Color(0xFFFF7043));
 
     for (var i = 0; i < 3; i++) {
       canvas.drawLine(
-        Offset(cx - 4 + i * 4, cy - 16),
-        Offset(cx - 8 + i * 6, cy - 28),
+        Offset(c.dx - 4 + i * 4, c.dy - 10),
+        Offset(c.dx - 8 + i * 6, c.dy - 22),
         Paint()
           ..color = const Color(0xFF66BB6A)
-          ..strokeWidth = 3
+          ..strokeWidth = 3.2
           ..strokeCap = StrokeCap.round,
       );
     }
 
-    for (var i = 0; i < 4; i++) {
-      final a = carrot.sparklePhase + i * 1.5;
+    for (var i = 0; i < 5; i++) {
+      final a = carrot.sparklePhase + i * 1.25;
       canvas.drawCircle(
-        Offset(cx + math.cos(a) * 22, cy + math.sin(a) * 18),
-        2,
-        Paint()..color = const Color(0xFFFFEB3B).withValues(alpha: 0.85),
+        Offset(c.dx + math.cos(a) * 30, c.dy + math.sin(a) * 28),
+        2.2,
+        Paint()..color = const Color(0xFFFFEB3B).withValues(alpha: 0.9),
       );
     }
   }
@@ -217,11 +267,11 @@ class LilyPadWidget extends StatelessWidget {
     if (pad.phase == LilyPadPhase.sunk) return const SizedBox.shrink();
 
     return Positioned(
-      left: pad.x - 38,
-      top: pad.y - 22 + pad.bobOffset,
+      left: pad.x - 40,
+      top: pad.y - 28 + pad.bobOffset,
       child: SizedBox(
-        width: 76,
-        height: 44,
+        width: 80,
+        height: 56,
         child: CustomPaint(
           painter: _LilyPadPainter(pad: pad),
         ),
@@ -240,55 +290,55 @@ class _LilyPadPainter extends CustomPainter {
     final cx = size.width / 2;
     final cy = size.height / 2;
     final sink = pad.sinkProgress;
+    final center = Offset(cx, cy + sink * 16);
+    final showFlower = !pad.isCracked && pad.index % 2 == 1;
 
-    final padCenter = Offset(cx, cy + sink * 20);
     canvas.drawOval(
-      Rect.fromCenter(center: padCenter, width: 68, height: 36),
-      Paint()..color = pad.isCracked ? const Color(0xFF689F38) : const Color(0xFF7CB342),
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: padCenter.translate(0, 2), width: 62, height: 30),
-      Paint()..color = const Color(0xFF8BC34A).withValues(alpha: 0.55),
+      Rect.fromCenter(center: center.translate(0, 6), width: 68, height: 22),
+      Paint()..color = const Color(0xFF0277BD).withValues(alpha: 0.18),
     );
 
-    canvas.drawArc(
-      Rect.fromCenter(center: padCenter, width: 68, height: 36),
-      -0.3,
-      0.5,
-      false,
+    final padRect = Rect.fromCenter(center: center, width: 70, height: 44);
+    canvas.drawOval(
+      padRect,
       Paint()
-        ..color = const Color(0xFF558B2F)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
+        ..shader = RadialGradient(
+          center: const Alignment(-0.2, -0.35),
+          colors: pad.isCracked
+              ? const [Color(0xFF9CCC65), Color(0xFF558B2F)]
+              : const [Color(0xFFAED581), Color(0xFF7CB342), Color(0xFF558B2F)],
+        ).createShader(padRect),
     );
-
-    if (!pad.isCracked && pad.index % 2 == 0) {
-      canvas.drawCircle(
-        padCenter.translate(0, -4),
-        5,
-        Paint()..color = const Color(0xFFF48FB1),
-      );
-      for (var i = 0; i < 5; i++) {
-        final a = i * 1.25;
-        canvas.drawCircle(
-          padCenter.translate(math.cos(a) * 7, -4 + math.sin(a) * 7),
-          2.5,
-          Paint()..color = const Color(0xFFFFEB3B),
-        );
-      }
-    }
+    canvas.drawOval(
+      Rect.fromCenter(center: center.translate(-8, -6), width: 28, height: 14),
+      Paint()..color = Colors.white.withValues(alpha: 0.22),
+    );
 
     if (pad.isCracked) {
+      final xPaint = Paint()
+        ..color = const Color(0xFF33691E)
+        ..strokeWidth = 4.5
+        ..strokeCap = StrokeCap.round;
       canvas.drawLine(
-        Offset(cx - 12, cy - 4 + sink * 20),
-        Offset(cx + 8, cy + 6 + sink * 20),
-        Paint()..color = const Color(0xFF33691E)..strokeWidth = 2,
+        center.translate(-10, -8),
+        center.translate(10, 8),
+        xPaint,
       );
       canvas.drawLine(
-        Offset(cx + 4, cy - 6 + sink * 20),
-        Offset(cx - 6, cy + 8 + sink * 20),
-        Paint()..color = const Color(0xFF33691E)..strokeWidth = 1.5,
+        center.translate(10, -8),
+        center.translate(-10, 8),
+        xPaint,
       );
+    } else if (showFlower) {
+      canvas.drawCircle(center.translate(0, -2), 5, Paint()..color = const Color(0xFFF48FB1));
+      for (var i = 0; i < 5; i++) {
+        final a = i * 1.26;
+        canvas.drawCircle(
+          center.translate(math.cos(a) * 8, -2 + math.sin(a) * 7),
+          3.2,
+          Paint()..color = i.isEven ? const Color(0xFFFFEB3B) : const Color(0xFFF8BBD0),
+        );
+      }
     }
   }
 
