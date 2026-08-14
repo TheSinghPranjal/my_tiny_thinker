@@ -6,7 +6,6 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/complete_the_word_adventure/models/complete_word_models.dart';
-import 'package:my_tiny_thinker/games/complete_the_word_adventure/presentation/widgets/complete_word_background.dart';
 import 'package:my_tiny_thinker/games/complete_the_word_adventure/repository/complete_word_settings_repository.dart';
 
 class CompleteWordSetupScreen extends ConsumerWidget {
@@ -16,8 +15,7 @@ class CompleteWordSetupScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(completeWordSettingsProvider);
 
-    return CompleteWordAdventureBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '✏️📚',
@@ -36,7 +34,6 @@ class CompleteWordSetupScreen extends ConsumerWidget {
           playLabel: 'Play!',
           onPlay: () => pushGameGuarded(context, ref, GameId.completeTheWordAdventure, AppRoutes.completeTheWordGame),
         ),
-      ),
-    );
+      );
   }
 }
