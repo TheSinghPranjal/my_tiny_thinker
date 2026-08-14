@@ -5,15 +5,13 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/candy_color_hunt/models/candy_color_hunt_models.dart';
-import 'package:my_tiny_thinker/games/candy_color_hunt/presentation/widgets/candy_world_background.dart';
 
 class CandyColorHuntSetupScreen extends ConsumerWidget {
   const CandyColorHuntSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return CandyWorldBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🐜🍬🌈',
@@ -29,7 +27,6 @@ class CandyColorHuntSetupScreen extends ConsumerWidget {
                     ],
           onPlay: () => pushGameGuarded(context, ref, GameId.candyColorHunt, AppRoutes.candyColorHuntGame),
         ),
-      ),
-    );
+      );
   }
 }
