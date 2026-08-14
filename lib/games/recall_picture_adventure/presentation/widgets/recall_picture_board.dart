@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/recall_picture_adventure/models/recall_picture_models.dart';
 
 /// Visual-only scene card: balloons, animal, color blob, shape — no text labels.
@@ -94,10 +94,7 @@ class _ColorBlob extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _BlobPainter(color),
-    );
+    return CustomPaint(size: Size(size, size), painter: _BlobPainter(color));
   }
 }
 
@@ -179,7 +176,11 @@ class _ShapePainter extends CustomPainter {
       case RecallSceneShape.square:
         canvas.drawRRect(
           RRect.fromRectAndRadius(
-            Rect.fromCenter(center: Offset(cx, cy), width: r * 1.7, height: r * 1.7),
+            Rect.fromCenter(
+              center: Offset(cx, cy),
+              width: r * 1.7,
+              height: r * 1.7,
+            ),
             const Radius.circular(6),
           ),
           paint,
@@ -295,10 +296,9 @@ class _RecallOptionButtonState extends State<RecallOptionButton>
 
   @override
   Widget build(BuildContext context) {
-    final accent = widget.option.color ??
-        (widget.isSelected
-            ? AppColors.mintGreen
-            : const Color(0xFF7E57C2));
+    final accent =
+        widget.option.color ??
+        (widget.isSelected ? AppColors.mintGreen : const Color(0xFF7E57C2));
 
     return AnimatedBuilder(
       animation: _wobble,
@@ -322,18 +322,15 @@ class _RecallOptionButtonState extends State<RecallOptionButton>
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color.lerp(accent, Colors.white, 0.35)!,
-                  accent,
-                ],
+                colors: [Color.lerp(accent, Colors.white, 0.35)!, accent],
               ),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
                 color: widget.isSelected
                     ? Colors.white
                     : widget.isWrong
-                        ? const Color(0xFFFFAB91)
-                        : Colors.white70,
+                    ? const Color(0xFFFFAB91)
+                    : Colors.white70,
                 width: widget.isSelected || widget.isWrong ? 4 : 3,
               ),
               boxShadow: [
@@ -367,20 +364,13 @@ class _RecallOptionButtonState extends State<RecallOptionButton>
           shape: BoxShape.circle,
           border: Border.all(color: Colors.white, width: 3),
           boxShadow: [
-            BoxShadow(
-              color: o.color!.withValues(alpha: 0.4),
-              blurRadius: 8,
-            ),
+            BoxShadow(color: o.color!.withValues(alpha: 0.4), blurRadius: 8),
           ],
         ),
       );
     }
     if (o.shape != null) {
-      return RecallShapeIcon(
-        shape: o.shape!,
-        color: Colors.white,
-        size: 40,
-      );
+      return RecallShapeIcon(shape: o.shape!, color: Colors.white, size: 40);
     }
     return Text(
       o.label ?? o.valueKey,
@@ -464,8 +454,10 @@ class RecallPictureBoard extends StatelessWidget {
               builder: (context, scale, child) =>
                   Transform.scale(scale: scale, child: child),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(20),
@@ -521,95 +513,40 @@ class RecallPictureVictoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black45,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Material(
-        color: Colors.transparent,
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.xl),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(28),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFFFFF), Color(0xFFE8EAF6)],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.softPurple.withValues(alpha: 0.35),
-                blurRadius: 24,
-              ),
-            ],
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🖼️🏆', style: TextStyle(fontSize: 52)),
-                const SizedBox(height: 8),
-                Text(
-                  result.encouragement,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFF4527A0),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _row('Rounds', '${result.roundsCompleted}'),
-                _row('Correct', '${result.correctCount}'),
-                _row('Accuracy', '${(result.accuracy * 100).round()}%'),
-                _row('Score', '${result.score}'),
-                _row('Coins', '+${result.coins}'),
-                _row('XP', '+${result.xp}'),
-                _row('Stars', '⭐ ${result.stars}'),
-                _row('Best combo', '${result.maxCombo}'),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: onPlayAgain,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.softPurple,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text(
-                      'Play Again',
-                      style: TextStyle(fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: onHome,
-                  child: const Text(
-                    'Home',
-                    style: TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                ),
-              ],
-            ),
-          ),
+    return GameCelebrationOverlay(
+      title: 'Recall Picture Celebration!',
+      stats: [
+        CelebrationStat(
+          icon: '🏁',
+          label: 'Rounds',
+          value: '${result.roundsCompleted}',
         ),
-      ),
-    );
-  }
-
-  Widget _row(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
-        ],
-      ),
+        CelebrationStat(
+          icon: '✅',
+          label: 'Correct',
+          value: '${result.correctCount}',
+        ),
+        CelebrationStat(
+          icon: '🎯',
+          label: 'Accuracy',
+          value: '${(result.accuracy * 100).round()}%',
+        ),
+        CelebrationStat(icon: '⭐', label: 'Score', value: '${result.score}'),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+        CelebrationStat(
+          icon: '🌟',
+          label: 'Happy Stars',
+          value: '+${result.stars}',
+        ),
+        CelebrationStat(
+          icon: '🔥',
+          label: 'Best Combo',
+          value: '${result.maxCombo}',
+        ),
+      ],
+      onPlayAgain: onPlayAgain,
+      onHome: onHome,
     );
   }
 }

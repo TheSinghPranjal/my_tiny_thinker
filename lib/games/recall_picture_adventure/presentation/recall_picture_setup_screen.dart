@@ -6,7 +6,6 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/recall_picture_adventure/models/recall_picture_models.dart';
-import 'package:my_tiny_thinker/games/recall_picture_adventure/presentation/widgets/recall_picture_background.dart';
 import 'package:my_tiny_thinker/games/recall_picture_adventure/repository/recall_picture_settings_repository.dart';
 
 class RecallPictureSetupScreen extends ConsumerWidget {
@@ -17,8 +16,7 @@ class RecallPictureSetupScreen extends ConsumerWidget {
     final settings = ref.watch(recallPictureSettingsProvider);
     final mins = (settings.sessionSeconds / 60).round();
 
-    return RecallPictureBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🖼️🎈',
@@ -37,7 +35,6 @@ class RecallPictureSetupScreen extends ConsumerWidget {
           playLabel: 'Play!',
           onPlay: () => pushGameGuarded(context, ref, GameId.recallPictureAdventure, AppRoutes.recallPictureGame),
         ),
-      ),
-    );
+      );
   }
 }
