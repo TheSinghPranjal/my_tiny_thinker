@@ -4,7 +4,6 @@ import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/shadow_match_adventure/models/shadow_match_models.dart';
 
@@ -13,9 +12,7 @@ class ShadowMatchSetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AnimatedSkyBackground(
-      showGrass: false,
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🌗🦋✨',
@@ -31,7 +28,6 @@ class ShadowMatchSetupScreen extends ConsumerWidget {
           ],
           onPlay: () => pushGameGuarded(context, ref, GameId.shadowMatchAdventure, AppRoutes.shadowMatchGame),
         ),
-      ),
-    );
+      );
   }
 }

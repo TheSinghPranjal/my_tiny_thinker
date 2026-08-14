@@ -81,6 +81,12 @@ enum GameId {
   shapeDropAdventure('shape_drop_adventure', '🔷', 'Shape Drop Adventure'),
   candyColorHunt('candy_color_hunt', '🐜', 'Candy Color Hunt'),
   colorSchoolBags('color_school_bags', '🎒', 'Color School Bags'),
+  learnToSortFood('learn_to_sort_food', '🥗', 'Learn to Sort Food'),
+  cleanDirtyClothesSort(
+    'clean_dirty_clothes_sort',
+    '👕',
+    'Clean & Dirty Clothes Sort',
+  ),
   alphabetAdventureQuiz('alphabet_adventure_quiz', '🔤', 'Alphabet Adventure Quiz'),
   animalSounds('animal_sounds', '🔊', 'Animal Sounds'),
   alphabetBridgeAdventure(
@@ -117,6 +123,21 @@ enum GameId {
     'color_balloon_pop',
     '🎨',
     'Color Balloon Pop',
+  ),
+  whackAMole(
+    'whack_a_mole',
+    '🔨',
+    'Whack-a-Mole',
+  ),
+  catchTheFallingStars(
+    'catch_the_falling_stars',
+    '⭐',
+    'Catch the Falling Stars',
+  ),
+  butterflyWebMatching(
+    'butterfly_web_matching',
+    '🦋',
+    'Butterfly Web Matching',
   );
 
   const GameId(this.id, this.emoji, this.displayName);

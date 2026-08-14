@@ -4,9 +4,9 @@ import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
+import 'package:my_tiny_thinker/core/widgets/glossy_play_button.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/setup_meadow_background.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 
 /// Overflow-safe intro layout used by game setup / skills screens.
 ///
@@ -59,126 +59,126 @@ class GameSetupScaffold extends StatelessWidget {
             AppSpacing.md,
           ),
           child: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back_rounded, size: 32),
-                onPressed: () => context.pop(),
-                style: IconButton.styleFrom(
-                  backgroundColor: backButtonBackground ??
-                      AppColors.white.withValues(alpha: 0.92),
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back_rounded, size: 32),
+                  onPressed: () => context.pop(),
+                  style: IconButton.styleFrom(
+                    backgroundColor:
+                        backButtonBackground ??
+                        AppColors.white.withValues(alpha: 0.92),
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight,
-                      ),
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              emoji,
-                              style: TextStyle(fontSize: emojiSize),
-                            ),
-                            const SizedBox(height: AppSpacing.md),
-                            Text(
-                              title,
-                              textAlign: TextAlign.center,
-                              style: context.textTheme.displaySmall?.copyWith(
-                                color: titleColor ?? AppColors.white,
-                                fontWeight: FontWeight.w800,
-                                height: 1.15,
-                                shadows: titleShadows,
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                emoji,
+                                style: TextStyle(fontSize: emojiSize),
                               ),
-                            ),
-                            const SizedBox(height: AppSpacing.sm),
-                            Text(
-                              subtitle,
-                              textAlign: TextAlign.center,
-                              style: context.textTheme.titleMedium?.copyWith(
-                                color: subtitleColor ??
-                                    (titleColor ?? AppColors.white)
-                                        .withValues(alpha: 0.95),
-                                fontWeight: FontWeight.w600,
-                                height: 1.25,
+                              const SizedBox(height: AppSpacing.md),
+                              Text(
+                                title,
+                                textAlign: TextAlign.center,
+                                style: context.textTheme.displaySmall?.copyWith(
+                                  color: titleColor ?? AppColors.white,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.15,
+                                  shadows: titleShadows,
+                                ),
                               ),
-                            ),
-                            if (skills.isNotEmpty) ...[
-                              const SizedBox(height: AppSpacing.lg),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(AppSpacing.md),
-                                decoration: BoxDecoration(
-                                  gradient: AppGradients.welcomeCard,
-                                  borderRadius: BorderRadius.circular(
-                                    AppSpacing.radiusXl,
+                              const SizedBox(height: AppSpacing.sm),
+                              Text(
+                                subtitle,
+                                textAlign: TextAlign.center,
+                                style: context.textTheme.titleMedium?.copyWith(
+                                  color:
+                                      subtitleColor ??
+                                      (titleColor ?? AppColors.white)
+                                          .withValues(alpha: 0.95),
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.25,
+                                ),
+                              ),
+                              if (skills.isNotEmpty) ...[
+                                const SizedBox(height: AppSpacing.lg),
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(AppSpacing.md),
+                                  decoration: BoxDecoration(
+                                    gradient: AppGradients.welcomeCard,
+                                    borderRadius: BorderRadius.circular(
+                                      AppSpacing.radiusXl,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Skills Developed',
+                                        style: context.textTheme.titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                      ),
+                                      const SizedBox(height: AppSpacing.sm),
+                                      Wrap(
+                                        spacing: AppSpacing.xs,
+                                        runSpacing: AppSpacing.xs,
+                                        children: [
+                                          for (final skill in skills)
+                                            Chip(
+                                              visualDensity:
+                                                  VisualDensity.compact,
+                                              materialTapTargetSize:
+                                                  MaterialTapTargetSize
+                                                      .shrinkWrap,
+                                              label: Text(
+                                                skill,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                              backgroundColor: chipColor,
+                                            ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Skills Developed',
-                                      style: context.textTheme.titleMedium
-                                          ?.copyWith(
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                    const SizedBox(height: AppSpacing.sm),
-                                    Wrap(
-                                      spacing: AppSpacing.xs,
-                                      runSpacing: AppSpacing.xs,
-                                      children: [
-                                        for (final skill in skills)
-                                          Chip(
-                                            visualDensity: VisualDensity.compact,
-                                            materialTapTargetSize:
-                                                MaterialTapTargetSize.shrinkWrap,
-                                            label: Text(
-                                              skill,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                            backgroundColor: chipColor,
-                                          ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              ],
+                              if (showMascot) ...[
+                                const SizedBox(height: AppSpacing.md),
+                                const MascotWidget(size: 64, waving: true),
+                              ],
                             ],
-                            if (showMascot) ...[
-                              const SizedBox(height: AppSpacing.md),
-                              const MascotWidget(size: 64, waving: true),
-                            ],
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            TTButton(
-              label: playLabel,
-              expanded: true,
-              size: TTButtonSize.large,
-              onPressed: onPlay,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-          ],
-        ),
+              const SizedBox(height: AppSpacing.sm),
+              GlossyPlayButton(label: playLabel, onPressed: onPlay),
+              const SizedBox(height: AppSpacing.sm),
+            ],
+          ),
         ),
       ),
     );
