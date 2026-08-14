@@ -35,15 +35,15 @@ abstract final class BunnyHopLogic {
     return picked..sort();
   }
 
-  static double bankAX(Size area) => area.width * 0.08;
-  static double bankBX(Size area) => area.width * 0.92;
-  static double riverY(Size area) => area.height * 0.57;
-  static double bankY(Size area) => area.height * 0.40;
+  static double bankAX(Size area) => area.width * 0.10;
+  static double bankBX(Size area) => area.width * 0.90;
+  static double riverY(Size area) => area.height * 0.50;
+  static double bankY(Size area) => area.height * 0.34;
 
   static List<LilyPadEntity> buildLilyPads(Size area, int count, Set<int> cracked) {
     final pads = <LilyPadEntity>[];
-    final left = area.width * 0.16;
-    final right = area.width * 0.84;
+    final left = area.width * 0.20;
+    final right = area.width * 0.80;
     final y = riverY(area);
     for (var i = 0; i < count; i++) {
       final t = count == 1 ? 0.5 : i / (count - 1);
@@ -63,8 +63,8 @@ abstract final class BunnyHopLogic {
   static (double x, double y) positionForStep(Size area, int step, int padCount) {
     if (step < 0) return (bankAX(area), bankY(area));
     if (step >= padCount) return (bankBX(area), bankY(area));
-    final left = area.width * 0.16;
-    final right = area.width * 0.84;
+    final left = area.width * 0.20;
+    final right = area.width * 0.80;
     final y = riverY(area);
     final t = padCount == 1 ? 0.5 : step / (padCount - 1);
     return (left + (right - left) * t, y);
@@ -72,7 +72,7 @@ abstract final class BunnyHopLogic {
 
   static CarrotEntity buildCarrot(Size area, CarrotSide side) {
     final x = side == CarrotSide.sideB ? bankBX(area) : bankAX(area);
-    return CarrotEntity(x: x, y: bankY(area) - 20, side: side);
+    return CarrotEntity(x: x, y: bankY(area) - 8, side: side);
   }
 
   static int nextStep(int current, TravelDirection dir) =>

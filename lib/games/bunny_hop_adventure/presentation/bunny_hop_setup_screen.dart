@@ -5,7 +5,6 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/models/bunny_hop_models.dart';
-import 'package:my_tiny_thinker/games/bunny_hop_adventure/presentation/widgets/river_background.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 
 class BunnyHopSetupScreen extends ConsumerWidget {
@@ -13,14 +12,13 @@ class BunnyHopSetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return RiverBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🐰🥕',
           emojiSize: 72,
           title: 'Bunny Hop Adventure',
-          subtitle: 'Tap to help the bunny hop across the river!',
+          subtitle: 'Tap to help the bunny hop across the pond!',
           skills: kBunnyHopSkills,
           skillChipColor: const Color(0xFFA5D6A7).withValues(alpha: 0.4),
           titleColor: AppColors.white,
@@ -28,7 +26,6 @@ class BunnyHopSetupScreen extends ConsumerWidget {
           titleShadows: const [Shadow(color: Color(0xFF43A047), blurRadius: 6)],
           onPlay: () => pushGameGuarded(context, ref, GameId.bunnyHopAdventure, AppRoutes.bunnyHopGame),
         ),
-      ),
-    );
+      );
   }
 }
