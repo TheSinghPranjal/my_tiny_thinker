@@ -6,16 +6,13 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/feed_the_frog_adventure/models/feed_frog_models.dart';
-import 'package:my_tiny_thinker/games/feed_the_frog_adventure/presentation/widgets/feed_pond_background.dart';
 
 class FeedFrogSetupScreen extends ConsumerWidget {
   const FeedFrogSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return FeedPondBackground(
-      nightFactor: 0,
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🐸🪰',
@@ -31,7 +28,6 @@ class FeedFrogSetupScreen extends ConsumerWidget {
           ],
           onPlay: () => pushGameGuarded(context, ref, GameId.feedTheFrogAdventure, AppRoutes.feedTheFrogGame),
         ),
-      ),
-    );
+      );
   }
 }
