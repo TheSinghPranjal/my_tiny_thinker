@@ -6,16 +6,13 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/color_balloon_pop/models/color_balloon_pop_models.dart';
-import 'package:my_tiny_thinker/games/shared/balloon/balloon_festival_background.dart';
 
 class ColorBalloonPopSetupScreen extends ConsumerWidget {
   const ColorBalloonPopSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return BalloonFestivalBackground(
-      showKites: true,
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🎨',
@@ -31,7 +28,6 @@ class ColorBalloonPopSetupScreen extends ConsumerWidget {
           playLabel: 'Find Colors!',
           onPlay: () => pushGameGuarded(context, ref, GameId.colorBalloonPop, AppRoutes.colorBalloonPopGame),
         ),
-      ),
-    );
+      );
   }
 }
