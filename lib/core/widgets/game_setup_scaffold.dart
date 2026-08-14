@@ -5,6 +5,7 @@ import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
+import 'package:my_tiny_thinker/core/widgets/setup_meadow_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 
 /// Overflow-safe intro layout used by game setup / skills screens.
@@ -24,7 +25,7 @@ class GameSetupScaffold extends StatelessWidget {
     this.subtitleColor,
     this.titleShadows,
     this.playLabel = 'Play',
-    this.showMascot = true,
+    this.showMascot = false,
     this.emojiSize = 64,
     this.backButtonBackground,
   });
@@ -48,15 +49,16 @@ class GameSetupScaffold extends StatelessWidget {
     final chipColor =
         skillChipColor ?? AppColors.softPurple.withValues(alpha: 0.35);
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          AppSpacing.md,
-          AppSpacing.lg,
-          AppSpacing.md,
-        ),
-        child: Column(
+    return SetupMeadowBackground(
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.md,
+            AppSpacing.lg,
+            AppSpacing.md,
+          ),
+          child: Column(
           children: [
             Align(
               alignment: Alignment.centerLeft,
@@ -176,6 +178,7 @@ class GameSetupScaffold extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
           ],
+        ),
         ),
       ),
     );
