@@ -66,6 +66,16 @@ void navigateToGame(BuildContext context, GameId gameId) {
       context.push(AppRoutes.candyColorHuntSetup);
     case GameId.colorSchoolBags:
       context.push(AppRoutes.colorSchoolBagsSetup);
+    case GameId.learnToSortFood:
+      context.push(AppRoutes.learnToSortFoodSetup);
+    case GameId.cleanDirtyClothesSort:
+      context.push(AppRoutes.cleanDirtyClothesSortSetup);
+    case GameId.whackAMole:
+      context.push(AppRoutes.whackAMoleSetup);
+    case GameId.catchTheFallingStars:
+      context.push(AppRoutes.catchTheFallingStarsSetup);
+    case GameId.butterflyWebMatching:
+      context.push(AppRoutes.butterflyWebMatchingSetup);
     case GameId.alphabetAdventureQuiz:
       context.push(AppRoutes.alphabetQuizSetup);
     case GameId.animalSounds:
