@@ -4,8 +4,7 @@ import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
+import 'package:my_tiny_thinker/core/widgets/setup_meadow_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -13,15 +12,13 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSkyBackground(
+    return SetupMeadowBackground(
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
           child: Column(
             children: [
               const Spacer(flex: 2),
-              const MascotWidget(size: 140, waving: true),
-              const SizedBox(height: AppSpacing.xl),
               Text(
                 'Welcome to TinyThink!',
                 textAlign: TextAlign.center,

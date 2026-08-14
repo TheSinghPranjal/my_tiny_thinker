@@ -2,10 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
-import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/whack_a_mole/models/whack_a_mole_models.dart';
 
 class WhackProgressMeter extends StatelessWidget {
@@ -56,8 +53,8 @@ class CheerAnimalWidget extends StatelessWidget {
     final opacity = cheer.progress < 0.15
         ? cheer.progress / 0.15
         : cheer.progress > 0.85
-            ? (1 - cheer.progress) / 0.15
-            : 1.0;
+        ? (1 - cheer.progress) / 0.15
+        : 1.0;
 
     return Opacity(
       opacity: opacity.clamp(0.0, 1.0),
@@ -90,93 +87,36 @@ class WhackVictoryOverlay extends StatelessWidget {
         ? '${(result.fastestReactionMs / 1000).toStringAsFixed(2)}s'
         : '—';
 
-    return Container(
-      color: const Color(0xFF2E7D32).withValues(alpha: 0.88),
-      child: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🎈🐹🌈✨', style: TextStyle(fontSize: 48)),
-                const MascotWidget(size: 96, waving: true),
-                Text(
-                  result.encouragement,
-                  textAlign: TextAlign.center,
-                  style: context.textTheme.headlineMedium?.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Container(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                    border: Border.all(color: Colors.white24),
-                  ),
-                  child: Column(
-                    children: [
-                      _Row('🐹 Moles Tapped', '${result.molesTapped}'),
-                      _Row('🪙 Coins Earned', '+${result.coins}'),
-                      _Row('⭐ Stars Collected', '+${result.stars}'),
-                      _Row('✨ Experience Points', '+${result.xp}'),
-                      _Row('🏅 Reward Points', '+${result.rewardPoints}'),
-                      _Row('🔥 Highest Tap Streak', '${result.longestStreak}'),
-                      _Row('⚡ Fastest Reaction', reaction),
-                      _Row('🎯 Accuracy', '$accuracyPct%'),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xl),
-                TTButton(
-                  label: 'Play Again!',
-                  expanded: true,
-                  size: TTButtonSize.large,
-                  onPressed: onPlayAgain,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                TTButton(
-                  label: 'Home',
-                  variant: TTButtonVariant.ghost,
-                  expanded: true,
-                  onPressed: onHome,
-                ),
-              ],
-            ),
-          ),
+    return GameCelebrationOverlay(
+      title: 'Whack-a-Mole Celebration!',
+      stats: [
+        CelebrationStat(
+          icon: '🐹',
+          label: 'Moles Tapped',
+          value: '${result.molesTapped}',
         ),
-      ),
-    );
-  }
-}
-
-class _Row extends StatelessWidget {
-  const _Row(this.label, this.value);
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Text(
-              label,
-              style: context.textTheme.titleMedium?.copyWith(color: AppColors.white),
-            ),
-          ),
-          Text(
-            value,
-            style: context.textTheme.titleLarge?.copyWith(color: AppColors.sunYellow),
-          ),
-        ],
-      ),
+        CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
+        CelebrationStat(
+          icon: '🌟',
+          label: 'Happy Stars',
+          value: '+${result.stars}',
+        ),
+        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+        CelebrationStat(
+          icon: '🏅',
+          label: 'Reward Points',
+          value: '+${result.rewardPoints}',
+        ),
+        CelebrationStat(
+          icon: '🔥',
+          label: 'Highest Tap Streak',
+          value: '${result.longestStreak}',
+        ),
+        CelebrationStat(icon: '⚡', label: 'Fastest Reaction', value: reaction),
+        CelebrationStat(icon: '🎯', label: 'Accuracy', value: '$accuracyPct%'),
+      ],
+      onPlayAgain: onPlayAgain,
+      onHome: onHome,
     );
   }
 }
