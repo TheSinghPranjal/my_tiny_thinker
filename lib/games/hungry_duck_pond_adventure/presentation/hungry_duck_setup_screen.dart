@@ -5,7 +5,6 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/models/hungry_duck_models.dart';
-import 'package:my_tiny_thinker/games/hungry_duck_pond_adventure/presentation/widgets/duck_pond_background.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 
 class HungryDuckSetupScreen extends ConsumerWidget {
@@ -13,8 +12,7 @@ class HungryDuckSetupScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DuckPondBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🦆🐟',
@@ -28,7 +26,6 @@ class HungryDuckSetupScreen extends ConsumerWidget {
           titleShadows: const [Shadow(color: Color(0xFF0277BD), blurRadius: 6)],
           onPlay: () => pushGameGuarded(context, ref, GameId.hungryDuckPondAdventure, AppRoutes.hungryDuckGame),
         ),
-      ),
-    );
+      );
   }
 }
