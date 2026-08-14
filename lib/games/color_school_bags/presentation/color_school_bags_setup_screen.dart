@@ -5,15 +5,13 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/models/color_school_bags_models.dart';
-import 'package:my_tiny_thinker/games/color_school_bags/presentation/widgets/playground_background.dart';
 
 class ColorSchoolBagsSetupScreen extends ConsumerWidget {
   const ColorSchoolBagsSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PlaygroundBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🎒📚🌈',
@@ -29,7 +27,6 @@ class ColorSchoolBagsSetupScreen extends ConsumerWidget {
                     ],
           onPlay: () => pushGameGuarded(context, ref, GameId.colorSchoolBags, AppRoutes.colorSchoolBagsGame),
         ),
-      ),
-    );
+      );
   }
 }
