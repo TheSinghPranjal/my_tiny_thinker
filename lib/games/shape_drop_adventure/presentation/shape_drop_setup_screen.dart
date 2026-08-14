@@ -6,15 +6,13 @@ import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/shape_drop_adventure/models/shape_drop_models.dart';
-import 'package:my_tiny_thinker/games/shape_drop_adventure/presentation/widgets/classroom_background.dart';
 
 class ShapeDropSetupScreen extends ConsumerWidget {
   const ShapeDropSetupScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ClassroomBackground(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.transparent,
         body: GameSetupScaffold(
           emoji: '🔷⭐🌈',
@@ -30,7 +28,6 @@ class ShapeDropSetupScreen extends ConsumerWidget {
                     ],
           onPlay: () => pushGameGuarded(context, ref, GameId.shapeDropAdventure, AppRoutes.shapeDropGame),
         ),
-      ),
-    );
+      );
   }
 }

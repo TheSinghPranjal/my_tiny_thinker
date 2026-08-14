@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
-import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
+import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/games/ascending_descending/models/bubble_game_models.dart';
 
 class VictoryDialog extends StatelessWidget {
@@ -15,17 +10,20 @@ class VictoryDialog extends StatelessWidget {
     required this.result,
     required this.onPlayAgain,
     required this.onHome,
+    this.title = 'Bubble Number Pop Celebration!',
   });
 
   final BubbleGameResult result;
   final VoidCallback onPlayAgain;
   final VoidCallback onHome;
+  final String title;
 
   static Future<void> show(
     BuildContext context, {
     required BubbleGameResult result,
     required VoidCallback onPlayAgain,
     required VoidCallback onHome,
+    String title = 'Bubble Number Pop Celebration!',
   }) {
     return showDialog(
       context: context,
@@ -34,6 +32,7 @@ class VictoryDialog extends StatelessWidget {
         result: result,
         onPlayAgain: onPlayAgain,
         onHome: onHome,
+        title: title,
       ),
     );
   }
@@ -42,86 +41,57 @@ class VictoryDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          const IgnorePointer(child: ConfettiWidget()),
-          TTCard(
-            gradient: AppGradients.welcomeCard,
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const MascotWidget(size: 80, waving: true),
-                Text(
-                  result.isVictory
-                      ? (result.isPerfect ? 'Perfect!' : 'Time\'s Up!')
-                      : 'Time\'s Up!',
-                  style: context.textTheme.displaySmall,
-                ),
-                if (result.isNewBest)
-                  Text(
-                    '🏆 New Best Score!',
-                    style: context.textTheme.titleMedium?.copyWith(
-                      color: AppColors.orange,
-                    ),
-                  ),
-                const SizedBox(height: AppSpacing.lg),
-                _ResultRow('Score', '🏆 ${result.score}'),
-                _ResultRow('Stars', '⭐ ${result.stars}'),
-                _ResultRow('Coins', '🪙 +${result.coins}'),
-                _ResultRow('XP', '+${result.xp}'),
-                _ResultRow(
-                  'Accuracy',
-                  '🎯 ${(result.accuracy * 100).round()}%',
-                ),
-                _ResultRow('Time Left', '⏱ ${_formatTime(result.remainingSeconds)}'),
-                _ResultRow('Best Combo', '🔥 ${result.longestCombo}'),
-                _ResultRow('Mistakes', '${result.mistakes}'),
-                const SizedBox(height: AppSpacing.xl),
-                TTButton(
-                  label: 'Play Again',
-                  expanded: true,
-                  onPressed: () {
-                    Navigator.pop(context);
-                    onPlayAgain();
-                  },
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                TTButton(
-                  label: 'Home',
-                  variant: TTButtonVariant.ghost,
-                  expanded: true,
-                  onPressed: () {
-                    Navigator.pop(context);
-                    onHome();
-                  },
-                ),
-              ],
+      insetPadding: const EdgeInsets.symmetric(horizontal: 22, vertical: 24),
+      child: SingleChildScrollView(
+        child: GameCelebrationCard(
+          title: title,
+          stats: [
+            CelebrationStat(
+              icon: '🏆',
+              label: 'Score',
+              value: '${result.score}',
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ResultRow extends StatelessWidget {
-  const _ResultRow(this.label, this.value);
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: context.textTheme.bodyMedium),
-          Text(value, style: context.textTheme.titleMedium),
-        ],
+            CelebrationStat(
+              icon: '🌟',
+              label: 'Happy Stars',
+              value: '+${result.stars}',
+            ),
+            CelebrationStat(
+              icon: '🪙',
+              label: 'Coins',
+              value: '+${result.coins}',
+            ),
+            CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
+            CelebrationStat(
+              icon: '🎯',
+              label: 'Accuracy',
+              value: '${(result.accuracy * 100).round()}%',
+            ),
+            CelebrationStat(
+              icon: '⏱',
+              label: 'Time Left',
+              value: _formatTime(result.remainingSeconds),
+            ),
+            CelebrationStat(
+              icon: '🔥',
+              label: 'Best Combo',
+              value: '${result.longestCombo}',
+            ),
+            CelebrationStat(
+              icon: '❌',
+              label: 'Mistakes',
+              value: '${result.mistakes}',
+            ),
+          ],
+          onPlayAgain: () {
+            Navigator.pop(context);
+            onPlayAgain();
+          },
+          onHome: () {
+            Navigator.pop(context);
+            onHome();
+          },
+        ),
       ),
     );
   }
@@ -152,7 +122,9 @@ class BubbleGameSetupSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppSpacing.radiusXl)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppSpacing.radiusXl),
+        ),
       ),
       builder: (context) => BubbleGameSetupSheet(
         config: config,
@@ -182,32 +154,30 @@ class BubbleGameSetupSheet extends StatelessWidget {
               value: config.minValue.toDouble(),
               min: -99999,
               max: 99999,
-              onChanged: (v) => onConfigChanged(
-                config.copyWith(minValue: v.round()),
-              ),
+              onChanged: (v) =>
+                  onConfigChanged(config.copyWith(minValue: v.round())),
             ),
             _RangeSlider(
               label: 'Max Value',
               value: config.maxValue.toDouble(),
               min: -99999,
               max: 99999,
-              onChanged: (v) => onConfigChanged(
-                config.copyWith(maxValue: v.round()),
-              ),
+              onChanged: (v) =>
+                  onConfigChanged(config.copyWith(maxValue: v.round())),
             ),
             _RangeSlider(
               label: 'Bubble Speed',
               value: config.bubbleSpeed,
               min: 0.3,
               max: 2.5,
-              onChanged: (v) => onConfigChanged(
-                config.copyWith(bubbleSpeed: v),
-              ),
+              onChanged: (v) =>
+                  onConfigChanged(config.copyWith(bubbleSpeed: v)),
             ),
             SwitchListTile(
               title: const Text('Hints'),
               value: config.hintsEnabled,
-              onChanged: (v) => onConfigChanged(config.copyWith(hintsEnabled: v)),
+              onChanged: (v) =>
+                  onConfigChanged(config.copyWith(hintsEnabled: v)),
             ),
           ],
         ),
@@ -237,7 +207,12 @@ class _RangeSlider extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('$label: ${value.round()}', style: context.textTheme.titleSmall),
-        Slider(value: value.clamp(min, max), min: min, max: max, onChanged: onChanged),
+        Slider(
+          value: value.clamp(min, max),
+          min: min,
+          max: max,
+          onChanged: onChanged,
+        ),
       ],
     );
   }
