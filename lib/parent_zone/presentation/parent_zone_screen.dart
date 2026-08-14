@@ -59,6 +59,14 @@ import 'package:my_tiny_thinker/games/candy_color_hunt/models/candy_color_hunt_m
 import 'package:my_tiny_thinker/games/candy_color_hunt/repository/candy_color_hunt_settings_repository.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/models/color_school_bags_models.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/repository/color_school_bags_settings_repository.dart';
+import 'package:my_tiny_thinker/games/learn_to_sort_food/models/learn_to_sort_food_models.dart';
+import 'package:my_tiny_thinker/games/learn_to_sort_food/repository/learn_to_sort_food_settings_repository.dart';
+import 'package:my_tiny_thinker/games/clean_dirty_clothes_sort/repository/clean_dirty_clothes_sort_settings_repository.dart';
+import 'package:my_tiny_thinker/games/whack_a_mole/models/whack_a_mole_models.dart';
+import 'package:my_tiny_thinker/games/whack_a_mole/repository/whack_a_mole_settings_repository.dart';
+import 'package:my_tiny_thinker/games/catch_the_falling_stars/models/catch_the_falling_stars_models.dart';
+import 'package:my_tiny_thinker/games/catch_the_falling_stars/repository/catch_the_falling_stars_settings_repository.dart';
+import 'package:my_tiny_thinker/games/butterfly_web_matching/repository/butterfly_web_matching_settings_repository.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/models/frog_pond_models.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/repository/frog_pond_settings_repository.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/models/alphabet_bridge_models.dart';
@@ -428,6 +436,31 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ParentGameSettingsCard(
               gameId: GameId.colorSchoolBags,
               child: _ColorSchoolBagsParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.learnToSortFood,
+              child: _LearnToSortFoodParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.cleanDirtyClothesSort,
+              child: _CleanDirtyClothesSortParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.whackAMole,
+              child: _WhackAMoleParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.catchTheFallingStars,
+              child: _CatchTheFallingStarsParentControls(),
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            ParentGameSettingsCard(
+              gameId: GameId.butterflyWebMatching,
+              child: _ButterflyWebMatchingParentControls(),
             ),
             const SizedBox(height: AppSpacing.lg),
             ParentGameSettingsCard(
@@ -2154,6 +2187,647 @@ class _ColorSchoolBagsParentControls extends ConsumerWidget {
               },
             );
           }).toList(),
+        ),
+      ],
+    );
+  }
+}
+
+class _WhackAMoleParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(whackAMoleSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ParentSwitch(
+          title: 'Practice Mode (no timer)',
+          value: s.practiceMode,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(practiceMode: v),
+              ),
+        ),
+        Text('Mole holes: ${s.holeCount}'),
+        Slider(
+          value: s.holeCount.toDouble(),
+          min: 4,
+          max: 8,
+          divisions: 4,
+          label: '${s.holeCount}',
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(holeCount: v.round()),
+              ),
+        ),
+        Text('Mole appearance speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: MoleAppearSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.appearSpeed == speed,
+              onSelected: (_) =>
+                  ref.read(whackAMoleSettingsProvider.notifier).applyAppearSpeed(speed),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Mole visibility duration', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: MoleVisibility.values.map((vis) {
+            return ChoiceChip(
+              label: Text(vis.name),
+              selected: s.visibility == vis,
+              onSelected: (_) =>
+                  ref.read(whackAMoleSettingsProvider.notifier).applyVisibility(vis),
+            );
+          }).toList(),
+        ),
+        Text(
+          'Delay between moles: ${s.delayMin.toStringAsFixed(1)}–${s.delayMax.toStringAsFixed(1)}s',
+        ),
+        RangeSlider(
+          values: RangeValues(
+            s.delayMin.clamp(0.3, 5.0),
+            s.delayMax.clamp(s.delayMin.clamp(0.3, 5.0), 5.0),
+          ),
+          min: 0.3,
+          max: 5,
+          divisions: 19,
+          labels: RangeLabels(
+            s.delayMin.toStringAsFixed(1),
+            s.delayMax.toStringAsFixed(1),
+          ),
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(delayMin: v.start, delayMax: v.end),
+              ),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              ref.read(whackAMoleSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rewardMultiplier: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(musicEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(soundEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Voice encouragement',
+          value: s.narrationEnabled,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(narrationEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reward celebrations',
+          value: s.celebrationsEnabled,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(celebrationsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Coin rewards',
+          value: s.coinRewardsEnabled,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(coinRewardsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(hapticsEnabled: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Left-handed layout',
+          value: s.leftHandedLayout,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(leftHandedLayout: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(largerTouchTargets: v),
+              ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) => ref.read(whackAMoleSettingsProvider.notifier).patch(
+                (x) => x.copyWith(reducedMotion: v),
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CatchTheFallingStarsParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(catchTheFallingStarsSettingsProvider);
+    final notifier = ref.read(catchTheFallingStarsSettingsProvider.notifier);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ParentSwitch(
+          title: 'Practice Mode (unlimited play)',
+          value: s.practiceMode,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(practiceMode: v)),
+        ),
+        Text('Visible stars: ${s.starCount}'),
+        Slider(
+          value: s.starCount.toDouble(),
+          min: 3,
+          max: 8,
+          divisions: 5,
+          label: '${s.starCount}',
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(starCount: v.round())),
+        ),
+        Text('Falling speed', style: context.textTheme.titleSmall),
+        Wrap(
+          spacing: AppSpacing.sm,
+          children: StarFallSpeed.values.map((speed) {
+            return ChoiceChip(
+              label: Text(speed.name),
+              selected: s.fallSpeed == speed,
+              onSelected: (_) => notifier.applyFallSpeed(speed),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Stationary before falling: ${s.stationarySeconds.toStringAsFixed(0)}s',
+        ),
+        Slider(
+          value: s.stationarySeconds,
+          min: 2,
+          max: 6,
+          divisions: 4,
+          label: '${s.stationarySeconds.toStringAsFixed(0)}s',
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(stationarySeconds: v)),
+        ),
+        Text(
+          'Replacement delay: ${s.replacementDelaySeconds.toStringAsFixed(1)}s',
+        ),
+        Slider(
+          value: s.replacementDelaySeconds,
+          min: 0.3,
+          max: 3,
+          divisions: 27,
+          label: '${s.replacementDelaySeconds.toStringAsFixed(1)}s',
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(replacementDelaySeconds: v)),
+        ),
+        _ParentSlider(
+          label: 'Twinkle intensity',
+          value: s.twinkleIntensity,
+          min: 0.2,
+          max: 1.0,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(twinkleIntensity: v)),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(rewardMultiplier: v)),
+        ),
+        _ParentSwitch(
+          title: 'Constellation animation',
+          value: s.constellationEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(constellationEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(musicEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(soundEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Voice encouragement',
+          value: s.narrationEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(narrationEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Reward celebrations',
+          value: s.celebrationsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(celebrationsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Coin rewards',
+          value: s.coinRewardsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(coinRewardsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(hapticsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Left-handed layout',
+          value: s.leftHandedLayout,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(leftHandedLayout: v)),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(largerTouchTargets: v)),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(reducedMotion: v)),
+        ),
+      ],
+    );
+  }
+}
+
+class _ButterflyWebMatchingParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(butterflyWebMatchingSettingsProvider);
+    final notifier = ref.read(butterflyWebMatchingSettingsProvider.notifier);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ParentSwitch(
+          title: 'Practice Mode (unlimited play)',
+          value: s.practiceMode,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(practiceMode: v)),
+        ),
+        Text('Butterfly pairs: ${s.pairCount} (${s.pairCount * 2} butterflies)'),
+        Slider(
+          value: s.pairCount.toDouble(),
+          min: 3,
+          max: 5,
+          divisions: 2,
+          label: '${s.pairCount}',
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(pairCount: v.round())),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(rewardMultiplier: v)),
+        ),
+        _ParentSwitch(
+          title: 'Butterfly floating animation',
+          value: s.floatingAnimation,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(floatingAnimation: v)),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(musicEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(soundEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Voice encouragement',
+          value: s.narrationEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(narrationEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Reward celebrations',
+          value: s.celebrationsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(celebrationsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Coin rewards',
+          value: s.coinRewardsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(coinRewardsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(hapticsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Left-handed layout',
+          value: s.leftHandedLayout,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(leftHandedLayout: v)),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(largerTouchTargets: v)),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(reducedMotion: v)),
+        ),
+      ],
+    );
+  }
+}
+
+class _LearnToSortFoodParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(learnToSortFoodSettingsProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Maximum difficulty', style: context.textTheme.titleSmall),
+        const SizedBox(height: AppSpacing.xs),
+        SegmentedButton<FoodSortDifficulty>(
+          segments: const [
+            ButtonSegment(
+              value: FoodSortDifficulty.beginner,
+              label: Text('Beginner'),
+            ),
+            ButtonSegment(
+              value: FoodSortDifficulty.easy,
+              label: Text('Easy'),
+            ),
+            ButtonSegment(
+              value: FoodSortDifficulty.medium,
+              label: Text('Medium'),
+            ),
+            ButtonSegment(
+              value: FoodSortDifficulty.advanced,
+              label: Text('Advanced'),
+            ),
+          ],
+          selected: {s.maxDifficulty},
+          onSelectionChanged: (v) => ref
+              .read(learnToSortFoodSettingsProvider.notifier)
+              .patch((x) => x.copyWith(maxDifficulty: v.first)),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              ref.read(learnToSortFoodSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(rewardMultiplier: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) =>
+              ref.read(learnToSortFoodSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(soundEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Show food names',
+          value: s.narrationEnabled,
+          onChanged: (v) =>
+              ref.read(learnToSortFoodSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(narrationEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) =>
+              ref.read(learnToSortFoodSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(musicEnabled: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) =>
+              ref.read(learnToSortFoodSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(largerTouchTargets: v),
+                  ),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              ref.read(learnToSortFoodSettingsProvider.notifier).patch(
+                    (x) => x.copyWith(reducedMotion: v),
+                  ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Healthy foods', style: context.textTheme.titleSmall),
+        Text(
+          'Keep at least 4 healthy foods selected',
+          style: context.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: FoodCatalog.healthyKinds().map((kind) {
+            final def = FoodCatalog.def(kind);
+            final selected = s.enabledHealthy.contains(kind);
+            return FilterChip(
+              avatar: Text(def.emoji, style: const TextStyle(fontSize: 14)),
+              label: Text(def.name),
+              selected: selected,
+              onSelected: (_) async {
+                final ok = await ref
+                    .read(learnToSortFoodSettingsProvider.notifier)
+                    .toggleHealthy(kind);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Please keep at least 4 healthy foods selected.',
+                      ),
+                    ),
+                  );
+                }
+              },
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text('Junk foods', style: context.textTheme.titleSmall),
+        Text(
+          'Keep at least 4 junk foods selected',
+          style: context.textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: FoodCatalog.junkKinds().map((kind) {
+            final def = FoodCatalog.def(kind);
+            final selected = s.enabledJunk.contains(kind);
+            return FilterChip(
+              avatar: Text(def.emoji, style: const TextStyle(fontSize: 14)),
+              label: Text(def.name),
+              selected: selected,
+              onSelected: (_) async {
+                final ok = await ref
+                    .read(learnToSortFoodSettingsProvider.notifier)
+                    .toggleJunk(kind);
+                if (!ok && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Please keep at least 4 junk foods selected.',
+                      ),
+                    ),
+                  );
+                }
+              },
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+}
+
+class _CleanDirtyClothesSortParentControls extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(cleanDirtyClothesSortSettingsProvider);
+    final notifier = ref.read(cleanDirtyClothesSortSettingsProvider.notifier);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _ParentSwitch(
+          title: 'Practice Mode (no timer)',
+          value: s.practiceMode,
+          onChanged: (v) => notifier.patch((x) => x.copyWith(practiceMode: v)),
+        ),
+        Text('Visible clothing items: ${s.visibleItemCount}'),
+        Slider(
+          value: s.visibleItemCount.toDouble(),
+          min: 3,
+          max: 8,
+          divisions: 5,
+          label: '${s.visibleItemCount}',
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(visibleItemCount: v.round())),
+        ),
+        _ParentSlider(
+          label: 'Reward multiplier',
+          value: s.rewardMultiplier,
+          min: 0.5,
+          max: 2.0,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(rewardMultiplier: v)),
+        ),
+        _ParentSwitch(
+          title: 'Sound effects',
+          value: s.soundEnabled,
+          onChanged: (v) => notifier.patch((x) => x.copyWith(soundEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Voice encouragement',
+          value: s.narrationEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(narrationEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Background music',
+          value: s.musicEnabled,
+          onChanged: (v) => notifier.patch((x) => x.copyWith(musicEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Reward celebrations',
+          value: s.celebrationsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(celebrationsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Coin rewards',
+          value: s.coinRewardsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(coinRewardsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Clothing floating animation',
+          value: s.floatingAnimation,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(floatingAnimation: v)),
+        ),
+        _ParentSwitch(
+          title: 'Bubble effects',
+          value: s.bubbleEffects,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(bubbleEffects: v)),
+        ),
+        _ParentSwitch(
+          title: 'Left-handed layout',
+          value: s.leftHandedLayout,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(leftHandedLayout: v)),
+        ),
+        _ParentSwitch(
+          title: 'Haptic feedback',
+          value: s.hapticsEnabled,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(hapticsEnabled: v)),
+        ),
+        _ParentSwitch(
+          title: 'Larger touch targets',
+          value: s.largerTouchTargets,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(largerTouchTargets: v)),
+        ),
+        _ParentSwitch(
+          title: 'Reduced motion',
+          value: s.reducedMotion,
+          onChanged: (v) =>
+              notifier.patch((x) => x.copyWith(reducedMotion: v)),
         ),
       ],
     );

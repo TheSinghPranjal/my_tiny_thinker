@@ -19,6 +19,11 @@ import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/repository/butt
 import 'package:my_tiny_thinker/games/catch_the_fish/repository/catch_the_fish_settings_repository.dart';
 import 'package:my_tiny_thinker/games/cloud_pop_garden/repository/cloud_pop_garden_settings_repository.dart';
 import 'package:my_tiny_thinker/games/color_school_bags/repository/color_school_bags_settings_repository.dart';
+import 'package:my_tiny_thinker/games/learn_to_sort_food/repository/learn_to_sort_food_settings_repository.dart';
+import 'package:my_tiny_thinker/games/clean_dirty_clothes_sort/repository/clean_dirty_clothes_sort_settings_repository.dart';
+import 'package:my_tiny_thinker/games/whack_a_mole/repository/whack_a_mole_settings_repository.dart';
+import 'package:my_tiny_thinker/games/catch_the_falling_stars/repository/catch_the_falling_stars_settings_repository.dart';
+import 'package:my_tiny_thinker/games/butterfly_web_matching/repository/butterfly_web_matching_settings_repository.dart';
 import 'package:my_tiny_thinker/games/color_shape_bridge_adventure/repository/color_shape_bridge_settings_repository.dart';
 import 'package:my_tiny_thinker/games/feed_the_frog_adventure/repository/feed_frog_settings_repository.dart';
 import 'package:my_tiny_thinker/games/frog_pond_adventure/repository/frog_pond_settings_repository.dart';
@@ -78,6 +83,16 @@ class ParentGameSettingsCard extends ConsumerWidget {
         ref.watch(flowerGardenSettingsProvider).sessionSeconds,
       GameId.colorSchoolBags =>
         ref.watch(colorSchoolBagsSettingsProvider).sessionSeconds,
+      GameId.learnToSortFood =>
+        ref.watch(learnToSortFoodSettingsProvider).sessionSeconds,
+      GameId.cleanDirtyClothesSort =>
+        ref.watch(cleanDirtyClothesSortSettingsProvider).sessionSeconds,
+      GameId.whackAMole =>
+        ref.watch(whackAMoleSettingsProvider).sessionSeconds,
+      GameId.catchTheFallingStars =>
+        ref.watch(catchTheFallingStarsSettingsProvider).sessionSeconds,
+      GameId.butterflyWebMatching =>
+        ref.watch(butterflyWebMatchingSettingsProvider).sessionSeconds,
       GameId.alphabetBridgeAdventure =>
         ref.watch(alphabetBridgeSettingsProvider).sessionSeconds,
       GameId.numberBridgeAdventure =>
@@ -163,6 +178,21 @@ class ParentGameSettingsCard extends ConsumerWidget {
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.colorSchoolBags:
         ref.read(colorSchoolBagsSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.learnToSortFood:
+        ref.read(learnToSortFoodSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.cleanDirtyClothesSort:
+        ref.read(cleanDirtyClothesSortSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.whackAMole:
+        ref.read(whackAMoleSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.catchTheFallingStars:
+        ref.read(catchTheFallingStarsSettingsProvider.notifier)
+            .patch((x) => x.copyWith(sessionSeconds: snapped));
+      case GameId.butterflyWebMatching:
+        ref.read(butterflyWebMatchingSettingsProvider.notifier)
             .patch((x) => x.copyWith(sessionSeconds: snapped));
       case GameId.alphabetBridgeAdventure:
         ref.read(alphabetBridgeSettingsProvider.notifier)
