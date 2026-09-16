@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
 
 class CelebrationStat {
   const CelebrationStat({
@@ -155,27 +156,37 @@ class GameCelebrationOverlay extends StatelessWidget {
       barrierDismissible: false,
       barrierLabel: 'celebration',
       barrierColor: Colors.black.withValues(alpha: 0.28),
+      transitionDuration: const Duration(milliseconds: 550),
       pageBuilder: (context, animation, secondaryAnimation) {
         return SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(22, 28, 22, 22),
-              child: GameCelebrationCard(
-                title: title,
-                stats: stats,
-                playAgainLabel: playAgainLabel,
-                homeLabel: homeLabel,
-                showHomeButton: showHomeButton,
-                onPlayAgain: () {
-                  Navigator.of(context).pop();
-                  onPlayAgain();
-                },
-                onHome: () {
-                  Navigator.of(context).pop();
-                  onHome();
-                },
+          child: Stack(
+            children: [
+              const Positioned.fill(
+                child: IgnorePointer(child: ConfettiWidget()),
               ),
-            ),
+              Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(22, 28, 22, 22),
+                  child: _CelebrationPopIn(
+                    child: GameCelebrationCard(
+                      title: title,
+                      stats: stats,
+                      playAgainLabel: playAgainLabel,
+                      homeLabel: homeLabel,
+                      showHomeButton: showHomeButton,
+                      onPlayAgain: () {
+                        Navigator.of(context).pop();
+                        onPlayAgain();
+                      },
+                      onHome: () {
+                        Navigator.of(context).pop();
+                        onHome();
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -187,22 +198,55 @@ class GameCelebrationOverlay extends StatelessWidget {
     return SizedBox.expand(
       child: ColoredBox(
         color: Colors.black.withValues(alpha: 0.22),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(22, 36, 22, 22),
-              child: GameCelebrationCard(
-                title: title,
-                stats: stats,
-                playAgainLabel: playAgainLabel,
-                homeLabel: homeLabel,
-                onPlayAgain: onPlayAgain,
-                onHome: onHome,
+        child: Stack(
+          children: [
+            const Positioned.fill(
+              child: IgnorePointer(child: ConfettiWidget()),
+            ),
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(22, 36, 22, 22),
+                  child: _CelebrationPopIn(
+                    child: GameCelebrationCard(
+                      title: title,
+                      stats: stats,
+                      playAgainLabel: playAgainLabel,
+                      homeLabel: homeLabel,
+                      onPlayAgain: onPlayAgain,
+                      onHome: onHome,
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
+    );
+  }
+}
+
+/// Bouncy scale + fade entrance used for the celebration card, so the win
+/// moment feels like a reward popping onto the screen rather than a hard cut.
+class _CelebrationPopIn extends StatelessWidget {
+  const _CelebrationPopIn({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 550),
+      curve: Curves.easeOutBack,
+      builder: (context, t, child) {
+        return Opacity(
+          opacity: t.clamp(0.0, 1.0),
+          child: Transform.scale(scale: t, child: child),
+        );
+      },
+      child: child,
     );
   }
 }
