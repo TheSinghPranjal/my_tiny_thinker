@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_tiny_thinker/core/animations/bounce_animation.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/setup_meadow_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
+import 'package:my_tiny_thinker/core/widgets/tt_option_pill.dart';
 import 'package:my_tiny_thinker/games/color_memory/controllers/color_memory_controller.dart';
 import 'package:my_tiny_thinker/games/color_memory/models/color_memory_models.dart';
 
@@ -120,7 +119,7 @@ class ColorMemorySetupScreen extends ConsumerWidget {
                         runSpacing: AppSpacing.sm,
                         children: [
                           for (final d in ColorMemoryDifficulty.values)
-                            _OptionPill(
+                            TTOptionPill(
                               label: d.name.capitalize,
                               selected: config.difficulty == d,
                               gradient: AppGradients.bubbleBlue,
@@ -141,7 +140,7 @@ class ColorMemorySetupScreen extends ConsumerWidget {
                         runSpacing: AppSpacing.sm,
                         children: [
                           for (final t in ColorMemoryTheme.values)
-                            _OptionPill(
+                            TTOptionPill(
                               label: '${t.tiles.first} ${t.label}',
                               selected: config.theme == t,
                               gradient: AppGradients.bubblePink,
@@ -198,56 +197,6 @@ class _SectionLabel extends StatelessWidget {
         fontSize: 16,
         fontWeight: FontWeight.w800,
         color: ColorMemorySetupScreen._navy,
-      ),
-    );
-  }
-}
-
-class _OptionPill extends StatelessWidget {
-  const _OptionPill({
-    required this.label,
-    required this.selected,
-    required this.gradient,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final Gradient gradient;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return BounceTapWrapper(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          gradient: selected ? gradient : null,
-          color: selected ? null : Colors.white,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusRound),
-          border: Border.all(
-            color: selected ? Colors.white : AppColors.skyBlue.withValues(alpha: 0.35),
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: (selected ? AppColors.skyBlueDark : Colors.black)
-                  .withValues(alpha: selected ? 0.28 : 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.nunito(
-            fontSize: 14,
-            fontWeight: FontWeight.w800,
-            color: selected ? Colors.white : ColorMemorySetupScreen._navy,
-          ),
-        ),
       ),
     );
   }

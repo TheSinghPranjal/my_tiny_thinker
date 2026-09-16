@@ -30,27 +30,41 @@ class MemoryHubScreen extends ConsumerWidget {
     return SetupMeadowBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => context.pop(),
-          ),
-          title: const Text('🧠 Memory Games'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.bar_chart_rounded),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                builder: (_) => MemoryStatisticsPanel(stats: stats),
-              ),
-            ),
-          ],
-        ),
         body: SafeArea(
           child: ResponsivePadding(
             child: CustomScrollView(
               slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: AppSpacing.sm,
+                      bottom: AppSpacing.md,
+                    ),
+                    child: Row(
+                      children: [
+                        _CircleIconButton(
+                          icon: Icons.arrow_back_rounded,
+                          onTap: () => context.pop(),
+                        ),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Text(
+                            '🧠 Memory Games',
+                            style: context.textTheme.headlineLarge,
+                          ),
+                        ),
+                        _CircleIconButton(
+                          icon: Icons.bar_chart_rounded,
+                          onTap: () => showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (_) => MemoryStatisticsPanel(stats: stats),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
                 SliverToBoxAdapter(
                   child: TTCard(
                     child: Row(
@@ -169,5 +183,31 @@ class MemoryHubScreen extends ConsumerWidget {
       await ref.read(profileProvider.notifier).addCoins(-type.unlockCost);
       if (context.mounted) _openSetup(context, ref, type);
     }
+  }
+}
+
+class _CircleIconButton extends StatelessWidget {
+  const _CircleIconButton({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      shape: const CircleBorder(),
+      elevation: 3,
+      shadowColor: Colors.black26,
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: Icon(icon, size: 24, color: const Color(0xFF455A64)),
+        ),
+      ),
+    );
   }
 }

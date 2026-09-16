@@ -4,6 +4,7 @@ import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/game_celebration_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
+import 'package:my_tiny_thinker/core/widgets/tt_option_pill.dart';
 import 'package:my_tiny_thinker/games/memory_game/models/memory_models.dart';
 
 class MemoryVictoryDialog extends StatelessWidget {
@@ -148,10 +149,10 @@ class MemorySetupSheet extends StatelessWidget {
               spacing: AppSpacing.sm,
               runSpacing: AppSpacing.sm,
               children: MemoryCardTheme.values.map((t) {
-                return ChoiceChip(
-                  label: Text('${t.emoji} ${t.displayName}'),
+                return TTOptionPill(
+                  label: '${t.emoji} ${t.displayName}',
                   selected: config.cardTheme == t,
-                  onSelected: (_) =>
+                  onTap: () =>
                       onConfigChanged(config.copyWith(cardTheme: t)),
                 );
               }).toList(),
