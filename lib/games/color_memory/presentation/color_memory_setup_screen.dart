@@ -9,6 +9,7 @@ import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
+import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/core/widgets/setup_meadow_background.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
@@ -108,6 +109,18 @@ class ColorMemorySetupScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      const TTCard(
+                        child: SkillsDevelopedSection(
+                          skills: [
+                            'Working Memory',
+                            'Sequencing',
+                            'Color Recognition',
+                            'Pattern Recognition',
+                            'Attention',
                           ],
                         ),
                       ),

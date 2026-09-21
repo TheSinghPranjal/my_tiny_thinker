@@ -210,32 +210,7 @@ class _InfoCard extends StatelessWidget {
                     ),
                     if (skills.isNotEmpty) ...[
                       const SizedBox(height: 16),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Skills Developed',
-                          style: GoogleFonts.nunito(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: GameSetupScaffold._navy,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            for (final skill in skills)
-                              _SkillPill(
-                                label: skill,
-                                fill: chipColor ?? GameSetupScaffold._chipFill,
-                              ),
-                          ],
-                        ),
-                      ),
+                      SkillsDevelopedSection(skills: skills, chipColor: chipColor),
                     ],
                   ],
                 ),
@@ -249,6 +224,49 @@ class _InfoCard extends StatelessWidget {
             emoji,
             style: TextStyle(fontSize: emojiSize * 0.55, height: 1),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+/// "Skills Developed" heading with a wrap of skill chips. Used by every game's
+/// setup screen (through [GameSetupScaffold]) and by custom setup screens.
+class SkillsDevelopedSection extends StatelessWidget {
+  const SkillsDevelopedSection({
+    super.key,
+    required this.skills,
+    this.chipColor,
+  });
+
+  final List<String> skills;
+  final Color? chipColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Skills Developed',
+          style: GoogleFonts.nunito(
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            color: GameSetupScaffold._navy,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final skill in skills)
+              _SkillPill(
+                label: skill,
+                fill: chipColor ?? GameSetupScaffold._chipFill,
+              ),
+          ],
         ),
       ],
     );

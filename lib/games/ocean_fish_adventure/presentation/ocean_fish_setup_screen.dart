@@ -18,7 +18,13 @@ class OceanFishSetupScreen extends ConsumerWidget {
           emojiSize: 80,
           title: 'Ocean Fish Adventure',
           subtitle: 'Tap the fish and watch them swim!',
-          skills: const [],
+          skills: const [
+            'Hand-Eye Coordination',
+            'Visual Tracking',
+            'Color Recognition',
+            'Reaction Timing',
+            'Attention',
+          ],
 
           titleColor: AppColors.white,
           subtitleColor: AppColors.white.withValues(alpha: 0.95),

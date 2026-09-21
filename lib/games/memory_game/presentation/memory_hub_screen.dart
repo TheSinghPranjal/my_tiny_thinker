@@ -8,6 +8,7 @@ import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
+import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
@@ -88,6 +89,20 @@ class MemoryHubScreen extends ConsumerWidget {
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.md)),
+                const SliverToBoxAdapter(
+                  child: TTCard(
+                    child: SkillsDevelopedSection(
+                      skills: [
+                        'Memory',
+                        'Concentration',
+                        'Visual Recall',
+                        'Attention',
+                        'Problem Solving',
                       ],
                     ),
                   ),

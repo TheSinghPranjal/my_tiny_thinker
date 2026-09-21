@@ -31,6 +31,7 @@ class BubbleGameSetupScreen extends ConsumerWidget {
             titleShadows: const [
               Shadow(color: AppColors.skyBlueDark, blurRadius: 6),
             ],
+            skills: _skillsFor(gameId),
             playLabel: 'Play!',
             onPlay: () async {
               if (!await ensureCanStartGame(context, ref, gameId)) return;
@@ -43,6 +44,39 @@ class BubbleGameSetupScreen extends ConsumerWidget {
           ),
         );
   }
+
+  /// "Skills Developed" chips for each bubble-pop game.
+  static List<String> _skillsFor(GameId id) => switch (id) {
+        GameId.bubbleNumberPop => const [
+            'Number Recognition',
+            'Counting',
+            'Hand-Eye Coordination',
+            'Focus',
+            'Reaction Timing',
+          ],
+        GameId.ascendingBubbleNumberPop => const [
+            'Number Order',
+            'Counting Up',
+            'Number Sense',
+            'Sequencing',
+            'Focus',
+          ],
+        GameId.descendingNumberPop => const [
+            'Counting Down',
+            'Number Order',
+            'Number Sense',
+            'Sequencing',
+            'Focus',
+          ],
+        GameId.numberWordPop => const [
+            'Number Words',
+            'Reading',
+            'Number Recognition',
+            'Vocabulary',
+            'Focus',
+          ],
+        _ => const ['Number Recognition', 'Focus', 'Hand-Eye Coordination'],
+      };
 
   BubbleGameConfig _configFor(WidgetRef ref, GameId id) {
     return switch (id) {
