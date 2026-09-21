@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:my_tiny_thinker/core/models/kid_profiles.dart';
 import 'package:my_tiny_thinker/core/models/app_settings.dart';
 import 'package:my_tiny_thinker/core/models/player_profile.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
@@ -71,21 +72,89 @@ final profileProvider =
 });
 
 class ProfileNotifier extends StateNotifier<PlayerProfile> {
-  ProfileNotifier(this._storage) : super(const PlayerProfile()) {
+  ProfileNotifier(this._storage) : super(_defaultFor(KidProfilePresets.all.first)) {
     _load();
   }
 
+  static const _kidProfilesKey = 'kid_profiles';
+
   final StorageService _storage;
 
+  /// All five kid profiles by id. The active one lives in [state] too.
+  final Map<String, PlayerProfile> _profiles = {};
+  String _activeId = KidProfilePresets.defaultId;
+
+  String get activeProfileId => _activeId;
+
+  /// The five profiles in preset order (the active one is always current).
+  List<PlayerProfile> get allProfiles => [
+        for (final p in KidProfilePresets.all)
+          p.id == _activeId ? state : (_profiles[p.id] ?? _defaultFor(p)),
+      ];
+
+  static PlayerProfile _defaultFor(KidProfilePreset preset) => PlayerProfile(
+        displayName: preset.defaultName,
+        avatarId: preset.id,
+        unlockedAvatars: [preset.id],
+      );
+
   Future<void> _load() async {
-    final json = _storage.getProfile();
-    if (json != null) {
-      state = PlayerProfile.fromJson(json);
+    final saved = _storage.getJson(_kidProfilesKey);
+    if (saved != null) {
+      final map = (saved['profiles'] as Map<String, dynamic>?) ?? const {};
+      map.forEach((id, json) {
+        _profiles[id] = PlayerProfile.fromJson(json as Map<String, dynamic>)
+            .copyWith(avatarId: id);
+      });
+      final active = saved['active'] as String?;
+      if (active != null && KidProfilePresets.all.any((p) => p.id == active)) {
+        _activeId = active;
+      }
+    } else {
+      // First run with profiles: existing progress becomes the Bunny profile.
+      final legacy = _storage.getProfile();
+      if (legacy != null) {
+        final old = PlayerProfile.fromJson(legacy);
+        _profiles[KidProfilePresets.defaultId] = old.copyWith(
+          avatarId: KidProfilePresets.defaultId,
+          displayName: old.displayName == 'Explorer'
+              ? KidProfilePresets.all.first.defaultName
+              : old.displayName,
+        );
+      }
     }
+    for (final preset in KidProfilePresets.all) {
+      _profiles.putIfAbsent(preset.id, () => _defaultFor(preset));
+    }
+    state = _profiles[_activeId]!;
   }
 
   Future<void> _save() async {
+    _profiles[_activeId] = state;
     await _storage.saveProfile(state.toJson());
+    await _storage.saveJson(_kidProfilesKey, {
+      'active': _activeId,
+      'profiles': {for (final e in _profiles.entries) e.key: e.value.toJson()},
+    });
+  }
+
+  /// Switches to another kid profile, keeping each one's own progress.
+  Future<void> switchProfile(String id) async {
+    if (id == _activeId || !KidProfilePresets.all.any((p) => p.id == id)) {
+      return;
+    }
+    _profiles[_activeId] = state;
+    _activeId = id;
+    state = _profiles[id] ?? _defaultFor(KidProfilePresets.byId(id));
+    await _save();
+  }
+
+  /// Changes the active profile's display name.
+  Future<void> renameActive(String name) async {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) return;
+    state = state.copyWith(displayName: trimmed);
+    await _save();
   }
 
   Future<void> applyReward(GameRewardResult reward) async {
@@ -135,10 +204,13 @@ class ProfileNotifier extends StateNotifier<PlayerProfile> {
   }
 
   Future<void> resetProgress() async {
-    state = const PlayerProfile();
-    await _save();
     await _storage.clearAll();
-    state = const PlayerProfile();
+    _profiles.clear();
+    _activeId = KidProfilePresets.defaultId;
+    for (final preset in KidProfilePresets.all) {
+      _profiles[preset.id] = _defaultFor(preset);
+    }
+    state = _profiles[_activeId]!;
     await _save();
   }
 }
