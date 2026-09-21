@@ -18,6 +18,7 @@ class BridgeMatchBoard extends StatefulWidget {
     this.slotSize = 78,
     this.canDragLeft,
     this.canTargetRight,
+    this.softLines = false,
   });
 
   final List<String> leftIds;
@@ -30,6 +31,10 @@ class BridgeMatchBoard extends StatefulWidget {
   final double slotSize;
   final bool Function(String id)? canDragLeft;
   final bool Function(String id)? canTargetRight;
+
+  /// Glossy "tube" connections with star knobs on the card edges, instead of
+  /// the classic thin line between card centres.
+  final bool softLines;
 
   @override
   State<BridgeMatchBoard> createState() => _BridgeMatchBoardState();
@@ -165,12 +170,18 @@ class _BridgeMatchBoardState extends State<BridgeMatchBoard>
   @override
   Widget build(BuildContext context) {
     final slot = widget.slotSize + 12;
+    // Soft lines attach to the facing card edges; classic lines to the centres.
+    final edge = widget.softLines ? widget.slotSize / 2 : 0.0;
     final permanent = <(Offset, Offset, Color)>[];
     for (final conn in widget.connections) {
       final a = _centerOf(_keyFor(conn.leftId));
       final b = _centerOf(_keyFor(conn.rightId));
       if (a != null && b != null) {
-        permanent.add((a, b, widget.colorForConnection(conn.colorKey)));
+        permanent.add((
+          a.translate(edge, 0),
+          b.translate(-edge, 0),
+          widget.colorForConnection(conn.colorKey),
+        ));
       }
     }
 
@@ -237,10 +248,11 @@ class _BridgeMatchBoardState extends State<BridgeMatchBoard>
             child: IgnorePointer(
               child: CustomPaint(
                 painter: BridgeLinesPainter(
+                  soft: widget.softLines,
                   permanent: permanent,
-                  dragStart: _dragStart,
+                  dragStart: _dragStart?.translate(edge, 0),
                   dragEnd: _dragCurrent,
-                  fadeStart: _fadeStart,
+                  fadeStart: _fadeStart?.translate(edge, 0),
                   fadeEnd: _fadeEnd,
                   fadeProgress: _fadeController.value,
                   sparklePhase:
@@ -264,8 +276,10 @@ class BridgeLinesPainter extends CustomPainter {
     required this.fadeEnd,
     required this.fadeProgress,
     required this.sparklePhase,
+    this.soft = false,
   });
 
+  final bool soft;
   final List<(Offset, Offset, Color)> permanent;
   final Offset? dragStart;
   final Offset? dragEnd;
@@ -297,8 +311,125 @@ class BridgeLinesPainter extends CustomPainter {
     }
   }
 
+  // --- Soft (tube) style --------------------------------------------------
+
+  void _softTube(Canvas canvas, Path path, Color color) {
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = color.withValues(alpha: 0.4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 20
+        ..strokeCap = StrokeCap.round
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+    );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = Color.lerp(color, Colors.white, 0.15)!
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 13
+        ..strokeCap = StrokeCap.round,
+    );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = Color.lerp(color, Colors.white, 0.6)!
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 9
+        ..strokeCap = StrokeCap.round,
+    );
+    canvas.drawPath(
+      path.shift(const Offset(0, -2)),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.55)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.6
+        ..strokeCap = StrokeCap.round,
+    );
+  }
+
+  void _starKnob(Canvas canvas, Offset c, Color color) {
+    final path = Path();
+    for (var i = 0; i < 10; i++) {
+      final a = -math.pi / 2 + i * math.pi / 5;
+      final r = i.isEven ? 12.0 : 5.6;
+      final p = Offset(c.dx + math.cos(a) * r, c.dy + math.sin(a) * r);
+      i == 0 ? path.moveTo(p.dx, p.dy) : path.lineTo(p.dx, p.dy);
+    }
+    path.close();
+    canvas.drawCircle(
+      c,
+      14,
+      Paint()
+        ..color = color.withValues(alpha: 0.5)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+    );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 5
+        ..strokeJoin = StrokeJoin.round,
+    );
+    canvas.drawPath(path, Paint()..color = Color.lerp(color, Colors.white, 0.35)!);
+  }
+
+  void _twinkles(Canvas canvas, Path path, Color color) {
+    for (final metric in path.computeMetrics()) {
+      for (final (t, r) in [(0.3, 6.0), (0.55, 9.0), (0.75, 5.0)]) {
+        final tan = metric.getTangentForOffset(metric.length * t);
+        if (tan == null) continue;
+        final pulse = 0.6 + 0.4 * math.sin(sparklePhase + t * 9);
+        final c = tan.position.translate(0, -22 - r * 0.5);
+        final rr = r * pulse;
+        canvas.drawPath(
+          Path()
+            ..moveTo(c.dx, c.dy - rr)
+            ..quadraticBezierTo(c.dx, c.dy, c.dx + rr, c.dy)
+            ..quadraticBezierTo(c.dx, c.dy, c.dx, c.dy + rr)
+            ..quadraticBezierTo(c.dx, c.dy, c.dx - rr, c.dy)
+            ..quadraticBezierTo(c.dx, c.dy, c.dx, c.dy - rr),
+          Paint()..color = Color.lerp(color, Colors.white, 0.4)!.withValues(alpha: 0.9),
+        );
+      }
+    }
+  }
+
+  void _paintSoft(Canvas canvas) {
+    for (final (a, b, color) in permanent) {
+      final path = _curve(a, b);
+      _softTube(canvas, path, color);
+      _starKnob(canvas, a, color);
+      _starKnob(canvas, b, color);
+      _twinkles(canvas, path, color);
+    }
+    if (dragStart != null && dragEnd != null) {
+      const blue = Color(0xFF7CC4F5);
+      final path = _curve(dragStart!, dragEnd!);
+      _softTube(canvas, path, blue);
+      _starKnob(canvas, dragStart!, blue);
+      _starKnob(canvas, dragEnd!, blue);
+    }
+    if (fadeStart != null && fadeEnd != null && fadeProgress < 1) {
+      canvas.drawPath(
+        _curve(fadeStart!, fadeEnd!),
+        Paint()
+          ..color = const Color(0xFF90CAF9).withValues(alpha: (1 - fadeProgress) * 0.6)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 9
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
+    if (soft) {
+      _paintSoft(canvas);
+      return;
+    }
     for (final (a, b, color) in permanent) {
       final path = _curve(a, b);
       canvas.drawPath(

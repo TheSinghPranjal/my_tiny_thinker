@@ -26,9 +26,10 @@ class AlphabetBridgeBoard extends StatelessWidget {
       for (final c in lowerCards) c.id: c,
       for (final c in upperCards) c.id: c,
     };
-    final cardSize = largerTouch ? 78.0 : 68.0;
+    final cardSize = largerTouch ? 80.0 : 70.0;
 
     return BridgeMatchBoard(
+      softLines: true,
       leftIds: [for (final c in lowerCards) c.id],
       rightIds: [for (final c in upperCards) c.id],
       connections: [

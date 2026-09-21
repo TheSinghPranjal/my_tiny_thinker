@@ -18,7 +18,8 @@ import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/controllers/alph
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/logic/alphabet_bridge_logic.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/models/alphabet_bridge_models.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_bridge_board.dart';
-import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_garden_background.dart';
+import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_bridge_background.dart';
+import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/presentation/widgets/alphabet_bridge_header.dart';
 import 'package:my_tiny_thinker/games/alphabet_bridge_adventure/repository/alphabet_bridge_settings_repository.dart';
 
 class AlphabetBridgeGameScreen extends ConsumerStatefulWidget {
@@ -185,7 +186,7 @@ class _AlphabetBridgeGameScreenState
           await _showPauseMenu();
         }
       },
-      child: AlphabetGardenBackground(
+      child: AlphabetBridgeBackground(
         envPhase: envPhase,
         reducedMotion: settings.reducedMotion,
         child: Scaffold(
@@ -209,29 +210,10 @@ class _AlphabetBridgeGameScreenState
                       largerFonts: settings.largerTouchTargets,
                       onPause: _showPauseMenu,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'little letters',
-                            style: TextStyle(
-                              color: const Color(0xFF4527A0).withValues(alpha: 0.85),
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                            ),
-                          ),
-                          Text(
-                            'BIG LETTERS',
-                            style: TextStyle(
-                              color: const Color(0xFF4527A0).withValues(alpha: 0.85),
-                              fontWeight: FontWeight.w800,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
+                    const AlphabetColumnSigns(),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 44),
+                      child: AlphabetInstructionCloud(),
                     ),
                     Expanded(
                       child: AlphabetBridgeBoard(

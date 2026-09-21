@@ -5,22 +5,19 @@ import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/animations/bounce_animation.dart';
 import 'package:my_tiny_thinker/core/widgets/game_session_hud.dart';
-import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
-import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
 import 'package:my_tiny_thinker/core/services/haptic_service.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
-import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/game_feedback_banner.dart';
 import 'package:my_tiny_thinker/core/widgets/particle_system.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/core/widgets/game_paused_overlay.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/controllers/alphabet_quiz_controller.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/models/alphabet_quiz_models.dart';
+import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/widgets/alphabet_meadow_background.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/widgets/alphabet_quiz_hud.dart';
+import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/presentation/widgets/alphabet_quiz_widgets.dart';
 import 'package:my_tiny_thinker/games/alphabet_adventure_quiz/repository/alphabet_quiz_settings_repository.dart';
 
 class AlphabetQuizGameScreen extends ConsumerStatefulWidget {
@@ -147,8 +144,10 @@ class _AlphabetQuizGameScreenState extends ConsumerState<AlphabetQuizGameScreen>
           await _showPauseMenu();
         }
       },
-      child: AnimatedSkyBackground(
-        showGrass: false,
+      child: AlphabetMeadowBackground(
+        reducedMotion: ref.watch(
+          alphabetQuizSettingsProvider.select((s) => s.reducedMotion),
+        ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: SafeArea(
@@ -169,62 +168,13 @@ class _AlphabetQuizGameScreenState extends ConsumerState<AlphabetQuizGameScreen>
                       onPause: _showPauseMenu,
                     ),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.lg),
-                        child: question == null
-                            ? const Center(child: CircularProgressIndicator())
-                            : Column(
-                                children: [
-                                  PulseAnimation(
-                                    child: TTCard(
-                                      gradient: AppGradients.rainbow,
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: AppSpacing.xl,
-                                        horizontal: AppSpacing.xxl,
-                                      ),
-                                      child: Text(
-                                        question.letter,
-                                        style: context.textTheme.displayLarge
-                                            ?.copyWith(
-                                          color: AppColors.white,
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 96,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: AppSpacing.sm),
-                                  Text(
-                                    question.prompt.split('!').first,
-                                    textAlign: TextAlign.center,
-                                    style: context.textTheme.titleMedium
-                                        ?.copyWith(
-                                      color: AppColors.white,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(height: AppSpacing.lg),
-                                  Expanded(
-                                    child: GridView.count(
-                                      crossAxisCount: 2,
-                                      crossAxisSpacing: AppSpacing.md,
-                                      mainAxisSpacing: AppSpacing.md,
-                                      children: question.options
-                                          .map(
-                                            (option) => _OptionCard(
-                                              option: option,
-                                              enabled: phase ==
-                                                  AlphabetQuizPhase.playing,
-                                              onTap: () =>
-                                                  _onSelect(option.itemId),
-                                            ),
-                                          )
-                                          .toList(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                      ),
+                      child: question == null
+                          ? const Center(child: CircularProgressIndicator())
+                          : _QuizBody(
+                              question: question,
+                              enabled: phase == AlphabetQuizPhase.playing,
+                              onSelect: _onSelect,
+                            ),
                     ),
                   ],
                 ),
@@ -276,57 +226,69 @@ class _AlphabetQuizGameScreenState extends ConsumerState<AlphabetQuizGameScreen>
   }
 }
 
-class _OptionCard extends StatelessWidget {
-  const _OptionCard({
-    required this.option,
+class _QuizBody extends StatelessWidget {
+  const _QuizBody({
+    required this.question,
     required this.enabled,
-    required this.onTap,
+    required this.onSelect,
   });
 
-  final AlphabetOption option;
+  final AlphabetQuestion question;
   final bool enabled;
-  final VoidCallback onTap;
+  final void Function(String itemId) onSelect;
 
   @override
   Widget build(BuildContext context) {
-    final item = option.item;
-    return AnimatedScale(
-      scale: option.glow ? 1.06 : option.shake ? 0.94 : 1.0,
-      duration: const Duration(milliseconds: 180),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: enabled ? onTap : null,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-          child: Ink(
-            decoration: BoxDecoration(
-              color: AppColors.white.withValues(alpha: 0.95),
-              borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-              border: Border.all(
-                color: option.glow
-                    ? AppColors.sunYellow
-                    : option.shake
-                        ? AppColors.candyPink
-                        : Colors.transparent,
-                width: 3,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: option.glow
-                      ? AppColors.sunYellow.withValues(alpha: 0.45)
-                      : AppColors.skyBlue.withValues(alpha: 0.2),
-                  blurRadius: option.glow ? 14 : 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(item?.emoji ?? '?', style: const TextStyle(fontSize: 64)),
+    // The answer word is revealed once the right picture has been chosen.
+    final answered = question.options.any((o) => o.glow);
+    final answerWord = answered
+        ? question.options
+            .firstWhere((o) => o.itemId == question.correctItemId,
+                orElse: () => question.options.first)
+            .item
+            ?.name
+        : null;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 2, 14, 12),
+      child: Column(
+        children: [
+          const AlphabetTitleBanner(),
+          const SizedBox(height: 6),
+          PulseAnimation(child: AlphabetLetterTile(letter: question.letter)),
+          const SizedBox(height: 10),
+          AlphabetAnswerPill(letter: question.letter, word: answerWord),
+          const SizedBox(height: 12),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, c) {
+                const gap = 14.0;
+                final w = (c.maxWidth - gap) / 2;
+                final h = (c.maxHeight - gap) / 2;
+                return GridView.count(
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: EdgeInsets.zero,
+                  crossAxisCount: 2,
+                  crossAxisSpacing: gap,
+                  mainAxisSpacing: gap,
+                  childAspectRatio: w / h,
+                  children: question.options.map((option) {
+                    final item = option.item;
+                    return AlphabetPictureCard(
+                      emoji: item?.emoji ?? '?',
+                      name: item?.name ?? '',
+                      correct: option.glow,
+                      wrong: option.shake,
+                      enabled: enabled,
+                      onTap: () => onSelect(option.itemId),
+                    );
+                  }).toList(),
+                );
+              },
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
-
