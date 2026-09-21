@@ -7,7 +7,7 @@ import 'package:my_tiny_thinker/games/shared/pond_fish_varieties.dart';
 abstract final class CatchTheFishLogic {
   static final random = math.Random();
 
-  /// Sky occupies the top 20% of the play area.
+  /// Sky, hills and the lake surface occupy the top of the play area.
   static const oceanTopFraction = 0.20;
 
   /// Fixed lane grid so Y positions stay stable as fish count changes.
@@ -18,7 +18,7 @@ abstract final class CatchTheFishLogic {
   ) {
     final marginX = math.max(36.0, area.width * 0.04);
     return (
-      top: area.height * 0.22,
+      top: area.height * 0.38,
       bottom: area.height * 0.92,
       left: marginX,
       right: area.width - marginX,
@@ -27,7 +27,7 @@ abstract final class CatchTheFishLogic {
 
   /// Boat sits near the ocean surface, horizontally centered.
   static (double, double) boatAnchor(Size area) =>
-      (area.width * 0.5, area.height * 0.18);
+      (area.width * 0.5, area.height * 0.235);
 
   static double _laneY(Size area, int lane) {
     final bounds = oceanBounds(area);

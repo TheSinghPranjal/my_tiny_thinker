@@ -88,188 +88,210 @@ class _OceanFishingPainter extends CustomPainter {
   final bool reducedMotion;
   final bool showCelebration;
 
+  // Layout (fractions of the full screen height).
+  static const _shoreY = 0.30;
+  static const _surfaceY = 0.43;
+
   @override
   void paint(Canvas canvas, Size size) {
     _drawSky(canvas, size);
-    _drawRainbow(canvas, size);
     _drawSun(canvas, size);
+    _drawRainbow(canvas, size);
     _drawClouds(canvas, size);
-    _drawBirds(canvas, size);
-    _drawIslands(canvas, size);
-    _drawOcean(canvas, size);
-    _drawWaves(canvas, size);
-    _drawUnderwater(canvas, size);
+    _drawHills(canvas, size);
+    _drawWater(canvas, size);
+    _drawLilyPads(canvas, size);
+    _drawSurfaceLine(canvas, size);
+    _drawLightRays(canvas, size);
+    _drawSilhouettes(canvas, size);
+    _drawSeaweed(canvas, size);
+    _drawSeabed(canvas, size);
+    _drawBubbles(canvas, size);
     if (showCelebration) _drawCelebrationSparkles(canvas, size);
   }
 
   void _drawSky(Canvas canvas, Size size) {
-    final skyH = size.height * 0.20;
-    final rect = Rect.fromLTWH(0, 0, size.width, skyH);
+    final rect = Rect.fromLTWH(0, 0, size.width, size.height * _shoreY + 20);
     canvas.drawRect(
       rect,
       Paint()
         ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF4FC3F7),
-            Color(0xFF81D4FA),
-            Color(0xFFFFF59D),
-          ],
-          stops: [0.0, 0.55, 1.0],
+          colors: [Color(0xFF4FB3F6), Color(0xFF8AD0FA), Color(0xFFCDEBFB)],
         ).createShader(rect),
     );
   }
 
   void _drawRainbow(Canvas canvas, Size size) {
-    final cx = size.width * 0.42;
-    final cy = size.height * 0.22;
+    final cx = size.width * 0.4;
+    final cy = size.height * (_shoreY + 0.03);
     const colors = [
-      Color(0xFFEF5350),
-      Color(0xFFFF9800),
-      Color(0xFFFFEB3B),
-      Color(0xFF66BB6A),
-      Color(0xFF42A5F5),
-      Color(0xFF7E57C2),
-      Color(0xFFEC407A),
+      Color(0xFFF48FB1),
+      Color(0xFFFFCC80),
+      Color(0xFFFFF59D),
+      Color(0xFFA5D6A7),
+      Color(0xFF81D4FA),
+      Color(0xFFB39DDB),
     ];
-    final baseW = size.width * 0.85;
-    final baseH = size.height * 0.28;
     for (var i = 0; i < colors.length; i++) {
       final shrink = i * 11.0;
       canvas.drawArc(
         Rect.fromCenter(
           center: Offset(cx, cy),
-          width: baseW - shrink,
-          height: baseH - shrink * 0.5,
+          width: size.width * 0.6 - shrink,
+          height: size.height * 0.2 - shrink * 0.8,
         ),
-        math.pi + 0.08,
-        math.pi - 0.16,
+        math.pi + 0.05,
+        math.pi - 0.1,
         false,
         Paint()
-          ..color = colors[i].withValues(alpha: 0.28)
+          ..color = colors[i].withValues(alpha: 0.5)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 8
-          ..strokeCap = StrokeCap.round,
+          ..strokeWidth = 10,
       );
     }
   }
 
   void _drawSun(Canvas canvas, Size size) {
-    final sun = Offset(size.width * 0.88, size.height * 0.07);
+    final sun = Offset(size.width * 0.85, size.height * 0.055);
     canvas.drawCircle(
       sun,
-      36,
+      60,
       Paint()
         ..shader = const RadialGradient(
-          colors: [Color(0xFFFFF59D), Color(0xFFFFB74D), Color(0x00FFB74D)],
-          stops: [0.2, 0.55, 1.0],
-        ).createShader(Rect.fromCircle(center: sun, radius: 36)),
+          colors: [Color(0xAAFFF59D), Color(0x00FFF59D)],
+        ).createShader(Rect.fromCircle(center: sun, radius: 60)),
     );
-    canvas.drawCircle(sun, 20, Paint()..color = const Color(0xFFFFF176));
-
-    // Smiling face
-    canvas.drawCircle(
-      sun + const Offset(-6, -2),
-      2.2,
-      Paint()..color = const Color(0xFFF57F17),
-    );
-    canvas.drawCircle(
-      sun + const Offset(6, -2),
-      2.2,
-      Paint()..color = const Color(0xFFF57F17),
-    );
-    canvas.drawArc(
-      Rect.fromCenter(center: sun + const Offset(0, 4), width: 14, height: 10),
-      0.15,
-      math.pi - 0.3,
-      false,
-      Paint()
-        ..color = const Color(0xFFF57F17)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2
-        ..strokeCap = StrokeCap.round,
-    );
-
     if (!reducedMotion) {
-      for (var i = 0; i < 8; i++) {
-        final a = t * math.pi * 2 + i * (math.pi / 4);
+      for (var i = 0; i < 12; i++) {
+        final a = t * math.pi * 2 + i * (math.pi / 6);
         canvas.drawLine(
-          sun + Offset(math.cos(a) * 26, math.sin(a) * 26),
-          sun + Offset(math.cos(a) * 38, math.sin(a) * 38),
+          sun + Offset(math.cos(a) * 36, math.sin(a) * 36),
+          sun + Offset(math.cos(a) * 50, math.sin(a) * 50),
           Paint()
-            ..color = const Color(0xFFFFF59D).withValues(alpha: 0.6)
-            ..strokeWidth = 3
+            ..color = const Color(0xFFFFF59D).withValues(alpha: 0.7)
+            ..strokeWidth = 4
             ..strokeCap = StrokeCap.round,
         );
       }
     }
+    canvas.drawCircle(sun, 32, Paint()..color = const Color(0xFFFFF176));
+    canvas.drawCircle(
+      sun + const Offset(-8, -8),
+      14,
+      Paint()..color = Colors.white.withValues(alpha: 0.3),
+    );
+    final face = Paint()..color = const Color(0xFFFF9800);
+    canvas.drawCircle(sun + const Offset(-9, -3), 2.6, face);
+    canvas.drawCircle(sun + const Offset(9, -3), 2.6, face);
+    canvas.drawArc(
+      Rect.fromCenter(center: sun + const Offset(0, 5), width: 18, height: 12),
+      0.2,
+      math.pi - 0.4,
+      false,
+      Paint()
+        ..color = const Color(0xFFFF9800)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.2
+        ..strokeCap = StrokeCap.round,
+    );
+  }
+
+  void _drawCloud(Canvas canvas, Offset c, double s) {
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.95);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: c + Offset(0, 8 * s), width: 74 * s, height: 22 * s),
+        Radius.circular(12 * s),
+      ),
+      paint,
+    );
+    canvas.drawCircle(c + Offset(-14 * s, 0), 15 * s, paint);
+    canvas.drawCircle(c + Offset(6 * s, -8 * s), 19 * s, paint);
+    canvas.drawCircle(c + Offset(24 * s, 0), 13 * s, paint);
   }
 
   void _drawClouds(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white.withValues(alpha: 0.92);
-    for (var i = 0; i < 4; i++) {
-      final x =
-          (size.width * (0.04 + i * 0.26) + t * size.width * 0.04) %
-              (size.width + 100) -
-          40;
-      final y = size.height * 0.04 + i * 5.0;
-      canvas.drawCircle(Offset(x, y), 18, paint);
-      canvas.drawCircle(Offset(x + 20, y + 2), 14, paint);
-      canvas.drawCircle(Offset(x + 8, y - 8), 12, paint);
-      canvas.drawCircle(Offset(x - 12, y + 2), 10, paint);
-    }
-  }
-
-  void _drawBirds(Canvas canvas, Size size) {
-    if (reducedMotion) return;
-    final paint = Paint()
-      ..color = const Color(0xFF455A64).withValues(alpha: 0.55)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.8
-      ..strokeCap = StrokeCap.round;
-    for (var i = 0; i < 5; i++) {
-      final bx =
-          (size.width * (0.1 + i * 0.18) + t * size.width * 0.06) % size.width;
-      final by = size.height * (0.05 + (i % 3) * 0.025) +
-          math.sin(t * 4 + i) * 3;
-      final flap = math.sin(t * 10 + i) * 0.35;
-      final path = Path()
-        ..moveTo(bx - 7, by + flap * 2)
-        ..quadraticBezierTo(bx - 3, by - 4 - flap, bx, by)
-        ..quadraticBezierTo(bx + 3, by - 4 - flap, bx + 7, by + flap * 2);
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  void _drawIslands(Canvas canvas, Size size) {
-    final horizon = size.height * 0.18;
-    for (final (nx, w, h, green) in [
-      (0.12, 70.0, 22.0, 0xFF81C784),
-      (0.35, 50.0, 16.0, 0xFF66BB6A),
-      (0.72, 80.0, 24.0, 0xFF7CB342),
-      (0.92, 40.0, 14.0, 0xFF9CCC65),
+    final drift = t * size.width * 0.04;
+    for (final (nx, ny, sc) in [
+      (0.1, 0.08, 1.1),
+      (0.5, 0.075, 0.9),
+      (0.05, 0.27, 0.8),
+      (0.78, 0.25, 1.0),
+      (0.4, 0.3, 0.7),
     ]) {
-      final c = Offset(size.width * nx, horizon);
-      canvas.drawOval(
-        Rect.fromCenter(center: c, width: w, height: h),
-        Paint()..color = Color(green).withValues(alpha: 0.75),
-      );
-      // Tiny palm hint
-      canvas.drawLine(
-        c + Offset(0, -h * 0.2),
-        c + Offset(4, -h * 0.9),
-        Paint()
-          ..color = const Color(0xFF558B2F)
-          ..strokeWidth = 2
-          ..strokeCap = StrokeCap.round,
+      final x = (size.width * nx + drift) % (size.width + 120) - 40;
+      _drawCloud(canvas, Offset(x, size.height * ny), sc);
+    }
+  }
+
+  void _drawTree(Canvas canvas, Offset base, double s) {
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(base.dx - 3 * s, base.dy - 26 * s, 6 * s, 30 * s),
+        Radius.circular(2 * s),
+      ),
+      Paint()..color = const Color(0xFF8D6E63),
+    );
+    final leaf = Paint()..color = const Color(0xFF43A047);
+    canvas.drawOval(
+      Rect.fromCenter(center: base + Offset(0, -46 * s), width: 34 * s, height: 60 * s),
+      leaf,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: base + Offset(-4 * s, -50 * s), width: 18 * s, height: 40 * s),
+      Paint()..color = const Color(0xFF66BB6A),
+    );
+  }
+
+  void _drawHills(Canvas canvas, Size size) {
+    final h = size.height;
+    final w = size.width;
+    final shore = h * _shoreY;
+
+    final far = Path()
+      ..moveTo(0, shore - 30)
+      ..quadraticBezierTo(w * 0.2, shore - 70, w * 0.45, shore - 28)
+      ..quadraticBezierTo(w * 0.7, shore - 56, w, shore - 40)
+      ..lineTo(w, shore + 10)
+      ..lineTo(0, shore + 10)
+      ..close();
+    canvas.drawPath(far, Paint()..color = const Color(0xFF9CCC65));
+
+    for (final (nx, ny, sc) in [(0.15, -34.0, 1.0), (0.93, -30.0, 1.1)]) {
+      _drawTree(canvas, Offset(w * nx, shore + ny), sc);
+    }
+
+    final near = Path()
+      ..moveTo(0, shore - 4)
+      ..quadraticBezierTo(w * 0.28, shore - 34, w * 0.55, shore - 8)
+      ..quadraticBezierTo(w * 0.82, shore - 24, w, shore - 6)
+      ..lineTo(w, shore + 12)
+      ..lineTo(0, shore + 12)
+      ..close();
+    canvas.drawPath(
+      near,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF8BC34A), Color(0xFF558B2F)],
+        ).createShader(Rect.fromLTWH(0, shore - 34, w, 46)),
+    );
+    // Bank bushes.
+    for (final nx in [0.03, 0.08, 0.9, 0.97]) {
+      canvas.drawCircle(
+        Offset(w * nx, shore - 4),
+        14,
+        Paint()..color = const Color(0xFF558B2F),
       );
     }
   }
 
-  void _drawOcean(Canvas canvas, Size size) {
-    final oceanTop = size.height * 0.20;
-    final rect = Rect.fromLTWH(0, oceanTop, size.width, size.height - oceanTop);
+  void _drawWater(Canvas canvas, Size size) {
+    final top = size.height * _shoreY;
+    final rect = Rect.fromLTWH(0, top, size.width, size.height - top);
     canvas.drawRect(
       rect,
       Paint()
@@ -277,272 +299,309 @@ class _OceanFishingPainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF4DD0E1),
-            Color(0xFF26C6DA),
-            Color(0xFF0288D1),
-            Color(0xFF01579B),
+            Color(0xFF5BC8F0),
+            Color(0xFF3AB0E8),
+            Color(0xFF2196D8),
+            Color(0xFF1565C0),
             Color(0xFF0D47A1),
           ],
-          stops: [0.0, 0.15, 0.4, 0.7, 1.0],
+          stops: [0.0, 0.25, 0.45, 0.75, 1.0],
         ).createShader(rect),
     );
-  }
-
-  void _drawWaves(Canvas canvas, Size size) {
-    final oceanTop = size.height * 0.20;
-    final wave = Path()..moveTo(0, oceanTop);
-    for (var x = 0.0; x <= size.width; x += 16) {
-      final y = oceanTop +
-          math.sin(x * 0.04 + t * math.pi * 2 + envPhase) * 5 -
-          2;
-      wave.lineTo(x, y);
-    }
-    wave
-      ..lineTo(size.width, oceanTop + 18)
-      ..lineTo(0, oceanTop + 18)
-      ..close();
-    canvas.drawPath(
-      wave,
-      Paint()..color = Colors.white.withValues(alpha: 0.28),
-    );
-
-    // Soft secondary ripple
+    // Gentle ripples on the lake surface.
     for (var i = 0; i < 6; i++) {
-      final y = oceanTop + 14 + i * 10.0;
-      for (var j = 0; j < 5; j++) {
-        final x = size.width * (0.08 + j * 0.2) +
-            math.sin(t * 3 + i + j) * 8;
+      final y = top + 26 + i * 16.0;
+      for (var j = 0; j < 4; j++) {
+        final x = size.width * (0.12 + j * 0.26 + (i.isOdd ? 0.1 : 0)) +
+            (reducedMotion ? 0 : math.sin(t * math.pi * 2 + i + j) * 8);
         canvas.drawOval(
-          Rect.fromCenter(
-            center: Offset(x, y),
-            width: 36 - i * 3,
-            height: 5,
-          ),
-          Paint()..color = Colors.white.withValues(alpha: 0.08),
+          Rect.fromCenter(center: Offset(x, y), width: 60 - i * 4, height: 5),
+          Paint()..color = Colors.white.withValues(alpha: 0.16),
         );
       }
     }
   }
 
-  void _drawUnderwater(Canvas canvas, Size size) {
-    _drawCoral(canvas, size);
-    _drawSeaweed(canvas, size);
-    _drawRocks(canvas, size);
-    _drawStarfish(canvas, size);
-    _drawShells(canvas, size);
-    _drawTreasure(canvas, size);
-    _drawCrabs(canvas, size);
-    _drawBubbles(canvas, size);
+  void _drawLilyPad(Canvas canvas, Offset c, double s, {bool flower = true}) {
+    canvas.drawOval(
+      Rect.fromCenter(center: c + Offset(0, 4 * s), width: 88 * s, height: 26 * s),
+      Paint()..color = const Color(0xFF2E7D32),
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: c, width: 88 * s, height: 26 * s),
+      Paint()..color = const Color(0xFF66BB6A),
+    );
+    if (!flower) return;
+    for (final (dx, ang) in [(-12.0, -0.4), (12.0, 0.4), (0.0, 0.0)]) {
+      canvas.save();
+      canvas.translate(c.dx + dx * s, c.dy - 4 * s);
+      canvas.rotate(ang);
+      canvas.drawOval(
+        Rect.fromCenter(center: Offset(0, -10 * s), width: 13 * s, height: 26 * s),
+        Paint()..color = Colors.white,
+      );
+      canvas.restore();
+    }
+    canvas.drawCircle(
+      c + Offset(0, -5 * s),
+      5 * s,
+      Paint()..color = const Color(0xFFFFCA28),
+    );
   }
 
-  void _drawCoral(Canvas canvas, Size size) {
-    final spots = [
-      (0.08, 0.78, 0xFFFF8A65, 22.0),
-      (0.18, 0.88, 0xFFEC407A, 18.0),
-      (0.82, 0.80, 0xFFFF7043, 24.0),
-      (0.92, 0.90, 0xFFF48FB1, 16.0),
-      (0.55, 0.92, 0xFFFFAB91, 14.0),
-    ];
-    for (final (nx, ny, color, r) in spots) {
-      final c = Offset(size.width * nx, size.height * ny);
-      canvas.drawCircle(c, r, Paint()..color = Color(color).withValues(alpha: 0.85));
-      canvas.drawCircle(
-        c + Offset(-r * 0.45, -r * 0.3),
-        r * 0.55,
-        Paint()..color = Color(color),
-      );
-      canvas.drawCircle(
-        c + Offset(r * 0.4, -r * 0.35),
-        r * 0.5,
-        Paint()..color = Color(color).withValues(alpha: 0.9),
-      );
-      canvas.drawCircle(
-        c + Offset(0, -r * 0.55),
-        r * 0.4,
-        Paint()..color = Color.lerp(Color(color), Colors.white, 0.25)!,
+  void _drawLilyPads(Canvas canvas, Size size) {
+    final h = size.height;
+    _drawLilyPad(canvas, Offset(size.width * 0.18, h * 0.365), 1.0);
+    _drawLilyPad(canvas, Offset(size.width * 0.1, h * 0.335), 0.7, flower: false);
+    _drawLilyPad(canvas, Offset(size.width * 0.86, h * 0.335), 0.8);
+    _drawLilyPad(canvas, Offset(size.width * 0.92, h * 0.365), 0.7);
+  }
+
+  void _drawSurfaceLine(Canvas canvas, Size size) {
+    final y0 = size.height * _surfaceY;
+    final wave = Path();
+    for (var x = 0.0; x <= size.width; x += 6) {
+      final y = y0 +
+          (reducedMotion ? 0 : math.sin(x * 0.03 + t * math.pi * 2 + envPhase) * 3);
+      x == 0 ? wave.moveTo(x, y) : wave.lineTo(x, y);
+    }
+    canvas.drawPath(
+      wave,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.85)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
+    canvas.drawPath(
+      wave.shift(const Offset(0, 6)),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.35)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+  }
+
+  void _drawLightRays(Canvas canvas, Size size) {
+    final top = size.height * _surfaceY;
+    for (var i = 0; i < 6; i++) {
+      final x = size.width * (0.15 + i * 0.14);
+      final sway = reducedMotion ? 0.0 : math.sin(t * math.pi * 2 + i) * 10;
+      final ray = Path()
+        ..moveTo(x, top)
+        ..lineTo(x + 26, top)
+        ..lineTo(x + 90 + sway, top + size.height * 0.4)
+        ..lineTo(x + 30 + sway, top + size.height * 0.4)
+        ..close();
+      canvas.drawPath(
+        ray,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white.withValues(alpha: 0.2),
+              Colors.white.withValues(alpha: 0),
+            ],
+          ).createShader(Rect.fromLTWH(x, top, 120, size.height * 0.4)),
       );
     }
   }
 
-  void _drawSeaweed(Canvas canvas, Size size) {
-    for (var i = 0; i < 10; i++) {
-      final x = size.width * (0.05 + i * 0.1);
-      final baseY = size.height * 0.98;
-      final sway = math.sin(t * 3 + i + envPhase) * 10;
-      final path = Path()..moveTo(x, baseY);
-      path.quadraticBezierTo(
-        x + sway,
-        baseY - 40,
-        x + sway * 0.4,
-        baseY - 70 - (i % 3) * 12,
+  void _drawSilhouettes(Canvas canvas, Size size) {
+    for (final (nx, ny, sc) in [(0.5, 0.53, 1.0), (0.86, 0.615, 1.1)]) {
+      final c = Offset(size.width * nx, size.height * ny);
+      canvas.save();
+      canvas.translate(c.dx, c.dy);
+      canvas.scale(sc);
+      final paint = Paint()..color = const Color(0xFF1E5FA8).withValues(alpha: 0.45);
+      canvas.drawOval(Rect.fromCenter(center: Offset.zero, width: 56, height: 32), paint);
+      canvas.drawPath(
+        Path()
+          ..moveTo(24, 0)
+          ..lineTo(46, -14)
+          ..lineTo(46, 14)
+          ..close(),
+        paint,
       );
+      canvas.restore();
+    }
+  }
+
+  void _drawSeaweed(Canvas canvas, Size size) {
+    final base = size.height * 0.98;
+    for (var i = 0; i < 16; i++) {
+      final left = i < 8;
+      final x = left
+          ? size.width * (0.01 + i * 0.022)
+          : size.width * (0.99 - (i - 8) * 0.022);
+      final sway = reducedMotion ? 0.0 : math.sin(t * math.pi * 2 * 2 + i + envPhase) * 8;
+      final hgt = size.height * (0.22 + (i % 4) * 0.05);
+      final lean = left ? 14.0 : -14.0;
+      final path = Path()
+        ..moveTo(x, base)
+        ..cubicTo(
+          x + sway - lean,
+          base - hgt * 0.35,
+          x - sway + lean,
+          base - hgt * 0.7,
+          x + sway * 0.5,
+          base - hgt,
+        );
       canvas.drawPath(
         path,
         Paint()
           ..color = Color.lerp(
-            const Color(0xFF2E7D32),
+            const Color(0xFF1B7A3A),
             const Color(0xFF66BB6A),
             (i % 4) / 4,
           )!
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 4
+          ..strokeWidth = 9 - (i % 3) * 1.5
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+    // A short cluster in the middle.
+    for (var i = 0; i < 4; i++) {
+      final x = size.width * (0.31 + i * 0.03);
+      final sway = reducedMotion ? 0.0 : math.sin(t * math.pi * 4 + i) * 6;
+      canvas.drawPath(
+        Path()
+          ..moveTo(x, base)
+          ..quadraticBezierTo(x + sway, base - 60, x + sway * 0.5 + (i - 1.5) * 6, base - 90 - i * 8),
+        Paint()
+          ..color = const Color(0xFF2E9F4A)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6
           ..strokeCap = StrokeCap.round,
       );
     }
   }
 
-  void _drawRocks(Canvas canvas, Size size) {
-    for (final (nx, ny, w, h) in [
-      (0.28, 0.94, 40.0, 18.0),
-      (0.48, 0.96, 55.0, 22.0),
-      (0.68, 0.93, 36.0, 16.0),
-    ]) {
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: Offset(size.width * nx, size.height * ny),
-          width: w,
-          height: h,
-        ),
-        Paint()..color = const Color(0xFF78909C).withValues(alpha: 0.75),
+  void _drawRock(Canvas canvas, Offset c, double w, double h) {
+    final rock = Path()
+      ..moveTo(c.dx - w / 2, c.dy)
+      ..quadraticBezierTo(c.dx - w * 0.45, c.dy - h, c.dx, c.dy - h)
+      ..quadraticBezierTo(c.dx + w * 0.45, c.dy - h, c.dx + w / 2, c.dy)
+      ..close();
+    canvas.drawPath(
+      rock,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF8C8FA8), Color(0xFF555872)],
+        ).createShader(Rect.fromLTWH(c.dx - w / 2, c.dy - h, w, h)),
+    );
+  }
+
+  void _drawCoral(Canvas canvas, Offset base, Color color, double s) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 7 * s
+      ..strokeCap = StrokeCap.round;
+    for (final (dx, dy) in [(-14.0, -34.0), (0.0, -46.0), (14.0, -32.0)]) {
+      canvas.drawPath(
+        Path()
+          ..moveTo(base.dx, base.dy)
+          ..quadraticBezierTo(base.dx + dx * 0.4 * s, base.dy + dy * 0.5 * s, base.dx + dx * s, base.dy + dy * s),
+        paint,
       );
     }
   }
 
-  void _drawStarfish(Canvas canvas, Size size) {
-    for (final (nx, ny, color) in [
-      (0.22, 0.86, 0xFFFF7043),
-      (0.78, 0.88, 0xFFFFCA28),
-    ]) {
-      final c = Offset(size.width * nx, size.height * ny);
-      final path = Path();
-      for (var i = 0; i < 5; i++) {
-        final a = -math.pi / 2 + i * 2 * math.pi / 5;
-        final outer = Offset(c.dx + math.cos(a) * 12, c.dy + math.sin(a) * 12);
-        final midA = a + math.pi / 5;
-        final inner =
-            Offset(c.dx + math.cos(midA) * 5, c.dy + math.sin(midA) * 5);
-        if (i == 0) {
-          path.moveTo(outer.dx, outer.dy);
-        } else {
-          path.lineTo(outer.dx, outer.dy);
-        }
-        path.lineTo(inner.dx, inner.dy);
-      }
-      path.close();
-      canvas.drawPath(path, Paint()..color = Color(color));
+  void _drawStarfish(Canvas canvas, Offset c, double r) {
+    final path = Path();
+    for (var i = 0; i < 5; i++) {
+      final a = -math.pi / 2 + i * 2 * math.pi / 5;
+      final outer = c + Offset(math.cos(a) * r, math.sin(a) * r);
+      final inner = c + Offset(math.cos(a + math.pi / 5) * r * 0.45, math.sin(a + math.pi / 5) * r * 0.45);
+      i == 0 ? path.moveTo(outer.dx, outer.dy) : path.lineTo(outer.dx, outer.dy);
+      path.lineTo(inner.dx, inner.dy);
     }
-  }
-
-  void _drawShells(Canvas canvas, Size size) {
-    for (final (nx, ny) in [(0.38, 0.90), (0.62, 0.88)]) {
-      final c = Offset(size.width * nx, size.height * ny);
-      canvas.drawArc(
-        Rect.fromCenter(center: c, width: 22, height: 16),
-        math.pi,
-        math.pi,
-        true,
-        Paint()..color = const Color(0xFFFFCC80),
-      );
-      canvas.drawArc(
-        Rect.fromCenter(center: c, width: 22, height: 16),
-        math.pi,
-        math.pi,
-        false,
-        Paint()
-          ..color = const Color(0xFFFFA726)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5,
-      );
-    }
-  }
-
-  void _drawTreasure(Canvas canvas, Size size) {
-    final c = Offset(size.width * 0.5, size.height * 0.94);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: c, width: 36, height: 22),
-        const Radius.circular(4),
-      ),
-      Paint()..color = const Color(0xFF8D6E63),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: c + const Offset(0, -10), width: 38, height: 10),
-        const Radius.circular(3),
-      ),
-      Paint()..color = const Color(0xFF6D4C41),
-    );
-    canvas.drawCircle(
-      c + const Offset(0, -4),
-      4,
-      Paint()..color = const Color(0xFFFFD54F),
-    );
-    // Glints
-    canvas.drawCircle(
-      c + const Offset(-8, 2),
-      2.5,
-      Paint()..color = const Color(0xFFFFEB3B),
-    );
-    canvas.drawCircle(
-      c + const Offset(8, 3),
-      2,
-      Paint()..color = const Color(0xFFFFEB3B),
+    path.close();
+    canvas.drawPath(path, Paint()..color = const Color(0xFFFF7043));
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = const Color(0xFFFFAB91)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeJoin = StrokeJoin.round,
     );
   }
 
-  void _drawCrabs(Canvas canvas, Size size) {
-    for (final (nx, ny) in [(0.14, 0.93), (0.86, 0.94)]) {
-      final c = Offset(
-        size.width * nx + (reducedMotion ? 0 : math.sin(t * 2 + nx) * 4),
-        size.height * ny,
-      );
-      canvas.drawOval(
-        Rect.fromCenter(center: c, width: 16, height: 10),
-        Paint()..color = const Color(0xFFEF5350),
-      );
-      canvas.drawCircle(c + const Offset(-4, -2), 2, Paint()..color = Colors.black);
-      canvas.drawCircle(c + const Offset(4, -2), 2, Paint()..color = Colors.black);
-      // Claws
-      canvas.drawArc(
-        Rect.fromCenter(center: c + const Offset(-10, -2), width: 10, height: 8),
-        math.pi * 0.2,
-        math.pi * 0.8,
-        false,
-        Paint()
-          ..color = const Color(0xFFE53935)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2,
-      );
-      canvas.drawArc(
-        Rect.fromCenter(center: c + const Offset(10, -2), width: 10, height: 8),
-        math.pi * 0.0,
-        math.pi * 0.8,
-        false,
-        Paint()
-          ..color = const Color(0xFFE53935)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2,
-      );
-    }
+  void _drawSeabed(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final sandTop = h * 0.945;
+    final sand = Path()
+      ..moveTo(0, sandTop)
+      ..quadraticBezierTo(w * 0.3, h * 0.925, w * 0.55, sandTop)
+      ..quadraticBezierTo(w * 0.8, h * 0.96, w, h * 0.935)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(
+      sand,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFE8CD8F), Color(0xFFCCA560)],
+        ).createShader(Rect.fromLTWH(0, h * 0.92, w, h * 0.08)),
+    );
+
+    _drawCoral(canvas, Offset(w * 0.27, h * 0.9), const Color(0xFFAB47BC), 1.0);
+    _drawCoral(canvas, Offset(w * 0.75, h * 0.925), const Color(0xFFCE6FD6), 0.9);
+    _drawCoral(canvas, Offset(w * 0.9, h * 0.93), const Color(0xFFEF5B7B), 1.1);
+    _drawCoral(canvas, Offset(w * 0.46, h * 0.93), const Color(0xFFFFB300), 0.8);
+
+    _drawRock(canvas, Offset(w * 0.06, h * 0.91), 130, 70);
+    _drawRock(canvas, Offset(w * 0.93, h * 0.905), 150, 78);
+    _drawRock(canvas, Offset(w * 0.34, h * 0.945), 100, 34);
+    _drawRock(canvas, Offset(w * 0.72, h * 0.955), 70, 24);
+
+    _drawStarfish(canvas, Offset(w * 0.12, h * 0.9), 28);
+    _drawCrab(canvas, Offset(w * 0.11, h * 0.975));
+  }
+
+  void _drawCrab(Canvas canvas, Offset c) {
+    final red = Paint()..color = const Color(0xFFE53935);
+    canvas.drawOval(Rect.fromCenter(center: c, width: 26, height: 16), red);
+    canvas.drawCircle(c + const Offset(-13, -6), 5, red);
+    canvas.drawCircle(c + const Offset(13, -6), 5, red);
+    canvas.drawCircle(c + const Offset(-4, -9), 3, Paint()..color = Colors.white);
+    canvas.drawCircle(c + const Offset(4, -9), 3, Paint()..color = Colors.white);
+    canvas.drawCircle(c + const Offset(-4, -9), 1.4, Paint()..color = Colors.black);
+    canvas.drawCircle(c + const Offset(4, -9), 1.4, Paint()..color = Colors.black);
   }
 
   void _drawBubbles(Canvas canvas, Size size) {
-    for (var i = 0; i < 16; i++) {
+    final top = size.height * (_surfaceY + 0.03);
+    final span = size.height * 0.88 - top;
+    for (var i = 0; i < 20; i++) {
       final progress = reducedMotion
-          ? (i / 16)
-          : ((t + i * 0.07 + envPhase * 0.02) % 1.0);
-      final x = size.width * ((0.1 + (i * 37 % 80) / 100));
-      final y = size.height * (0.95 - progress * 0.7);
-      final r = 2.0 + (i % 4);
+          ? (i / 20)
+          : ((t * 2 + i * 0.053 + envPhase * 0.02) % 1.0);
+      final x = size.width * (0.08 + (i * 37 % 84) / 100) +
+          math.sin(progress * 8 + i) * 4;
+      final y = top + span * (1 - progress);
+      final r = 3.0 + (i % 5) * 2;
+      final c = Offset(x, y);
+      canvas.drawCircle(c, r, Paint()..color = Colors.white.withValues(alpha: 0.14));
       canvas.drawCircle(
-        Offset(x, y),
+        c,
         r,
-        Paint()..color = Colors.white.withValues(alpha: 0.35),
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.6)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.4,
       );
       canvas.drawCircle(
-        Offset(x - r * 0.3, y - r * 0.3),
-        r * 0.3,
-        Paint()..color = Colors.white.withValues(alpha: 0.55),
+        c + Offset(-r * 0.35, -r * 0.35),
+        r * 0.28,
+        Paint()..color = Colors.white.withValues(alpha: 0.8),
       );
     }
   }

@@ -506,63 +506,68 @@ class _NeonButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
+    return DecoratedBox(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(999),
-        child: Ink(
-          height: 52,
-          decoration: BoxDecoration(
-            gradient: gradient,
-            borderRadius: BorderRadius.circular(999),
-            boxShadow: [
-              BoxShadow(
-                color: glow.withValues(alpha: 0.45),
-                blurRadius: 16,
-                offset: const Offset(0, 8),
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: glow.withValues(alpha: 0.45),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: compact ? 12 : 16),
-            child: compact
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(icon, color: Colors.white, size: 22),
-                      const SizedBox(width: 6),
-                      Text(
-                        label,
-                        style: GoogleFonts.fredoka(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    children: [
-                      Icon(icon, color: Colors.white, size: 22),
-                      Expanded(
-                        child: Text(
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(999),
+          child: Ink(
+            height: 52,
+            decoration: BoxDecoration(
+              gradient: gradient,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: compact ? 12 : 16),
+              child: compact
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(icon, color: Colors.white, size: 22),
+                        const SizedBox(width: 6),
+                        Text(
                           label,
-                          textAlign: TextAlign.center,
                           style: GoogleFonts.fredoka(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
                         ),
-                      ),
-                      Icon(
-                        trailing ?? Icons.chevron_right_rounded,
-                        color: Colors.white,
-                        size: 22,
-                      ),
-                    ],
-                  ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        Icon(icon, color: Colors.white, size: 22),
+                        Expanded(
+                          child: Text(
+                            label,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.fredoka(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          trailing ?? Icons.chevron_right_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),
@@ -587,64 +592,69 @@ class _OutlineButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onPressed,
+    return DecoratedBox(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(999),
-        child: Ink(
-          height: 52,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: TTPauseDialog._outline, width: 1.4),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF3D7EFF).withValues(alpha: 0.08),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3D7EFF).withValues(alpha: 0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: compact ? 10 : 16),
-            child: compact
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(icon, color: TTPauseDialog._actionBlue, size: 22),
-                      const SizedBox(width: 6),
-                      Text(
-                        label,
-                        style: GoogleFonts.fredoka(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: TTPauseDialog._actionBlue,
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    children: [
-                      Icon(icon, color: TTPauseDialog._actionBlue, size: 22),
-                      Expanded(
-                        child: Text(
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(999),
+          child: Ink(
+            height: 52,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: TTPauseDialog._outline, width: 1.4),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: compact ? 10 : 16),
+              child: compact
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(icon, color: TTPauseDialog._actionBlue, size: 22),
+                        const SizedBox(width: 6),
+                        Text(
                           label,
-                          textAlign: TextAlign.center,
                           style: GoogleFonts.fredoka(
-                            fontSize: 18,
+                            fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: TTPauseDialog._actionBlue,
                           ),
                         ),
-                      ),
-                      Icon(
-                        trailing ?? Icons.chevron_right_rounded,
-                        color: TTPauseDialog._actionBlue,
-                        size: 22,
-                      ),
-                    ],
-                  ),
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        Icon(icon, color: TTPauseDialog._actionBlue, size: 22),
+                        Expanded(
+                          child: Text(
+                            label,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.fredoka(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: TTPauseDialog._actionBlue,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          trailing ?? Icons.chevron_right_rounded,
+                          color: TTPauseDialog._actionBlue,
+                          size: 22,
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),

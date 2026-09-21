@@ -82,17 +82,51 @@ class _CloudPainter extends CustomPainter {
       );
     }
 
-    final paint = Paint()..color = _cloudColor;
-    canvas.drawCircle(Offset(cx - 18, cy + 4), 22, paint);
-    canvas.drawCircle(Offset(cx + 20, cy + 2), 24, paint);
-    canvas.drawCircle(Offset(cx, cy - 8), 26, paint);
-    canvas.drawCircle(Offset(cx - 4, cy + 10), 20, paint);
+    final base = _cloudColor;
+    final light = Color.lerp(base, Colors.white, 0.35)!;
+    final dark = Color.lerp(base, const Color(0xFF1A237E), 0.25)!;
 
+    // Soft ground shadow so the cloud reads as a floating character.
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(cx, cy + 34),
+        width: size.width * 0.6,
+        height: 8,
+      ),
+      Paint()..color = Colors.black.withValues(alpha: 0.06),
+    );
+
+    final puffs = Path()
+      ..addOval(Rect.fromCircle(center: Offset(cx - 18, cy + 4), radius: 22))
+      ..addOval(Rect.fromCircle(center: Offset(cx + 20, cy + 2), radius: 24))
+      ..addOval(Rect.fromCircle(center: Offset(cx, cy - 8), radius: 26))
+      ..addOval(Rect.fromCircle(center: Offset(cx - 4, cy + 10), radius: 20));
+    final bounds = Rect.fromCenter(
+      center: Offset(cx, cy),
+      width: size.width * 0.9,
+      height: size.height * 0.7,
+    );
+    canvas.drawPath(
+      puffs,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [light, base, dark],
+          stops: const [0.0, 0.55, 1.0],
+        ).createShader(bounds),
+    );
+
+    // Glossy highlight on the top puff.
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx - 8, cy - 22), width: 22, height: 10),
+      Paint()..color = Colors.white.withValues(alpha: 0.32),
+    );
     canvas.drawCircle(
       Offset(cx, cy - 8),
       26,
       Paint()
-        ..color = Colors.white.withValues(alpha: 0.25)
+        ..color = Colors.white.withValues(alpha: 0.22)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -120,19 +154,25 @@ class _CloudPainter extends CustomPainter {
 
   void _drawFace(Canvas canvas, double cx, double cy) {
     for (final sign in [-1.0, 1.0]) {
+      final e = Offset(cx + sign * 12, cy - 2);
+      canvas.drawCircle(e, 5, Paint()..color = Colors.white);
       canvas.drawCircle(
-        Offset(cx + sign * 12, cy - 2),
-        4,
-        Paint()..color = Colors.white,
+        e + const Offset(0.8, 0.4),
+        3,
+        Paint()..color = const Color(0xFF263238),
       );
       canvas.drawCircle(
-        Offset(cx + sign * 12 + 1, cy - 2),
-        2,
-        Paint()..color = const Color(0xFF37474F),
+        e + const Offset(-0.4, -1),
+        1.1,
+        Paint()..color = Colors.white,
       );
     }
 
     if (showSmile) {
+      final cheek = Paint()
+        ..color = const Color(0xFFFF8FA3).withValues(alpha: 0.55);
+      canvas.drawCircle(Offset(cx - 21, cy + 6), 4.5, cheek);
+      canvas.drawCircle(Offset(cx + 21, cy + 6), 4.5, cheek);
       canvas.drawArc(
         Rect.fromCenter(center: Offset(cx, cy + 8), width: 18, height: 10),
         0.2,
@@ -141,15 +181,17 @@ class _CloudPainter extends CustomPainter {
         Paint()
           ..color = const Color(0xFF37474F)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 2,
+          ..strokeWidth = 2.2
+          ..strokeCap = StrokeCap.round,
       );
     } else {
       canvas.drawLine(
         Offset(cx - 6, cy + 10),
         Offset(cx + 6, cy + 10),
         Paint()
-          ..color = const Color(0xFF37474F)
-          ..strokeWidth = 2,
+          ..color = const Color(0xFF263238)
+          ..strokeWidth = 2.2
+          ..strokeCap = StrokeCap.round,
       );
     }
   }

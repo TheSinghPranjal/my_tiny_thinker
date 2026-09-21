@@ -330,6 +330,7 @@ class BridgeLinesPainter extends CustomPainter {
               Color(0xFF80DEEA),
               Color(0xFFCE93D8),
             ],
+            const [0.0, 1 / 3, 2 / 3, 1.0],
           )
           ..style = PaintingStyle.stroke
           ..strokeWidth = 7

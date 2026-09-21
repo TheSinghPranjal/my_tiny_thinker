@@ -618,6 +618,7 @@ class _PeekDecorPainter extends CustomPainter {
           Offset(cx - 8, 2),
           Offset(cx + 8, 30),
           const [Color(0xFFFFF176), Color(0xFFFFD54F), Color(0xFFFFCA28)],
+          const [0.0, 0.5, 1.0],
         ),
     );
     canvas.drawPath(
@@ -724,6 +725,7 @@ class _RibbonPainter extends CustomPainter {
           Offset(w / 2, 0),
           Offset(w / 2, h),
           const [Color(0xFFB07CFF), Color(0xFF8E5AF7), Color(0xFF7C3AED)],
+          const [0.0, 0.5, 1.0],
         ),
     );
 

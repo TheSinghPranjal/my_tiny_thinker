@@ -195,7 +195,6 @@ class _CatchTheFishGameScreenState extends ConsumerState<CatchTheFishGameScreen>
                             .select((s) => s.starsEarned),
                       ),
                       largerFonts: settings.largerTouchTargets,
-                      accentColor: const Color(0xFF0288D1),
                       onPause: _showPauseMenu,
                     ),
                     Expanded(
@@ -374,17 +373,13 @@ class _TapHintState extends State<_TapHint>
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF29B6F6),
-                    Color(0xFF26C6DA),
-                    Color(0xFF42A5F5),
-                  ],
+                  colors: [Color(0xFF4FA8F5), Color(0xFF8E7CF0)],
                 ),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(28),
                 border: Border.all(color: Colors.white, width: 2.5),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF0277BD).withValues(alpha: 0.3),
+                    color: const Color(0xFF5E35B1).withValues(alpha: 0.3),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
