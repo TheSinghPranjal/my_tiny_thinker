@@ -34,14 +34,8 @@ class LearningPathCard extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF7FA4F2), Color(0xFFC08AF0), Color(0xFFFFB79A)],
-          stops: [0.0, 0.5, 1.0],
-        ),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 3),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.85), width: 3),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF8A5BD8).withValues(alpha: 0.3),
@@ -54,25 +48,15 @@ class LearningPathCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(29),
         child: Stack(
           children: [
-            // Soft glow behind the illustration.
-            Positioned(
-              right: -30,
-              bottom: -10,
-              child: Container(
-                width: 220,
-                height: 220,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      Colors.white.withValues(alpha: 0.35),
-                      Colors.white.withValues(alpha: 0.0),
-                    ],
-                  ),
-                ),
+            // Card artwork (gradient sky, leaves and the books with a sprout).
+            // It sizes itself to the content and keeps the books bottom-right.
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/learning_path_card.png',
+                fit: BoxFit.cover,
+                alignment: Alignment.bottomRight,
               ),
             ),
-            const Positioned(right: 6, bottom: 10, child: HomeBooks(size: 150)),
             if (!isPremium)
               const Positioned(top: 12, right: 14, child: _PremiumBadge()),
             Padding(
@@ -132,7 +116,7 @@ class LearningPathCard extends ConsumerWidget {
                   ),
                   const SizedBox(height: 14),
                   FractionallySizedBox(
-                    widthFactor: 0.72,
+                    widthFactor: 0.62,
                     child: GestureDetector(
                       onTap: canStart ? start : null,
                       child: Opacity(
@@ -182,7 +166,7 @@ class LearningPathCard extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   FractionallySizedBox(
-                    widthFactor: 0.72,
+                    widthFactor: 0.62,
                     child: GestureDetector(
                       onTap: () => context.push(AppRoutes.parentZone),
                       child: Container(
