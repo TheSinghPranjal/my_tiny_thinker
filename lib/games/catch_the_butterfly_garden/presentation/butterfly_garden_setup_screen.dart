@@ -5,7 +5,6 @@ import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/widgets/game_setup_scaffold.dart';
 import 'package:my_tiny_thinker/games/catch_the_butterfly_garden/models/butterfly_garden_models.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 
 class ButterflyGardenSetupScreen extends ConsumerWidget {
   const ButterflyGardenSetupScreen({super.key});
@@ -21,11 +20,8 @@ class ButterflyGardenSetupScreen extends ConsumerWidget {
           subtitle: 'Tap the butterflies and fill your basket!',
           skills: kButterflyGardenSkills,
           skillChipColor: const Color(0xFFCE93D8).withValues(alpha: 0.35),
-          titleColor: AppColors.white,
-          subtitleColor: AppColors.white.withValues(alpha: 0.95),
-          titleShadows: const [
-                      Shadow(color: Color(0xFF7B1FA2), blurRadius: 6),
-                    ],
+          titleColor: const Color(0xFF7B1FA2),
+          subtitleColor: const Color(0xFF4A148C),
           onPlay: () => pushGameGuarded(context, ref, GameId.catchTheButterflyGarden, AppRoutes.butterflyGardenGame),
         ),
       );

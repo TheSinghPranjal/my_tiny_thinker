@@ -193,7 +193,7 @@ class _InfoCard extends StatelessWidget {
                   children: [
                     _GradientOutlineTitle(
                       text: title,
-                      fallbackColor: titleColor,
+                      fallbackColor: _legibleOnLightCard(titleColor),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -203,7 +203,9 @@ class _InfoCard extends StatelessWidget {
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         height: 1.3,
-                        color: subtitleColor ?? GameSetupScaffold._brown,
+                        color:
+                            _legibleOnLightCard(subtitleColor) ??
+                            GameSetupScaffold._brown,
                       ),
                     ),
                     if (skills.isNotEmpty) ...[
@@ -251,6 +253,13 @@ class _InfoCard extends StatelessWidget {
       ],
     );
   }
+}
+
+/// The info card is a light frosted panel, so light (e.g. white) text colors
+/// would vanish into it. Swap those for a dark, readable color.
+Color? _legibleOnLightCard(Color? color) {
+  if (color == null) return null;
+  return color.computeLuminance() > 0.5 ? const Color(0xFF4A148C) : color;
 }
 
 class _GradientOutlineTitle extends StatelessWidget {

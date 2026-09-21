@@ -29,7 +29,8 @@ class CandyColorHuntGameScreen extends ConsumerStatefulWidget {
       _CandyColorHuntGameScreenState();
 }
 
-class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScreen>
+class _CandyColorHuntGameScreenState
+    extends ConsumerState<CandyColorHuntGameScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   final _particleKey = GlobalKey<ParticleSystemState>();
   Ticker? _ticker;
@@ -52,11 +53,7 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
   }
 
   Future<void> _start() async {
-    if (!await ensureCanStartGame(
-      context,
-      ref,
-      GameId.candyColorHunt,
-    )) {
+    if (!await ensureCanStartGame(context, ref, GameId.candyColorHunt)) {
       return;
     }
     if (!mounted) return;
@@ -99,7 +96,8 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
     ref.read(candyColorHuntControllerProvider.notifier).pause();
     await TTPauseDialog.show(
       context,
-      onResume: () => ref.read(candyColorHuntControllerProvider.notifier).resume(),
+      onResume: () =>
+          ref.read(candyColorHuntControllerProvider.notifier).resume(),
       onRestart: _start,
       onHome: () {
         ref.read(candyColorHuntControllerProvider.notifier).reset();
@@ -116,18 +114,17 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
 
   void _onCandyTap(String id) {
     final settings = ref.read(candyColorHuntSettingsProvider);
-    final ok =
-        ref.read(candyColorHuntControllerProvider.notifier).tapCandy(id);
+    final ok = ref.read(candyColorHuntControllerProvider.notifier).tapCandy(id);
 
     if (settings.hapticsEnabled) {
-      ref.read(hapticServiceProvider).trigger(
-            ok ? HapticType.success : HapticType.light,
-          );
+      ref
+          .read(hapticServiceProvider)
+          .trigger(ok ? HapticType.success : HapticType.light);
     }
     if (settings.soundEnabled) {
-      ref.read(audioServiceProvider).playSfx(
-            ok ? SoundEffect.correct : SoundEffect.wrong,
-          );
+      ref
+          .read(audioServiceProvider)
+          .playSfx(ok ? SoundEffect.correct : SoundEffect.wrong);
       if (ok) {
         ref.read(audioServiceProvider).playSfx(SoundEffect.reward);
         ref.read(audioServiceProvider).playSfx(SoundEffect.coin);
@@ -137,16 +134,19 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
 
   @override
   Widget build(BuildContext context) {
-    final phase =
-        ref.watch(candyColorHuntControllerProvider.select((s) => s.phase));
+    final phase = ref.watch(
+      candyColorHuntControllerProvider.select((s) => s.phase),
+    );
     final settings = ref.watch(candyColorHuntSettingsProvider);
-    final envPhase =
-        ref.watch(candyColorHuntControllerProvider.select((s) => s.envPhase));
+    final envPhase = ref.watch(
+      candyColorHuntControllerProvider.select((s) => s.envPhase),
+    );
     final remaining = ref.watch(
       candyColorHuntControllerProvider.select((s) => s.remainingSeconds),
     );
-    final targetDef =
-        ref.watch(candyColorHuntControllerProvider.select((s) => s.targetDef));
+    final targetDef = ref.watch(
+      candyColorHuntControllerProvider.select((s) => s.targetDef),
+    );
 
     return PopScope(
       canPop: false,
@@ -168,13 +168,19 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
                   children: [
                     GameSessionHud(
                       remainingSeconds: ref.watch(
-                        candyColorHuntControllerProvider.select((s) => s.remainingSeconds),
+                        candyColorHuntControllerProvider.select(
+                          (s) => s.remainingSeconds,
+                        ),
                       ),
                       coinsEarned: ref.watch(
-                        candyColorHuntControllerProvider.select((s) => s.coinsEarned),
+                        candyColorHuntControllerProvider.select(
+                          (s) => s.coinsEarned,
+                        ),
                       ),
                       starsEarned: ref.watch(
-                        candyColorHuntControllerProvider.select((s) => s.starsEarned),
+                        candyColorHuntControllerProvider.select(
+                          (s) => s.starsEarned,
+                        ),
                       ),
                       largerFonts: settings.largerTouchTargets,
                       onPause: _showPauseMenu,
@@ -184,33 +190,43 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
                       flex: 3,
                       child: targetDef == null
                           ? const Center(child: CircularProgressIndicator())
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ThoughtBubbleWidget(
-                                  target: targetDef,
-                                  scale: ref.watch(
-                                    candyColorHuntControllerProvider
-                                        .select((s) => s.bubbleScale),
+                          : FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.bottomCenter,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ThoughtBubbleWidget(
+                                    target: targetDef,
+                                    scale: ref.watch(
+                                      candyColorHuntControllerProvider.select(
+                                        (s) => s.bubbleScale,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                CandyAntWidget(
-                                  mood: ref.watch(
-                                    candyColorHuntControllerProvider
-                                        .select((s) => s.antMood),
+                                  CandyAntWidget(
+                                    mood: ref.watch(
+                                      candyColorHuntControllerProvider.select(
+                                        (s) => s.antMood,
+                                      ),
+                                    ),
+                                    animPhase: ref.watch(
+                                      candyColorHuntControllerProvider.select(
+                                        (s) => s.antAnimPhase,
+                                      ),
+                                    ),
+                                    blinkTimer: ref.watch(
+                                      candyColorHuntControllerProvider.select(
+                                        (s) => s.blinkTimer,
+                                      ),
+                                    ),
+                                    size: settings.largerTouchTargets
+                                        ? 128
+                                        : 112,
                                   ),
-                                  animPhase: ref.watch(
-                                    candyColorHuntControllerProvider
-                                        .select((s) => s.antAnimPhase),
-                                  ),
-                                  blinkTimer: ref.watch(
-                                    candyColorHuntControllerProvider
-                                        .select((s) => s.blinkTimer),
-                                  ),
-                                  size: settings.largerTouchTargets ? 128 : 112,
-                                ),
-                                const SizedBox(height: 4),
-                              ],
+                                  const SizedBox(height: 4),
+                                ],
+                              ),
                             ),
                     ),
                     // Floating wrapped candies over the meadow (no bowl).
@@ -220,8 +236,9 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
                         padding: const EdgeInsets.fromLTRB(10, 4, 10, 16),
                         child: CandyBowlWidget(
                           candies: ref.watch(
-                            candyColorHuntControllerProvider
-                                .select((s) => s.candies),
+                            candyColorHuntControllerProvider.select(
+                              (s) => s.candies,
+                            ),
                           ),
                           largerTouch: settings.largerTouchTargets,
                           onCandyTap: _onCandyTap,
@@ -241,20 +258,27 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
                 ),
                 GameFeedbackOverlay(
                   message: ref.watch(
-                    candyColorHuntControllerProvider
-                        .select((s) => s.feedbackMessage),
+                    candyColorHuntControllerProvider.select(
+                      (s) => s.feedbackMessage,
+                    ),
                   ),
                   rewardText: ref.watch(
-                    candyColorHuntControllerProvider
-                        .select((s) => s.lastRewardText),
+                    candyColorHuntControllerProvider.select(
+                      (s) => s.lastRewardText,
+                    ),
                   ),
                   showMascot: ref.watch(
-                    candyColorHuntControllerProvider.select((s) => s.showMascot),
+                    candyColorHuntControllerProvider.select(
+                      (s) => s.showMascot,
+                    ),
                   ),
                   rewardShadowColor: const Color(0xFFFF7043),
                 ),
-                if (phase == CandyHuntPhase.paused) GamePausedOverlay(
-                    onResume: () => ref.read(candyColorHuntControllerProvider.notifier).resume(),
+                if (phase == CandyHuntPhase.paused)
+                  GamePausedOverlay(
+                    onResume: () => ref
+                        .read(candyColorHuntControllerProvider.notifier)
+                        .resume(),
                     onOpenMenu: _showPauseMenu,
                   ),
                 if (phase == CandyHuntPhase.finished)
@@ -264,7 +288,9 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
                         .getResult(),
                     onPlayAgain: _start,
                     onHome: () {
-                      ref.read(candyColorHuntControllerProvider.notifier).reset();
+                      ref
+                          .read(candyColorHuntControllerProvider.notifier)
+                          .reset();
                       context.go(AppRoutes.home);
                     },
                   ),
@@ -276,4 +302,3 @@ class _CandyColorHuntGameScreenState extends ConsumerState<CandyColorHuntGameScr
     );
   }
 }
-

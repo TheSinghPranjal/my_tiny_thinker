@@ -370,13 +370,6 @@ class _PlayAgainButton extends StatelessWidget {
               end: Alignment.bottomCenter,
               colors: [Color(0xFFB07CFF), Color(0xFF8E5AF7), Color(0xFF6C3AE8)],
             ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF6C3AE8).withValues(alpha: 0.38),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
           ),
           child: Stack(
             alignment: Alignment.center,
