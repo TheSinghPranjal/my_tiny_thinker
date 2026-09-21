@@ -121,7 +121,6 @@ class CompleteWordState extends Equatable {
     this.countdown = 3,
     this.score = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.lettersCorrect = 0,
     this.lettersWrong = 0,
@@ -147,7 +146,6 @@ class CompleteWordState extends Equatable {
   final int countdown;
   final int score;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int lettersCorrect;
   final int lettersWrong;
@@ -183,7 +181,6 @@ class CompleteWordState extends Equatable {
     int? countdown,
     int? score,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? lettersCorrect,
     int? lettersWrong,
@@ -214,7 +211,6 @@ class CompleteWordState extends Equatable {
         countdown: countdown ?? this.countdown,
         score: score ?? this.score,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         lettersCorrect: lettersCorrect ?? this.lettersCorrect,
         lettersWrong: lettersWrong ?? this.lettersWrong,
@@ -243,7 +239,6 @@ class CompleteWordState extends Equatable {
         countdown,
         score,
         coinsEarned,
-        xpEarned,
         starsEarned,
         lettersCorrect,
         lettersWrong,
@@ -266,7 +261,6 @@ class CompleteWordResult extends Equatable {
     required this.lettersWrong,
     required this.accuracy,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.score,
     required this.maxCombo,
@@ -278,7 +272,6 @@ class CompleteWordResult extends Equatable {
   final int lettersWrong;
   final double accuracy;
   final int coins;
-  final int xp;
   final int stars;
   final int score;
   final int maxCombo;
@@ -291,7 +284,6 @@ class CompleteWordResult extends Equatable {
         lettersWrong,
         accuracy,
         coins,
-        xp,
         stars,
         score,
         maxCombo,

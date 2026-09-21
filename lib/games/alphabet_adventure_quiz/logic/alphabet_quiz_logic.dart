@@ -74,7 +74,7 @@ abstract final class AlphabetQuizLogic {
     };
   }
 
-  static ({int coins, int xp, int stars, int points}) answerReward(
+  static ({int coins, int stars, int points}) answerReward(
     AlphabetQuizSettings settings,
     int streak,
   ) {
@@ -83,7 +83,6 @@ abstract final class AlphabetQuizLogic {
     return (
       points: points,
       coins: math.max(1, (5 * mult).round()),
-      xp: math.max(3, (5 * mult).round()),
       stars: streak % 3 == 0 ? 1 : 0,
     );
   }
@@ -99,7 +98,6 @@ abstract final class AlphabetQuizLogic {
       maxStreak: state.maxStreak,
       lettersCompleted: state.lettersCompleted,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: state.starsEarned + (accuracy >= 0.85 ? 1 : 0),
       sessionSeconds: state.settings.sessionSeconds,
       accuracy: accuracy,
@@ -109,7 +107,6 @@ abstract final class AlphabetQuizLogic {
   static GameRewardResult toReward(AlphabetQuizResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars,
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.95,
       );
 }

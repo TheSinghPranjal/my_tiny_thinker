@@ -212,7 +212,7 @@ abstract final class LearnToSortFoodLogic {
         ),
       ];
 
-  static ({int points, int coins, int xp, int stars}) matchReward(
+  static ({int points, int coins, int stars}) matchReward(
     FoodSortSettings settings,
     int streak,
   ) {
@@ -220,7 +220,6 @@ abstract final class LearnToSortFoodLogic {
     return (
       points: (10 * mult).round(),
       coins: math.max(1, (3 * mult).round()),
-      xp: math.max(2, (3 * mult).round()),
       stars: 10,
     );
   }
@@ -236,7 +235,6 @@ abstract final class LearnToSortFoodLogic {
       attempts: state.attempts,
       maxStreak: state.maxStreak,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: (state.starsEarned ~/ 10) + bonusStars,
       roundReached: state.round,
       accuracy: accuracy,
@@ -246,7 +244,6 @@ abstract final class LearnToSortFoodLogic {
   static GameRewardResult toReward(FoodSortResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars.clamp(0, 5),
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.95,
       );
 

@@ -345,7 +345,6 @@ class CandyHuntState extends Equatable {
     this.streak = 0,
     this.maxStreak = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.antMood = AntMood.idle,
     this.antAnimPhase = 0,
@@ -371,7 +370,6 @@ class CandyHuntState extends Equatable {
   final int streak;
   final int maxStreak;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final AntMood antMood;
   final double antAnimPhase;
@@ -400,7 +398,6 @@ class CandyHuntState extends Equatable {
     int? streak,
     int? maxStreak,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     AntMood? antMood,
     double? antAnimPhase,
@@ -429,7 +426,6 @@ class CandyHuntState extends Equatable {
         streak: streak ?? this.streak,
         maxStreak: maxStreak ?? this.maxStreak,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         antMood: antMood ?? this.antMood,
         antAnimPhase: antAnimPhase ?? this.antAnimPhase,
@@ -460,7 +456,6 @@ class CandyHuntState extends Equatable {
         streak,
         maxStreak,
         coinsEarned,
-        xpEarned,
         starsEarned,
         antMood,
         antAnimPhase,
@@ -483,7 +478,6 @@ class CandyHuntResult extends Equatable {
     required this.attempts,
     required this.maxStreak,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
     required this.accuracy,
@@ -494,7 +488,6 @@ class CandyHuntResult extends Equatable {
   final int attempts;
   final int maxStreak;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
   final double accuracy;
@@ -506,7 +499,6 @@ class CandyHuntResult extends Equatable {
         attempts,
         maxStreak,
         coins,
-        xp,
         stars,
         sessionSeconds,
         accuracy,

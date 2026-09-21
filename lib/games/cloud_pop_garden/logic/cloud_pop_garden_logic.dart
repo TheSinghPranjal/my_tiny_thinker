@@ -341,7 +341,6 @@ abstract final class CloudPopGardenLogic {
     final bonus = streak >= 3 ? 1 : 0;
     return CloudPopReward(
       coins: ((1 + random.nextInt(2)) * mult).round().clamp(1, 4),
-      xp: ((4 + random.nextInt(3)) * mult).round().clamp(3, 12),
       stars: streak % 4 == 0 ? 1 + bonus : (streak % 2 == 0 ? 1 : 0),
     );
   }

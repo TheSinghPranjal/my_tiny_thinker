@@ -68,7 +68,7 @@ abstract final class NumberBridgeLogic {
     return next;
   }
 
-  static ({int points, int coins, int xp, int stars}) matchReward(
+  static ({int points, int coins, int stars}) matchReward(
     NumberBridgeSettings settings,
     int streak,
   ) {
@@ -76,19 +76,17 @@ abstract final class NumberBridgeLogic {
     return (
       points: (10 * mult).round(),
       coins: math.max(1, (5 * mult).round()),
-      xp: math.max(2, (5 * mult).round()),
       stars: 1,
     );
   }
 
-  static ({int points, int coins, int xp, int stars}) roundBonus(
+  static ({int points, int coins, int stars}) roundBonus(
     NumberBridgeSettings settings,
   ) {
     final mult = settings.rewardMultiplier;
     return (
       points: (50 * mult).round(),
       coins: math.max(5, (20 * mult).round()),
-      xp: math.max(5, (20 * mult).round()),
       stars: 2,
     );
   }
@@ -118,7 +116,6 @@ abstract final class NumberBridgeLogic {
       maxStreak: state.maxStreak,
       roundsCompleted: state.roundsCompleted,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: state.starsEarned + bonusStars,
       accuracy: accuracy,
     );
@@ -127,7 +124,6 @@ abstract final class NumberBridgeLogic {
   static GameRewardResult toReward(NumberBridgeResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars.clamp(0, 8),
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.95,
       );
 

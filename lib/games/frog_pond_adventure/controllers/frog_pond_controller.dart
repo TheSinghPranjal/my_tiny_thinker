@@ -198,11 +198,10 @@ class FrogPondController extends StateNotifier<FrogPondState> {
       longestStreak: math.max(state.longestStreak, streak),
       pointsEarned: state.pointsEarned + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       feedbackMessage: FrogPondLogic.pickEncouragement(tapped),
       lastRewardText:
-          '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
+          '+${reward.points} Points  +${reward.coins} Coins${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
       showMascot: tapped % 3 == 0,
       showSparkles: true,
     );
@@ -251,11 +250,10 @@ class FrogPondController extends StateNotifier<FrogPondState> {
       longestStreak: math.max(state.longestStreak, streak),
       pointsEarned: state.pointsEarned + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       feedbackMessage: FrogPondLogic.pickKingMessage(kings),
       lastRewardText:
-          'Double Reward!  +${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP  +${reward.stars} Stars',
+          'Double Reward!  +${reward.points} Points  +${reward.coins} Coins  +${reward.stars} Stars',
       showMascot: true,
       showSparkles: true,
     );
@@ -319,7 +317,6 @@ class FrogPondController extends StateNotifier<FrogPondState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.frogPondAdventure);

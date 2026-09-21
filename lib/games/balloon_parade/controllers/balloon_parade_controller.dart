@@ -189,13 +189,12 @@ class BalloonParadeController extends StateNotifier<BalloonParadeState> {
       maxStreak: maxStreak,
       pointsEarned: state.pointsEarned + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       inactivitySeconds: 0,
       showMascot: showMascot,
       feedbackMessage: phrase,
       lastRewardText:
-          '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP'
+          '+${reward.points} Points  +${reward.coins} Coins'
           '${reward.stars > 0 ? '  +${reward.stars} Happy Star' : ''}',
     );
     _scheduleFeedbackClear(showMascot: showMascot);
@@ -247,7 +246,6 @@ class BalloonParadeController extends StateNotifier<BalloonParadeState> {
         maxStreak: state.maxStreak,
         points: state.pointsEarned,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         sessionSeconds: state.settings.sessionSeconds,
       );
@@ -274,7 +272,6 @@ class BalloonParadeController extends StateNotifier<BalloonParadeState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref

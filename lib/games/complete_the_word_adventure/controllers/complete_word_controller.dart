@@ -114,11 +114,10 @@ class CompleteWordController extends StateNotifier<CompleteWordState> {
       combo: combo,
       maxCombo: math.max(state.maxCombo, combo),
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       score: state.score + reward.points,
       flyingLetter: letter,
       feedbackMessage: praise,
-      lastRewardText: '+${reward.coins} Coins  +${reward.xp} XP',
+      lastRewardText: '+${reward.coins} Coins',
       clearHint: true,
       clearWrong: true,
     );
@@ -164,12 +163,11 @@ class CompleteWordController extends StateNotifier<CompleteWordState> {
       phase: CompleteWordPhase.celebrating,
       wordsCompleted: state.wordsCompleted + 1,
       coinsEarned: state.coinsEarned + bonus.coins,
-      xpEarned: state.xpEarned + bonus.xp,
       starsEarned: state.starsEarned + bonus.stars,
       score: state.score + bonus.points,
       feedbackMessage: praise,
       lastRewardText:
-          '+${bonus.coins} Coins  +${bonus.xp} XP  +${bonus.stars}⭐',
+          '+${bonus.coins} Coins  +${bonus.stars}⭐',
     );
 
     _celebrateTimer?.cancel();
@@ -268,7 +266,6 @@ class CompleteWordController extends StateNotifier<CompleteWordState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
             isPerfect: result.lettersWrong == 0 && result.lettersCorrect > 0,
             isNewBest: result.score >
                 (existing != null

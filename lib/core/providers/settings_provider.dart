@@ -178,7 +178,6 @@ class ProfileNotifier extends StateNotifier<PlayerProfile> {
 
   Future<void> applyChestReward({
     required int coins,
-    required int xp,
     required int stars,
     required int streakDays,
     String? stickerId,
@@ -187,16 +186,9 @@ class ProfileNotifier extends StateNotifier<PlayerProfile> {
     if (stickerId != null && !unlocked.contains(stickerId)) {
       unlocked.add(stickerId);
     }
-    final newXp = state.xp + xp;
-    var newLevel = state.level;
-    while (newXp >= newLevel * 100) {
-      newLevel++;
-    }
     state = state.copyWith(
       coins: state.coins + coins,
       stars: state.stars + stars,
-      xp: newXp,
-      level: newLevel,
       dailyStreak: streakDays,
       unlockedStickers: unlocked,
     );

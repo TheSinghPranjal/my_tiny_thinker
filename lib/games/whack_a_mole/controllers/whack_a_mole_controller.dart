@@ -207,7 +207,6 @@ class WhackAMoleController extends StateNotifier<WhackAMoleState> {
       longestStreak: math.max(state.longestStreak, streak),
       fastestReactionMs: fastest,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       rewardPoints: state.rewardPoints + reward.rewardPoints,
       progressMeter: meter,
@@ -216,7 +215,7 @@ class WhackAMoleController extends StateNotifier<WhackAMoleState> {
           : null,
       lastRewardText: state.settings.celebrationsEnabled
           ? '+${reward.coins > 0 ? '${reward.coins} Coins  ' : ''}'
-              '+${reward.xp} XP'
+              ''
               '${reward.stars > 0 ? '  +${reward.stars} Star' : ''}'
           : null,
       showMascot: state.settings.celebrationsEnabled && taps % 5 == 0,

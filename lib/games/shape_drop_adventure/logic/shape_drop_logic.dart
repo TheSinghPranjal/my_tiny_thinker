@@ -77,7 +77,7 @@ abstract final class ShapeDropLogic {
     );
   }
 
-  static ({int coins, int xp, int stars, int points}) matchReward(
+  static ({int coins, int stars, int points}) matchReward(
     ShapeDropSettings settings,
     int streak,
   ) {
@@ -86,7 +86,6 @@ abstract final class ShapeDropLogic {
     return (
       points: points,
       coins: math.max(1, (5 * mult).round()),
-      xp: math.max(3, (5 * mult).round()),
       stars: streak > 0 && streak % 4 == 0 ? 1 : 0,
     );
   }
@@ -111,7 +110,6 @@ abstract final class ShapeDropLogic {
       attempts: state.attempts,
       maxStreak: state.maxStreak,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: stars.clamp(0, 5),
       sessionSeconds: state.settings.sessionSeconds,
       accuracy: accuracy,
@@ -123,7 +121,6 @@ abstract final class ShapeDropLogic {
   static GameRewardResult toReward(ShapeDropResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars,
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.95,
       );
 }

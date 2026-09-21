@@ -26,10 +26,9 @@ void main() {
       expect(CatchTheFishLogic.spawnFish(area, 10).length, 10);
     });
 
-    test('catch reward grants coins and xp', () {
+    test('catch reward grants coins and stars', () {
       final reward = CatchTheFishLogic.catchReward(settings, caught: 1);
       expect(reward.coins, 10);
-      expect(reward.xp, 5);
       final starReward = CatchTheFishLogic.catchReward(settings, caught: 5);
       expect(starReward.stars, 1);
     });

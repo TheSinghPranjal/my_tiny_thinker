@@ -173,7 +173,7 @@ abstract final class FeedFrogLogic {
     return (tipX: x, tipY: y);
   }
 
-  static ({int points, int coins, int xp, int stars}) feedReward(
+  static ({int points, int coins, int stars}) feedReward(
     FeedFrogSettings settings, {
     required bool isFirefly,
     required int eaten,
@@ -182,7 +182,6 @@ abstract final class FeedFrogLogic {
     return (
       points: (10 * m).round().clamp(5, 20),
       coins: (5 * m).round().clamp(2, 12),
-      xp: (5 * m).round().clamp(2, 12),
       stars: eaten % 3 == 0 ? 1 : 0,
     );
   }
@@ -192,7 +191,6 @@ abstract final class FeedFrogLogic {
         firefliesCaught: state.firefliesCaught,
         points: state.pointsEarned,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         longestStreak: state.longestStreak,
         sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,

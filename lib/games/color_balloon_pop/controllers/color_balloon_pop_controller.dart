@@ -255,7 +255,6 @@ class ColorBalloonPopController extends StateNotifier<ColorBalloonPopState> {
       maxStreak: math.max(state.maxStreak, streak),
       pointsEarned: state.pointsEarned + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       colorsMastered: mastered,
       showMascot: streak % 3 == 0,
@@ -266,7 +265,7 @@ class ColorBalloonPopController extends StateNotifier<ColorBalloonPopState> {
             )
           : 'Wonderful!',
       lastRewardText:
-          '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP'
+          '+${reward.points} Points  +${reward.coins} Coins'
           '${reward.stars > 0 ? '  +${reward.stars} Happy Star' : ''}',
     );
     _scheduleFeedbackClear(showMascot: streak % 3 == 0);
@@ -320,7 +319,6 @@ class ColorBalloonPopController extends StateNotifier<ColorBalloonPopState> {
         colorsMastered: state.colorsMastered.length,
         points: state.pointsEarned,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         sessionSeconds: state.settings.sessionSeconds,
       );
@@ -347,7 +345,6 @@ class ColorBalloonPopController extends StateNotifier<ColorBalloonPopState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref

@@ -197,7 +197,6 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
     var maxWateringStreak = state.maxWateringStreak;
     var rainbowsCreated = state.rainbowsCreated;
     var coinsEarned = state.coinsEarned;
-    var xpEarned = state.xpEarned;
     var starsEarned = state.starsEarned;
     var rainbowProgress = state.rainbowProgress;
     var showRainbow = state.showRainbow;
@@ -222,7 +221,6 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
           wateringStreak,
         );
         coinsEarned += reward.coins;
-        xpEarned += reward.xp;
         starsEarned += reward.stars;
         rainbowProgress += 1 / state.settings.rainsForRainbow;
         if (rainbowProgress >= 1) {
@@ -233,7 +231,7 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
         }
         feedback = kCloudPopEncouragements[successfulRains % kCloudPopEncouragements.length];
         rewardText =
-            '+${reward.coins} Coin${reward.coins == 1 ? '' : 's'}  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}';
+            '+${reward.coins} Coin${reward.coins == 1 ? '' : 's'}${reward.stars > 0 ? '  +${reward.stars} Star' : ''}';
         _scheduleFeedbackClear(showMascot: showMascot);
       case CloudTapResult.earlyThunder:
         wateringStreak = 0;
@@ -263,7 +261,6 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
       maxWateringStreak: maxWateringStreak,
       rainbowsCreated: rainbowsCreated,
       coinsEarned: coinsEarned,
-      xpEarned: xpEarned,
       starsEarned: starsEarned,
       rainbowProgress: rainbowProgress,
       showRainbow: showRainbow,
@@ -323,7 +320,6 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
         rainbowsCreated: state.rainbowsCreated,
         maxWateringStreak: state.maxWateringStreak,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         sessionSeconds: state.settings.sessionSeconds,
       );
@@ -350,7 +346,6 @@ class CloudPopGardenController extends StateNotifier<CloudPopGardenState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.cloudPopGarden);

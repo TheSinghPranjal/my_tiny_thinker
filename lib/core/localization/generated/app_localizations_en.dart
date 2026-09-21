@@ -90,12 +90,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stars => 'Stars';
 
   @override
-  String get xp => 'XP';
-
-  @override
-  String get level => 'Level';
-
-  @override
   String get streak => 'Streak';
 
   @override

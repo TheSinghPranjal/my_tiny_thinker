@@ -383,7 +383,6 @@ class WhackAMoleState extends Equatable {
     this.molesTapped = 0,
     this.molesAppeared = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.rewardPoints = 0,
     this.currentStreak = 0,
@@ -411,7 +410,6 @@ class WhackAMoleState extends Equatable {
   final int molesTapped;
   final int molesAppeared;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int rewardPoints;
   final int currentStreak;
@@ -445,7 +443,6 @@ class WhackAMoleState extends Equatable {
     int? molesTapped,
     int? molesAppeared,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? rewardPoints,
     int? currentStreak,
@@ -475,7 +472,6 @@ class WhackAMoleState extends Equatable {
         molesTapped: molesTapped ?? this.molesTapped,
         molesAppeared: molesAppeared ?? this.molesAppeared,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         rewardPoints: rewardPoints ?? this.rewardPoints,
         currentStreak: currentStreak ?? this.currentStreak,
@@ -507,7 +503,6 @@ class WhackAMoleState extends Equatable {
         molesTapped,
         molesAppeared,
         coinsEarned,
-        xpEarned,
         starsEarned,
         rewardPoints,
         currentStreak,
@@ -531,7 +526,6 @@ class WhackAMoleResult extends Equatable {
     required this.molesTapped,
     required this.coins,
     required this.stars,
-    required this.xp,
     required this.rewardPoints,
     required this.longestStreak,
     required this.fastestReactionMs,
@@ -543,7 +537,6 @@ class WhackAMoleResult extends Equatable {
   final int molesTapped;
   final int coins;
   final int stars;
-  final int xp;
   final int rewardPoints;
   final int longestStreak;
   final int fastestReactionMs;
@@ -556,7 +549,6 @@ class WhackAMoleResult extends Equatable {
         molesTapped,
         coins,
         stars,
-        xp,
         rewardPoints,
         longestStreak,
         fastestReactionMs,

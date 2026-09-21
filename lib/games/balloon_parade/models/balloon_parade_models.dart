@@ -111,7 +111,6 @@ class BalloonParadeState extends Equatable {
     this.maxStreak = 0,
     this.pointsEarned = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.spawnCooldown = 0,
     this.inactivitySeconds = 0,
@@ -132,7 +131,6 @@ class BalloonParadeState extends Equatable {
   final int maxStreak;
   final int pointsEarned;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final double spawnCooldown;
   final double inactivitySeconds;
@@ -153,7 +151,6 @@ class BalloonParadeState extends Equatable {
     int? maxStreak,
     int? pointsEarned,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     double? spawnCooldown,
     double? inactivitySeconds,
@@ -176,7 +173,6 @@ class BalloonParadeState extends Equatable {
         maxStreak: maxStreak ?? this.maxStreak,
         pointsEarned: pointsEarned ?? this.pointsEarned,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         spawnCooldown: spawnCooldown ?? this.spawnCooldown,
         inactivitySeconds: inactivitySeconds ?? this.inactivitySeconds,
@@ -201,7 +197,6 @@ class BalloonParadeState extends Equatable {
         maxStreak,
         pointsEarned,
         coinsEarned,
-        xpEarned,
         starsEarned,
         spawnCooldown,
         inactivitySeconds,
@@ -220,7 +215,6 @@ class BalloonParadeResult extends Equatable {
     required this.maxStreak,
     required this.points,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
   });
@@ -230,7 +224,6 @@ class BalloonParadeResult extends Equatable {
   final int maxStreak;
   final int points;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
 
@@ -241,7 +234,6 @@ class BalloonParadeResult extends Equatable {
         maxStreak,
         points,
         coins,
-        xp,
         stars,
         sessionSeconds,
       ];

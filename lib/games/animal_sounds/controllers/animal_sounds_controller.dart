@@ -148,11 +148,10 @@ class AnimalSoundsController extends StateNotifier<AnimalSoundsState> {
       attempts: attempts,
       streak: streak,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       feedbackMessage: msg,
       lastRewardText:
-          '+${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +⭐' : ''}',
+          '+${reward.coins} Coins${reward.stars > 0 ? '  +⭐' : ''}',
       showSparkles: true,
     );
 
@@ -222,7 +221,6 @@ class AnimalSoundsController extends StateNotifier<AnimalSoundsState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref

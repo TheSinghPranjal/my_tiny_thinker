@@ -73,7 +73,7 @@ abstract final class ColorSchoolBagsLogic {
     return (books: books, backpacks: backpacks);
   }
 
-  static ({int points, int coins, int xp, int stars}) matchReward(
+  static ({int points, int coins, int stars}) matchReward(
     SortBagsSettings settings,
     int streak,
   ) {
@@ -81,7 +81,6 @@ abstract final class ColorSchoolBagsLogic {
     return (
       points: (10 * mult).round(),
       coins: math.max(1, (3 * mult).round()),
-      xp: math.max(2, (3 * mult).round()),
       stars: 10, // +10 stars per correct match as per design
     );
   }
@@ -96,7 +95,6 @@ abstract final class ColorSchoolBagsLogic {
       attempts: state.attempts,
       maxStreak: state.maxStreak,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: (state.starsEarned ~/ 10) + bonusStars, // convert to reward stars
       levelReached: state.level,
       accuracy: accuracy,
@@ -106,7 +104,6 @@ abstract final class ColorSchoolBagsLogic {
   static GameRewardResult toReward(SortBagsResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars.clamp(0, 5),
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.95,
       );
 

@@ -198,7 +198,6 @@ class MemoryGameResult extends Equatable {
     required this.score,
     required this.stars,
     required this.coins,
-    required this.xp,
     required this.accuracy,
     required this.mistakes,
     required this.elapsedSeconds,
@@ -212,7 +211,6 @@ class MemoryGameResult extends Equatable {
   final int score;
   final int stars;
   final int coins;
-  final int xp;
   final double accuracy;
   final int mistakes;
   final int elapsedSeconds;
@@ -227,7 +225,6 @@ class MemoryGameResult extends Equatable {
         score,
         stars,
         coins,
-        xp,
         accuracy,
         mistakes,
         elapsedSeconds,

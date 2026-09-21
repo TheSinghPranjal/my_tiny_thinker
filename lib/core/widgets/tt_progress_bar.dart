@@ -3,7 +3,6 @@ import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_badge.dart';
 
 class TTProgressBar extends StatelessWidget {
   const TTProgressBar({
@@ -145,48 +144,6 @@ class _TTAnimatedProgressBarState extends State<TTAnimatedProgressBar>
           label: '${widget.current} / ${widget.total}',
         );
       },
-    );
-  }
-}
-
-class TTXPBar extends StatelessWidget {
-  const TTXPBar({
-    super.key,
-    required this.currentXp,
-    required this.xpForLevel,
-    required this.level,
-  });
-
-  final int currentXp;
-  final int xpForLevel;
-  final int level;
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = xpForLevel > 0 ? (currentXp % xpForLevel) / xpForLevel : 0.0;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            TTBadge(
-              label: 'Lv. $level',
-              color: AppColors.lavender,
-            ),
-            const Spacer(),
-            Text(
-              '$currentXp XP',
-              style: context.textTheme.labelSmall,
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        TTProgressBar(
-          progress: progress,
-          height: 8,
-          gradient: AppGradients.bubblePurple,
-        ),
-      ],
     );
   }
 }

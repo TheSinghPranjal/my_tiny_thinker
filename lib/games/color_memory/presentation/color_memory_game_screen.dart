@@ -284,7 +284,6 @@ class _ColorMemoryGameScreenState extends ConsumerState<ColorMemoryGameScreen> {
           value: '+${result.stars}',
         ),
         CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
         CelebrationStat(icon: '🏁', label: 'Level', value: '${result.level}'),
         CelebrationStat(
           icon: '🔥',

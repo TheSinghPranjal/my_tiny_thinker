@@ -61,7 +61,6 @@ void main() {
       final r = NumberBridgeLogic.matchReward(const NumberBridgeSettings(), 1);
       expect(r.points, 10);
       expect(r.coins, 5);
-      expect(r.xp, 5);
       expect(r.stars, 1);
     });
 
@@ -69,7 +68,6 @@ void main() {
       final r = NumberBridgeLogic.roundBonus(const NumberBridgeSettings());
       expect(r.points, 50);
       expect(r.coins, 20);
-      expect(r.xp, 20);
     });
 
     test('mergeRecent prefers newest values', () {

@@ -32,7 +32,6 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
         );
     await ref.read(profileProvider.notifier).applyChestReward(
           coins: chest.coins,
-          xp: chest.xp,
           stars: chest.stars,
           streakDays: daily.streakDays,
           stickerId: chest.stickerId,
@@ -44,7 +43,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
       title: 'Treasure Opened!',
       emoji: '💎',
       message:
-          '+${chest.coins} coins · +${chest.xp} XP · +${chest.stars} stars'
+          '+${chest.coins} coins · +${chest.stars} stars'
           '${chest.bonusLabel != null ? '\n${chest.bonusLabel}' : ''}'
           '${chest.stickerId != null ? '\nSticker unlocked!' : ''}'
           '\n\n🔥 ${daily.streakDays} day streak',
@@ -96,11 +95,6 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen> {
                             icon: Icons.star_rounded,
                             value: profile.stars,
                             label: 'Stars',
-                          ),
-                          _RewardStat(
-                            icon: Icons.bolt_rounded,
-                            value: profile.xp,
-                            label: 'XP',
                           ),
                         ],
                       ),

@@ -151,7 +151,6 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
     var rocket = tick.rocket;
     var score = state.score;
     var coins = state.coinsEarned;
-    var xp = state.xpEarned;
     var stars = state.starsEarned;
     var rescued = state.astronautsRescued;
     var streak = state.streak;
@@ -173,12 +172,11 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
         maxStreak = math.max(maxStreak, streak);
         score += reward.points;
         coins += reward.coins;
-        xp += reward.xp;
         stars += reward.stars;
       }
       feedback = n == 1 ? 'Astronaut Rescued!' : '$n Astronauts Rescued!';
       rewardText =
-          '+${reward.points * n} Pts  +${reward.coins * n} Coins  +${reward.xp * n} XP';
+          '+${reward.points * n} Pts  +${reward.coins * n} Coins';
       spoken = 'Great rescue!';
       showSparkles = true;
       showMascot = true;
@@ -234,7 +232,6 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
       rocket: rocket,
       score: score,
       coinsEarned: coins,
-      xpEarned: xp,
       starsEarned: stars,
       astronautsRescued: rescued,
       streak: streak,
@@ -306,11 +303,10 @@ class MoonRescueController extends StateNotifier<MoonRescueState> {
       // Show launch rewards immediately on tap.
       score: state.score + bonus.points,
       coinsEarned: state.coinsEarned + bonus.coins,
-      xpEarned: state.xpEarned + bonus.xp,
       starsEarned: state.starsEarned + bonus.stars,
       feedbackMessage: 'Liftoff! +${bonus.points} Pts',
       lastRewardText:
-          '+${bonus.points} Pts  +${bonus.coins} Coins  +${bonus.xp} XP',
+          '+${bonus.points} Pts  +${bonus.coins} Coins',
       spokenPhrase: 'Liftoff!',
       showSparkles: true,
       showMascot: true,

@@ -133,14 +133,13 @@ abstract final class CompleteWordLogic {
   static List<String> emptySlots(int length) =>
       List.filled(length, '');
 
-  static ({int coins, int xp, int stars, int points}) letterReward() =>
-      (coins: 5, xp: 2, stars: 0, points: 10);
+  static ({int coins, int stars, int points}) letterReward() =>
+      (coins: 5, stars: 0, points: 10);
 
-  static ({int coins, int xp, int stars, int points}) wordBonus(int combo) {
+  static ({int coins, int stars, int points}) wordBonus(int combo) {
     final comboBonus = combo >= 3 ? 5 : 0;
     return (
       coins: 20 + comboBonus,
-      xp: 10 + comboBonus,
       stars: 1,
       points: 40 + comboBonus * 2,
     );
@@ -154,7 +153,6 @@ abstract final class CompleteWordLogic {
       lettersWrong: state.lettersWrong,
       accuracy: state.accuracy,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: state.starsEarned,
       score: state.score,
       maxCombo: state.maxCombo,

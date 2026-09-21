@@ -153,7 +153,6 @@ class ColorMemoryResult extends Equatable {
     required this.score,
     required this.stars,
     required this.coins,
-    required this.xp,
     required this.level,
     required this.longestStreak,
     required this.mistakes,
@@ -164,7 +163,6 @@ class ColorMemoryResult extends Equatable {
   final int score;
   final int stars;
   final int coins;
-  final int xp;
   final int level;
   final int longestStreak;
   final int mistakes;
@@ -173,5 +171,5 @@ class ColorMemoryResult extends Equatable {
 
   @override
   List<Object?> get props =>
-      [score, stars, coins, xp, level, longestStreak, mistakes, isPerfect, isNewBest];
+      [score, stars, coins, level, longestStreak, mistakes, isPerfect, isNewBest];
 }

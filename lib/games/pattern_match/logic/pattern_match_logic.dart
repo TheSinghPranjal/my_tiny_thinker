@@ -148,7 +148,6 @@ abstract final class PatternMatchScoring {
       score: score,
       stars: stars,
       coins: score ~/ 8 + stars * 2,
-      xp: score ~/ 5,
       longestStreak: state.longestStreak,
       mistakes: state.mistakes,
       roundsSolved: solved,
@@ -160,7 +159,6 @@ abstract final class PatternMatchScoring {
   static GameRewardResult toReward(PatternMatchResult r) => GameRewardResult(
         coins: r.coins,
         stars: r.stars,
-        xp: r.xp,
         isPerfect: r.isPerfect,
         isNewBest: r.isNewBest,
       );

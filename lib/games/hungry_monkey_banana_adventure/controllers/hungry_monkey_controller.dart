@@ -231,11 +231,10 @@ class HungryMonkeyController extends StateNotifier<HungryMonkeyState> {
       longestStreak: math.max(state.longestStreak, streak),
       pointsEarned: state.pointsEarned + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       feedbackMessage: HungryMonkeyLogic.pickBananaEncouragement(fed),
       lastRewardText:
-          '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
+          '+${reward.points} Points  +${reward.coins} Coins${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
       showMascot: fed % 3 == 0,
       showSparkles: true,
       inactivityTimer: 0,
@@ -335,7 +334,6 @@ class HungryMonkeyController extends StateNotifier<HungryMonkeyState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.hungryMonkeyBananaAdventure);

@@ -413,26 +413,24 @@ abstract final class MoonRescueLogic {
     );
   }
 
-  static ({int points, int coins, int xp, int stars}) rescueReward(
+  static ({int points, int coins, int stars}) rescueReward(
     MoonRescueSettings settings,
   ) {
     final m = settings.rewardMultiplier;
     return (
       points: (10 * m).round(),
       coins: math.max(1, (5 * m).round()),
-      xp: math.max(2, (5 * m).round()),
       stars: 1,
     );
   }
 
-  static ({int points, int coins, int xp, int stars}) launchBonus(
+  static ({int points, int coins, int stars}) launchBonus(
     MoonRescueSettings settings,
   ) {
     final m = settings.rewardMultiplier;
     return (
       points: (50 * m).round(),
       coins: math.max(5, (25 * m).round()),
-      xp: math.max(5, (25 * m).round()),
       stars: 2,
     );
   }
@@ -445,14 +443,12 @@ abstract final class MoonRescueLogic {
         rocketsLaunched: state.rocketsLaunched,
         maxStreak: state.maxStreak,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
       );
 
   static GameRewardResult toReward(MoonRescueResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars.clamp(0, 8),
-        xp: result.xp,
         isPerfect: result.rocketsLaunched > 0 && result.maxStreak >= 3,
       );
 }

@@ -108,16 +108,15 @@ abstract final class FlowerGardenLogic {
   static double _angleToward(double x, double y, double tx, double ty) =>
       math.atan2(ty - y, tx - x);
 
-  static ({int coins, int xp, int stars}) bloomReward(FlowerGardenSettings s) {
+  static ({int coins, int stars}) bloomReward(FlowerGardenSettings s) {
     final m = s.rewardMultiplier;
     return (
       coins: (5 * m).round().clamp(1, 8),
-      xp: (10 * m).round().clamp(3, 20),
       stars: 0,
     );
   }
 
-  static ({int coins, int xp, int stars}) pollinatorReward(
+  static ({int coins, int stars}) pollinatorReward(
     FlowerGardenSettings s,
     int bloomsCount,
   ) {
@@ -125,7 +124,6 @@ abstract final class FlowerGardenLogic {
     final star = bloomsCount > 0 && bloomsCount % 3 == 0 ? 1 : 0;
     return (
       coins: (5 * m).round().clamp(1, 8),
-      xp: (8 * m).round().clamp(3, 18),
       stars: star,
     );
   }
@@ -134,7 +132,6 @@ abstract final class FlowerGardenLogic {
       FlowerGardenResult(
         bloomsCount: state.bloomsCount,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,
         endReason: state.endReason,

@@ -6,8 +6,6 @@ class PlayerProfile extends Equatable {
     this.displayName = 'Explorer',
     this.coins = 0,
     this.stars = 0,
-    this.xp = 0,
-    this.level = 1,
     this.dailyStreak = 0,
     this.totalPlayTimeMinutes = 0,
     this.avatarId = 'default',
@@ -21,8 +19,6 @@ class PlayerProfile extends Equatable {
   final String displayName;
   final int coins;
   final int stars;
-  final int xp;
-  final int level;
   final int dailyStreak;
   final int totalPlayTimeMinutes;
   final String avatarId;
@@ -32,15 +28,10 @@ class PlayerProfile extends Equatable {
   final List<String> unlockedBubbleSkins;
   final DateTime? lastPlayedDate;
 
-  int get xpForNextLevel => level * 100;
-  double get levelProgress => xpForNextLevel > 0 ? (xp % xpForNextLevel) / xpForNextLevel : 0;
-
   PlayerProfile copyWith({
     String? displayName,
     int? coins,
     int? stars,
-    int? xp,
-    int? level,
     int? dailyStreak,
     int? totalPlayTimeMinutes,
     String? avatarId,
@@ -54,8 +45,6 @@ class PlayerProfile extends Equatable {
         displayName: displayName ?? this.displayName,
         coins: coins ?? this.coins,
         stars: stars ?? this.stars,
-        xp: xp ?? this.xp,
-        level: level ?? this.level,
         dailyStreak: dailyStreak ?? this.dailyStreak,
         totalPlayTimeMinutes:
             totalPlayTimeMinutes ?? this.totalPlayTimeMinutes,
@@ -70,16 +59,9 @@ class PlayerProfile extends Equatable {
       );
 
   PlayerProfile applyReward(GameRewardResult reward) {
-    final newXp = xp + reward.xp;
-    var newLevel = level;
-    while (newXp >= newLevel * 100) {
-      newLevel++;
-    }
     return copyWith(
       coins: coins + reward.coins,
       stars: stars + reward.stars,
-      xp: newXp,
-      level: newLevel,
     );
   }
 
@@ -87,8 +69,6 @@ class PlayerProfile extends Equatable {
         'displayName': displayName,
         'coins': coins,
         'stars': stars,
-        'xp': xp,
-        'level': level,
         'dailyStreak': dailyStreak,
         'totalPlayTimeMinutes': totalPlayTimeMinutes,
         'avatarId': avatarId,
@@ -103,8 +83,6 @@ class PlayerProfile extends Equatable {
         displayName: json['displayName'] as String? ?? 'Explorer',
         coins: json['coins'] as int? ?? 0,
         stars: json['stars'] as int? ?? 0,
-        xp: json['xp'] as int? ?? 0,
-        level: json['level'] as int? ?? 1,
         dailyStreak: json['dailyStreak'] as int? ?? 0,
         totalPlayTimeMinutes: json['totalPlayTimeMinutes'] as int? ?? 0,
         avatarId: json['avatarId'] as String? ?? 'default',
@@ -134,8 +112,6 @@ class PlayerProfile extends Equatable {
         displayName,
         coins,
         stars,
-        xp,
-        level,
         dailyStreak,
         totalPlayTimeMinutes,
         avatarId,

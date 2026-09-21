@@ -467,7 +467,6 @@ class HungryDuckState extends Equatable {
     this.duckSwims = 0,
     this.pointsEarned = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.longestStreak = 0,
     this.currentStreak = 0,
@@ -500,7 +499,6 @@ class HungryDuckState extends Equatable {
   final int duckSwims;
   final int pointsEarned;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int longestStreak;
   final int currentStreak;
@@ -538,7 +536,6 @@ class HungryDuckState extends Equatable {
     int? duckSwims,
     int? pointsEarned,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? longestStreak,
     int? currentStreak,
@@ -572,7 +569,6 @@ class HungryDuckState extends Equatable {
         duckSwims: duckSwims ?? this.duckSwims,
         pointsEarned: pointsEarned ?? this.pointsEarned,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         longestStreak: longestStreak ?? this.longestStreak,
         currentStreak: currentStreak ?? this.currentStreak,
@@ -609,7 +605,6 @@ class HungryDuckState extends Equatable {
         duckSwims,
         pointsEarned,
         coinsEarned,
-        xpEarned,
         starsEarned,
         longestStreak,
         currentStreak,
@@ -637,7 +632,6 @@ class HungryDuckResult extends Equatable {
     required this.duckSwims,
     required this.points,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.longestStreak,
     required this.sessionSeconds,
@@ -649,7 +643,6 @@ class HungryDuckResult extends Equatable {
   final int duckSwims;
   final int points;
   final int coins;
-  final int xp;
   final int stars;
   final int longestStreak;
   final int sessionSeconds;
@@ -662,7 +655,6 @@ class HungryDuckResult extends Equatable {
         duckSwims,
         points,
         coins,
-        xp,
         stars,
         longestStreak,
         sessionSeconds,

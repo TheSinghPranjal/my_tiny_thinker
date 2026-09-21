@@ -355,16 +355,14 @@ class CloudEntity extends Equatable {
 class CloudPopReward extends Equatable {
   const CloudPopReward({
     required this.coins,
-    required this.xp,
     required this.stars,
   });
 
   final int coins;
-  final int xp;
   final int stars;
 
   @override
-  List<Object?> get props => [coins, xp, stars];
+  List<Object?> get props => [coins, stars];
 }
 
 class CloudPopGardenState extends Equatable {
@@ -381,7 +379,6 @@ class CloudPopGardenState extends Equatable {
     this.maxWateringStreak = 0,
     this.rainbowsCreated = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.rainbowProgress = 0,
     this.showRainbow = false,
@@ -405,7 +402,6 @@ class CloudPopGardenState extends Equatable {
   final int maxWateringStreak;
   final int rainbowsCreated;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final double rainbowProgress;
   final bool showRainbow;
@@ -429,7 +425,6 @@ class CloudPopGardenState extends Equatable {
     int? maxWateringStreak,
     int? rainbowsCreated,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     double? rainbowProgress,
     bool? showRainbow,
@@ -455,7 +450,6 @@ class CloudPopGardenState extends Equatable {
         maxWateringStreak: maxWateringStreak ?? this.maxWateringStreak,
         rainbowsCreated: rainbowsCreated ?? this.rainbowsCreated,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         rainbowProgress: rainbowProgress ?? this.rainbowProgress,
         showRainbow: showRainbow ?? this.showRainbow,
@@ -483,7 +477,6 @@ class CloudPopGardenState extends Equatable {
         maxWateringStreak,
         rainbowsCreated,
         coinsEarned,
-        xpEarned,
         starsEarned,
         rainbowProgress,
         showRainbow,
@@ -504,7 +497,6 @@ class CloudPopGardenResult extends Equatable {
     required this.rainbowsCreated,
     required this.maxWateringStreak,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
   });
@@ -515,7 +507,6 @@ class CloudPopGardenResult extends Equatable {
   final int rainbowsCreated;
   final int maxWateringStreak;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
 
@@ -527,7 +518,6 @@ class CloudPopGardenResult extends Equatable {
         rainbowsCreated,
         maxWateringStreak,
         coins,
-        xp,
         stars,
         sessionSeconds,
       ];

@@ -58,7 +58,6 @@ class NumberMemoryState extends Equatable {
     this.countdown = 3,
     this.score = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.correctCount = 0,
     this.wrongCount = 0,
@@ -82,7 +81,6 @@ class NumberMemoryState extends Equatable {
   final int countdown;
   final int score;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int correctCount;
   final int wrongCount;
@@ -112,7 +110,6 @@ class NumberMemoryState extends Equatable {
     int? countdown,
     int? score,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? correctCount,
     int? wrongCount,
@@ -138,7 +135,6 @@ class NumberMemoryState extends Equatable {
         countdown: countdown ?? this.countdown,
         score: score ?? this.score,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         correctCount: correctCount ?? this.correctCount,
         wrongCount: wrongCount ?? this.wrongCount,
@@ -167,7 +163,6 @@ class NumberMemoryState extends Equatable {
         countdown,
         score,
         coinsEarned,
-        xpEarned,
         starsEarned,
         correctCount,
         wrongCount,
@@ -190,7 +185,6 @@ class NumberMemoryResult extends Equatable {
     required this.wrongCount,
     required this.accuracy,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.maxCombo,
     required this.encouragement,
@@ -201,7 +195,6 @@ class NumberMemoryResult extends Equatable {
   final int wrongCount;
   final double accuracy;
   final int coins;
-  final int xp;
   final int stars;
   final int maxCombo;
   final String encouragement;
@@ -213,7 +206,6 @@ class NumberMemoryResult extends Equatable {
         wrongCount,
         accuracy,
         coins,
-        xp,
         stars,
         maxCombo,
         encouragement,

@@ -36,7 +36,6 @@ class MoonRescueVictoryOverlay extends StatelessWidget {
           value: '${result.maxStreak}',
         ),
         CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
         CelebrationStat(
           icon: '🌟',
           label: 'Happy Stars',

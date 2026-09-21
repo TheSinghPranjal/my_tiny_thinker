@@ -38,7 +38,6 @@ class NumberBridgeVictoryOverlay extends StatelessWidget {
         ),
         CelebrationStat(icon: '🎯', label: 'Accuracy', value: '$accuracyPct%'),
         CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
         CelebrationStat(
           icon: '🌟',
           label: 'Happy Stars',

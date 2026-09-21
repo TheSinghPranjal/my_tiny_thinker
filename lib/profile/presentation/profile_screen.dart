@@ -10,7 +10,6 @@ import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
 import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_progress_bar.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -135,12 +134,6 @@ class ProfileScreen extends ConsumerWidget {
                   gradient: AppGradients.welcomeCard,
                   child: Column(
                     children: [
-                      TTXPBar(
-                        currentXp: profile.xp,
-                        xpForLevel: profile.xpForNextLevel,
-                        level: profile.level,
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [

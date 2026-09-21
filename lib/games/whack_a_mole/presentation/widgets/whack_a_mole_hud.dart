@@ -101,7 +101,6 @@ class WhackVictoryOverlay extends StatelessWidget {
           label: 'Happy Stars',
           value: '+${result.stars}',
         ),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
         CelebrationStat(
           icon: '🏅',
           label: 'Reward Points',

@@ -161,7 +161,6 @@ class AlphabetQuizState extends Equatable {
     this.streak = 0,
     this.maxStreak = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.lettersCompleted = 0,
     this.feedbackMessage,
@@ -183,7 +182,6 @@ class AlphabetQuizState extends Equatable {
   final int streak;
   final int maxStreak;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int lettersCompleted;
   final String? feedbackMessage;
@@ -205,7 +203,6 @@ class AlphabetQuizState extends Equatable {
     int? streak,
     int? maxStreak,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? lettersCompleted,
     String? feedbackMessage,
@@ -229,7 +226,6 @@ class AlphabetQuizState extends Equatable {
         streak: streak ?? this.streak,
         maxStreak: maxStreak ?? this.maxStreak,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         lettersCompleted: lettersCompleted ?? this.lettersCompleted,
         feedbackMessage:
@@ -255,7 +251,6 @@ class AlphabetQuizState extends Equatable {
         streak,
         maxStreak,
         coinsEarned,
-        xpEarned,
         starsEarned,
         lettersCompleted,
         feedbackMessage,
@@ -276,7 +271,6 @@ class AlphabetQuizResult extends Equatable {
     required this.maxStreak,
     required this.lettersCompleted,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
     required this.accuracy,
@@ -288,7 +282,6 @@ class AlphabetQuizResult extends Equatable {
   final int maxStreak;
   final int lettersCompleted;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
   final double accuracy;
@@ -301,7 +294,6 @@ class AlphabetQuizResult extends Equatable {
         maxStreak,
         lettersCompleted,
         coins,
-        xp,
         stars,
         sessionSeconds,
         accuracy,

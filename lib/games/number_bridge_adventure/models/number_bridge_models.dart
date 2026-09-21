@@ -180,7 +180,6 @@ class NumberBridgeState extends Equatable {
     this.streak = 0,
     this.maxStreak = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.feedbackMessage,
     this.lastRewardText,
@@ -207,7 +206,6 @@ class NumberBridgeState extends Equatable {
   final int streak;
   final int maxStreak;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final String? feedbackMessage;
   final String? lastRewardText;
@@ -237,7 +235,6 @@ class NumberBridgeState extends Equatable {
     int? streak,
     int? maxStreak,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     String? feedbackMessage,
     String? lastRewardText,
@@ -266,7 +263,6 @@ class NumberBridgeState extends Equatable {
         streak: streak ?? this.streak,
         maxStreak: maxStreak ?? this.maxStreak,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         feedbackMessage:
             clearFeedback ? null : (feedbackMessage ?? this.feedbackMessage),
@@ -297,7 +293,6 @@ class NumberBridgeState extends Equatable {
         streak,
         maxStreak,
         coinsEarned,
-        xpEarned,
         starsEarned,
         feedbackMessage,
         lastRewardText,
@@ -318,7 +313,6 @@ class NumberBridgeResult extends Equatable {
     required this.maxStreak,
     required this.roundsCompleted,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.accuracy,
   });
@@ -329,7 +323,6 @@ class NumberBridgeResult extends Equatable {
   final int maxStreak;
   final int roundsCompleted;
   final int coins;
-  final int xp;
   final int stars;
   final double accuracy;
 
@@ -341,7 +334,6 @@ class NumberBridgeResult extends Equatable {
         maxStreak,
         roundsCompleted,
         coins,
-        xp,
         stars,
         accuracy,
       ];

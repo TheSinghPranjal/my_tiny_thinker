@@ -383,7 +383,6 @@ class SortBagsState extends Equatable {
     this.streak = 0,
     this.maxStreak = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.feedbackMessage,
     this.lastRewardText,
@@ -408,7 +407,6 @@ class SortBagsState extends Equatable {
   final int streak;
   final int maxStreak;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final String? feedbackMessage;
   final String? lastRewardText;
@@ -436,7 +434,6 @@ class SortBagsState extends Equatable {
     int? streak,
     int? maxStreak,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     String? feedbackMessage,
     String? lastRewardText,
@@ -465,7 +462,6 @@ class SortBagsState extends Equatable {
         streak: streak ?? this.streak,
         maxStreak: maxStreak ?? this.maxStreak,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         feedbackMessage:
             clearFeedback ? null : (feedbackMessage ?? this.feedbackMessage),
@@ -495,7 +491,6 @@ class SortBagsState extends Equatable {
         streak,
         maxStreak,
         coinsEarned,
-        xpEarned,
         starsEarned,
         feedbackMessage,
         lastRewardText,
@@ -516,7 +511,6 @@ class SortBagsResult extends Equatable {
     required this.attempts,
     required this.maxStreak,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.levelReached,
     required this.accuracy,
@@ -527,7 +521,6 @@ class SortBagsResult extends Equatable {
   final int attempts;
   final int maxStreak;
   final int coins;
-  final int xp;
   final int stars;
   final int levelReached;
   final double accuracy;
@@ -539,7 +532,6 @@ class SortBagsResult extends Equatable {
         attempts,
         maxStreak,
         coins,
-        xp,
         stars,
         levelReached,
         accuracy,

@@ -262,13 +262,11 @@ abstract final class BubbleScoring {
                 : 0;
 
     final coins = (finalScore / 10).round() + stars * 2;
-    final xp = finalScore ~/ 5;
 
     return BubbleGameResult(
       score: finalScore,
       stars: stars,
       coins: coins,
-      xp: xp,
       accuracy: state.accuracy,
       mistakes: state.mistakes,
       elapsedSeconds: state.elapsedSeconds,
@@ -286,7 +284,6 @@ abstract final class BubbleRewardCalculator {
     return GameRewardResult(
       coins: result.coins,
       stars: result.stars,
-      xp: result.xp,
       isPerfect: result.isPerfect,
       isNewBest: result.isNewBest,
     );

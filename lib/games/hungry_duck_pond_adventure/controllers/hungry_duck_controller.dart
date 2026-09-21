@@ -245,12 +245,11 @@ class HungryDuckController extends StateNotifier<HungryDuckState> {
       longestStreak: math.max(state.longestStreak, streak),
       pointsEarned: state.pointsEarned + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       feedbackMessage: HungryDuckLogic.pickEncouragement(caught, isGolden: isGolden),
       lastRewardText: isGolden
-          ? 'Golden!  +${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP  +${reward.stars} Stars'
-          : '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
+          ? 'Golden!  +${reward.points} Points  +${reward.coins} Coins  +${reward.stars} Stars'
+          : '+${reward.points} Points  +${reward.coins} Coins${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
       showMascot: caught % 3 == 0 || isGolden,
       showSparkles: true,
       showGoldenCelebration: isGolden,
@@ -364,7 +363,6 @@ class HungryDuckController extends StateNotifier<HungryDuckState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.hungryDuckPondAdventure);

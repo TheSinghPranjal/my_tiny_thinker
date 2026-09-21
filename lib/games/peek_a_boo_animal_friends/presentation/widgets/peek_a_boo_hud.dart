@@ -34,7 +34,6 @@ class PeekABooVictoryOverlay extends StatelessWidget {
         ),
         CelebrationStat(icon: '⭐', label: 'Points', value: '+${result.points}'),
         CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
         CelebrationStat(
           icon: '🌟',
           label: 'Happy Stars',

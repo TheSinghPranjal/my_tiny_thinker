@@ -182,7 +182,6 @@ class CatchTheFishState extends Equatable {
     this.remainingSeconds = 60,
     this.fishCaught = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.boatX = 0,
     this.boatY = 0,
@@ -204,7 +203,6 @@ class CatchTheFishState extends Equatable {
   final int remainingSeconds;
   final int fishCaught;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final double boatX;
   final double boatY;
@@ -229,7 +227,6 @@ class CatchTheFishState extends Equatable {
     int? remainingSeconds,
     int? fishCaught,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     double? boatX,
     double? boatY,
@@ -253,7 +250,6 @@ class CatchTheFishState extends Equatable {
         remainingSeconds: remainingSeconds ?? this.remainingSeconds,
         fishCaught: fishCaught ?? this.fishCaught,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         boatX: boatX ?? this.boatX,
         boatY: boatY ?? this.boatY,
@@ -281,7 +277,6 @@ class CatchTheFishState extends Equatable {
         remainingSeconds,
         fishCaught,
         coinsEarned,
-        xpEarned,
         starsEarned,
         boatX,
         boatY,
@@ -302,7 +297,6 @@ class CatchTheFishResult extends Equatable {
   const CatchTheFishResult({
     required this.fishCaught,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
     this.endReason,
@@ -310,14 +304,13 @@ class CatchTheFishResult extends Equatable {
 
   final int fishCaught;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
   final String? endReason;
 
   @override
   List<Object?> get props =>
-      [fishCaught, coins, xp, stars, sessionSeconds, endReason];
+      [fishCaught, coins, stars, sessionSeconds, endReason];
 }
 
 const kCatchTheFishSkills = [

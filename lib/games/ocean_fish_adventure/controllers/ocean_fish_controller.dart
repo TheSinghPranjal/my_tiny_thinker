@@ -188,11 +188,10 @@ class OceanFishController extends StateNotifier<OceanFishState> {
       fish: updated,
       fishTapped: newTapped,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + addStar,
       feedbackMessage: msg,
       showMascotCelebrate: showMascot,
-      lastRewardText: '+${reward.coins} Coin  +${reward.xp} XP',
+      lastRewardText: '+${reward.coins} Coin',
     );
 
     // Immediately spawn replacement so screen never empties
@@ -263,7 +262,6 @@ class OceanFishController extends StateNotifier<OceanFishState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.oceanFishAdventure);

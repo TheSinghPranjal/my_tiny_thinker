@@ -401,7 +401,6 @@ class HungryMonkeyState extends Equatable {
     this.applesTapped = 0,
     this.pointsEarned = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.longestStreak = 0,
     this.currentStreak = 0,
@@ -428,7 +427,6 @@ class HungryMonkeyState extends Equatable {
   final int applesTapped;
   final int pointsEarned;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int longestStreak;
   final int currentStreak;
@@ -467,7 +465,6 @@ class HungryMonkeyState extends Equatable {
     int? applesTapped,
     int? pointsEarned,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? longestStreak,
     int? currentStreak,
@@ -495,7 +492,6 @@ class HungryMonkeyState extends Equatable {
         applesTapped: applesTapped ?? this.applesTapped,
         pointsEarned: pointsEarned ?? this.pointsEarned,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         longestStreak: longestStreak ?? this.longestStreak,
         currentStreak: currentStreak ?? this.currentStreak,
@@ -526,7 +522,6 @@ class HungryMonkeyState extends Equatable {
         applesTapped,
         pointsEarned,
         coinsEarned,
-        xpEarned,
         starsEarned,
         longestStreak,
         currentStreak,
@@ -548,7 +543,6 @@ class HungryMonkeyResult extends Equatable {
     required this.applesTapped,
     required this.points,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.longestStreak,
     required this.sessionSeconds,
@@ -558,14 +552,13 @@ class HungryMonkeyResult extends Equatable {
   final int applesTapped;
   final int points;
   final int coins;
-  final int xp;
   final int stars;
   final int longestStreak;
   final int sessionSeconds;
 
   @override
   List<Object?> get props =>
-      [bananasFed, applesTapped, points, coins, xp, stars, longestStreak, sessionSeconds];
+      [bananasFed, applesTapped, points, coins, stars, longestStreak, sessionSeconds];
 }
 
 const kHungryMonkeySkills = [

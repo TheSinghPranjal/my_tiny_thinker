@@ -396,7 +396,7 @@ abstract final class HungryTeddyLogic {
     return v.copyWith(x: nx, y: ny);
   }
 
-  static ({int points, int coins, int xp, int stars}) feedReward(
+  static ({int points, int coins, int stars}) feedReward(
     HungryTeddySettings settings, {
     required bool isGolden,
     required int fedCount,
@@ -404,9 +404,8 @@ abstract final class HungryTeddyLogic {
     final m = settings.rewardMultiplier * (isGolden ? 2.0 : 1.0);
     final points = (10 * m).round().clamp(5, 60);
     final coins = (5 * m).round().clamp(2, 30);
-    final xp = (5 * m).round().clamp(2, 30);
     final stars = isGolden ? 2 : (fedCount % 3 == 0 ? 1 : 0);
-    return (points: points, coins: coins, xp: xp, stars: stars);
+    return (points: points, coins: coins, stars: stars);
   }
 
   static HungryTeddyResult buildResult(HungryTeddyState state) {
@@ -416,7 +415,6 @@ abstract final class HungryTeddyLogic {
       goldenFed: state.goldenFed,
       points: state.pointsEarned,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: state.starsEarned,
       longestStreak: state.longestStreak,
       sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,

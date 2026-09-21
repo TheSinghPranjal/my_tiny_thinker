@@ -287,7 +287,6 @@ class CompleteWordVictoryOverlay extends StatelessWidget {
           value: '${(result.accuracy * 100).round()}%',
         ),
         CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
         CelebrationStat(
           icon: '🌟',
           label: 'Happy Stars',

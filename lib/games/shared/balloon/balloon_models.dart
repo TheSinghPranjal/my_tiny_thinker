@@ -193,17 +193,15 @@ class BalloonPopReward extends Equatable {
   const BalloonPopReward({
     required this.points,
     required this.coins,
-    required this.xp,
     required this.stars,
   });
 
   final int points;
   final int coins;
-  final int xp;
   final int stars;
 
   @override
-  List<Object?> get props => [points, coins, xp, stars];
+  List<Object?> get props => [points, coins, stars];
 }
 
 const kBalloonPopPhrases = [

@@ -395,7 +395,7 @@ abstract final class HungryDuckLogic {
 
   static bool shouldMarkGoldenDue(int elapsed, int nextGoldenAt) => elapsed >= nextGoldenAt;
 
-  static ({int points, int coins, int xp, int stars}) catchReward(
+  static ({int points, int coins, int stars}) catchReward(
     HungryDuckSettings settings, {
     required bool isGolden,
     required int caught,
@@ -403,9 +403,8 @@ abstract final class HungryDuckLogic {
     final m = settings.rewardMultiplier * (isGolden ? 2.0 : 1.0);
     final points = ((isGolden ? 20 : 10) * m).round().clamp(5, 40);
     final coins = ((isGolden ? 10 : 5) * m).round().clamp(2, 24);
-    final xp = ((isGolden ? 10 : 5) * m).round().clamp(2, 24);
     final stars = isGolden ? 2 : (caught % 3 == 0 ? 1 : 0);
-    return (points: points, coins: coins, xp: xp, stars: stars);
+    return (points: points, coins: coins, stars: stars);
   }
 
   static HungryDuckResult buildResult(HungryDuckState state) => HungryDuckResult(
@@ -415,7 +414,6 @@ abstract final class HungryDuckLogic {
         duckSwims: state.duckSwims,
         points: state.pointsEarned,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         longestStreak: state.longestStreak,
         sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,

@@ -200,7 +200,7 @@ abstract final class WhackAMoleLogic {
     return s.copyWith(progress: (s.progress + delta * 1.8).clamp(0.0, 1.0));
   }
 
-  static ({int coins, int xp, int stars, int rewardPoints}) tapReward(
+  static ({int coins, int stars, int rewardPoints}) tapReward(
     WhackAMoleSettings settings,
     int streak,
   ) {
@@ -209,10 +209,9 @@ abstract final class WhackAMoleLogic {
     final coins = settings.coinRewardsEnabled
         ? ((4 + streakBonus) * m).round().clamp(2, 14)
         : 0;
-    final xp = ((5 + streakBonus) * m).round().clamp(2, 16);
     final rewardPoints = ((3 + streakBonus) * m).round().clamp(1, 12);
     final stars = streak > 0 && streak % 5 == 0 ? 1 : 0;
-    return (coins: coins, xp: xp, stars: stars, rewardPoints: rewardPoints);
+    return (coins: coins, stars: stars, rewardPoints: rewardPoints);
   }
 
   static String pickEncouragement(int taps) =>
@@ -230,7 +229,6 @@ abstract final class WhackAMoleLogic {
       molesTapped: state.molesTapped,
       coins: state.coinsEarned,
       stars: state.starsEarned,
-      xp: state.xpEarned,
       rewardPoints: state.rewardPoints,
       longestStreak: state.longestStreak,
       fastestReactionMs: state.fastestReactionMs,
@@ -243,7 +241,6 @@ abstract final class WhackAMoleLogic {
   static GameRewardResult toReward(WhackAMoleResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars.clamp(0, 5),
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.9 && result.molesTapped >= 5,
       );
 

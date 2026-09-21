@@ -133,12 +133,11 @@ class BunnyHopController extends StateNotifier<BunnyHopState> {
 
       var points = state.pointsEarned + hopReward.points;
       var coins = state.coinsEarned + hopReward.coins;
-      var xp = state.xpEarned + hopReward.xp;
       var stars = state.starsEarned + hopReward.stars;
       var carrots = state.carrotsCollected;
       var feedback = BunnyHopLogic.pickHopMessage(hops);
       var rewardText =
-          '+${hopReward.points} Points  +${hopReward.coins} Coins  +${hopReward.xp} XP${hopReward.stars > 0 ? '  +${hopReward.stars} Star' : ''}';
+          '+${hopReward.points} Points  +${hopReward.coins} Coins${hopReward.stars > 0 ? '  +${hopReward.stars} Star' : ''}';
       var mascot = hops % 4 == 0;
       showSparkles = true;
       var celebrating = false;
@@ -148,11 +147,10 @@ class BunnyHopController extends StateNotifier<BunnyHopState> {
         final cReward = BunnyHopLogic.carrotReward(state.settings, carrotCount: carrots);
         points += cReward.points;
         coins += cReward.coins;
-        xp += cReward.xp;
         stars += cReward.stars;
         feedback = BunnyHopLogic.pickCarrotMessage(carrots);
         rewardText =
-            'Carrot!  +${cReward.points} Points  +${cReward.coins} Coins  +${cReward.xp} XP  +${cReward.stars} Stars';
+            'Carrot!  +${cReward.points} Points  +${cReward.coins} Coins  +${cReward.stars} Stars';
         bunny = bunny.copyWith(phase: BunnyPhase.celebrating, actionTimer: 0, celebrateProgress: 0);
         mascot = true;
         showCarrot = true;
@@ -169,7 +167,6 @@ class BunnyHopController extends StateNotifier<BunnyHopState> {
         longestStreak: math.max(state.longestStreak, celebrating ? streak + 1 : streak),
         pointsEarned: points,
         coinsEarned: coins,
-        xpEarned: xp,
         starsEarned: stars,
         carrotsCollected: carrots,
         feedbackMessage: feedback,
@@ -380,7 +377,6 @@ class BunnyHopController extends StateNotifier<BunnyHopState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.bunnyHopAdventure);

@@ -338,7 +338,6 @@ class FrogPondState extends Equatable {
     this.kingFrogsRemoved = 0,
     this.pointsEarned = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.longestStreak = 0,
     this.currentStreak = 0,
@@ -363,7 +362,6 @@ class FrogPondState extends Equatable {
   final int kingFrogsRemoved;
   final int pointsEarned;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int longestStreak;
   final int currentStreak;
@@ -398,7 +396,6 @@ class FrogPondState extends Equatable {
     int? kingFrogsRemoved,
     int? pointsEarned,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? longestStreak,
     int? currentStreak,
@@ -424,7 +421,6 @@ class FrogPondState extends Equatable {
         kingFrogsRemoved: kingFrogsRemoved ?? this.kingFrogsRemoved,
         pointsEarned: pointsEarned ?? this.pointsEarned,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         longestStreak: longestStreak ?? this.longestStreak,
         currentStreak: currentStreak ?? this.currentStreak,
@@ -453,7 +449,6 @@ class FrogPondState extends Equatable {
         kingFrogsRemoved,
         pointsEarned,
         coinsEarned,
-        xpEarned,
         starsEarned,
         longestStreak,
         currentStreak,
@@ -475,7 +470,6 @@ class FrogPondResult extends Equatable {
     required this.kingFrogsRemoved,
     required this.points,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.longestStreak,
     required this.sessionSeconds,
@@ -485,14 +479,13 @@ class FrogPondResult extends Equatable {
   final int kingFrogsRemoved;
   final int points;
   final int coins;
-  final int xp;
   final int stars;
   final int longestStreak;
   final int sessionSeconds;
 
   @override
   List<Object?> get props =>
-      [frogsTapped, kingFrogsRemoved, points, coins, xp, stars, longestStreak, sessionSeconds];
+      [frogsTapped, kingFrogsRemoved, points, coins, stars, longestStreak, sessionSeconds];
 }
 
 const kFrogPondSkills = [

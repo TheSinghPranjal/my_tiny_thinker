@@ -78,12 +78,10 @@ void main() {
       final r = MoonRescueLogic.rescueReward(const MoonRescueSettings());
       expect(r.points, 10);
       expect(r.coins, 5);
-      expect(r.xp, 5);
 
       final b = MoonRescueLogic.launchBonus(const MoonRescueSettings());
       expect(b.points, 50);
       expect(b.coins, 25);
-      expect(b.xp, 25);
     });
 
     test('tick advances floating astronauts', () {

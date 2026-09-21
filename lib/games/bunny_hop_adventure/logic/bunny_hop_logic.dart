@@ -89,28 +89,26 @@ abstract final class BunnyHopLogic {
   static bool isOnCrackedPad(int step, int padCount, List<LilyPadEntity> pads) =>
       step >= 0 && step < padCount && pads[step].isCracked && pads[step].phase == LilyPadPhase.floating;
 
-  static ({int points, int coins, int xp, int stars}) hopReward(
+  static ({int points, int coins, int stars}) hopReward(
     BunnyHopSettings settings, {
     required int hopCount,
   }) {
     final m = settings.rewardMultiplier;
     final points = (10 * m).round().clamp(5, 25);
     final coins = (5 * m).round().clamp(2, 15);
-    final xp = (5 * m).round().clamp(2, 15);
     final stars = hopCount % 4 == 0 ? 1 : 0;
-    return (points: points, coins: coins, xp: xp, stars: stars);
+    return (points: points, coins: coins, stars: stars);
   }
 
-  static ({int points, int coins, int xp, int stars}) carrotReward(
+  static ({int points, int coins, int stars}) carrotReward(
     BunnyHopSettings settings, {
     required int carrotCount,
   }) {
     final m = settings.rewardMultiplier * 2.0;
     final points = (20 * m).round().clamp(10, 50);
     final coins = (10 * m).round().clamp(5, 30);
-    final xp = (10 * m).round().clamp(5, 30);
     final stars = 2;
-    return (points: points, coins: coins, xp: xp, stars: stars);
+    return (points: points, coins: coins, stars: stars);
   }
 
   static LilyPadEntity updateLilyPad(
@@ -255,7 +253,6 @@ abstract final class BunnyHopLogic {
         carrotsCollected: state.carrotsCollected,
         points: state.pointsEarned,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         longestStreak: state.longestStreak,
         fallsRecovered: state.fallsRecovered,

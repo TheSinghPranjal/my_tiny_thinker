@@ -276,16 +276,15 @@ abstract final class PeekABooLogic {
     );
   }
 
-  static ({int points, int coins, int xp, int stars}) discoveryReward(
+  static ({int points, int coins, int stars}) discoveryReward(
     PeekABooSettings settings,
     int discoveries,
   ) {
     final m = settings.rewardMultiplier;
     final points = (10 * m).round().clamp(5, 20);
     final coins = (5 * m).round().clamp(2, 12);
-    final xp = (5 * m).round().clamp(2, 12);
     final star = discoveries % 3 == 0 ? 1 : 0;
-    return (points: points, coins: coins, xp: xp, stars: star);
+    return (points: points, coins: coins, stars: star);
   }
 
   static PeekABooResult buildResult(PeekABooState state) => PeekABooResult(
@@ -293,7 +292,6 @@ abstract final class PeekABooLogic {
         bushesExplored: state.bushesExplored,
         points: state.pointsEarned,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,
       );

@@ -69,7 +69,6 @@ void main() {
       const settings = CloudPopGardenSettings(rewardMultiplier: 2.0);
       final reward = CloudPopGardenLogic.rainReward(settings, 1);
       expect(reward.coins, greaterThanOrEqualTo(1));
-      expect(reward.xp, greaterThanOrEqualTo(3));
     });
   });
 }

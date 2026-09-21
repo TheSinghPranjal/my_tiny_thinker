@@ -176,13 +176,12 @@ class CatchTheFishController extends StateNotifier<CatchTheFishState> {
       fish: list,
       fishCaught: caught,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       hookProgress: 0.01,
       hookTargetFishId: id,
       feedbackMessage: CatchTheFishLogic.pickEncouragement(caught),
       lastRewardText:
-          '+${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
+          '+${reward.coins} Coins${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
       showSparkles: true,
       showCelebration: caught % 5 == 0,
     );
@@ -251,7 +250,6 @@ class CatchTheFishController extends StateNotifier<CatchTheFishState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref

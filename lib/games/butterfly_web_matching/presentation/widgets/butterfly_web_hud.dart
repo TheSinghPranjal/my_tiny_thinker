@@ -85,7 +85,6 @@ class ButterflyWebVictoryOverlay extends StatelessWidget {
           label: 'Happy Stars',
           value: '+${result.stars}',
         ),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
         CelebrationStat(
           icon: '🏅',
           label: 'TinyThink Points',

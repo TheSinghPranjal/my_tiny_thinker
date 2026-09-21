@@ -10,7 +10,6 @@ void main() {
       const settings = FlowerGardenSettings(rewardMultiplier: 2.0);
       final reward = FlowerGardenLogic.bloomReward(settings);
       expect(reward.coins, greaterThanOrEqualTo(2));
-      expect(reward.xp, greaterThanOrEqualTo(3));
     });
 
     test('spawnSingleFlower creates centered bud', () {

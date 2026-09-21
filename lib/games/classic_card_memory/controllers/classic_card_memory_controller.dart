@@ -121,11 +121,10 @@ class ClassicCardMemoryController
       maxCombo: math.max(state.maxCombo, combo),
       score: state.score + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       feedbackMessage: combo >= 3 ? 'Amazing combo!' : 'Match!',
       lastRewardText:
-          '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP',
+          '+${reward.points} Points  +${reward.coins} Coins',
       clearFirstFlip: true,
       lockInput: false,
     );
@@ -257,7 +256,6 @@ class ClassicCardMemoryController
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
             isPerfect: result.mistakes == 0 && result.matches > 0,
             isNewBest: result.score > (existing != null
                 ? GameStats.fromJson(existing).bestScore

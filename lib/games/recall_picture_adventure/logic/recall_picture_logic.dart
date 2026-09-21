@@ -154,11 +154,10 @@ abstract final class RecallPictureLogic {
     );
   }
 
-  /// Correct: +10 coins, +5 XP, +15 points; star on every 3rd combo hit.
-  static ({int coins, int xp, int points, int stars}) correctReward(int combo) {
+  /// Correct: +10 coins, +15 points; star on every 3rd combo hit.
+  static ({int coins, int points, int stars}) correctReward(int combo) {
     return (
       coins: 10,
-      xp: 5,
       points: 15,
       stars: combo > 0 && combo % 3 == 0 ? 1 : 0,
     );
@@ -173,7 +172,6 @@ abstract final class RecallPictureLogic {
       wrongCount: state.wrongCount,
       accuracy: state.accuracy,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: state.starsEarned,
       score: state.score,
       maxCombo: state.maxCombo,

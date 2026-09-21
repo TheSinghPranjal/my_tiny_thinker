@@ -270,7 +270,7 @@ abstract final class CatchTheFallingStarsLogic {
     return s.copyWith(progress: (s.progress + delta * 1.8).clamp(0.0, 1.0));
   }
 
-  static ({int coins, int xp, int stars, int rewardPoints}) tapReward(
+  static ({int coins, int stars, int rewardPoints}) tapReward(
     CatchTheFallingStarsSettings settings,
     int streak,
   ) {
@@ -279,10 +279,9 @@ abstract final class CatchTheFallingStarsLogic {
     final coins = settings.coinRewardsEnabled
         ? ((5 + streakBonus) * m).round().clamp(2, 16)
         : 0;
-    final xp = ((6 + streakBonus) * m).round().clamp(2, 18);
     final rewardPoints = ((3 + streakBonus) * m).round().clamp(1, 12);
     final stars = streak > 0 && streak % 5 == 0 ? 1 : 0;
-    return (coins: coins, xp: xp, stars: stars, rewardPoints: rewardPoints);
+    return (coins: coins, stars: stars, rewardPoints: rewardPoints);
   }
 
   static String pickEncouragement(int taps) =>
@@ -306,7 +305,6 @@ abstract final class CatchTheFallingStarsLogic {
       starsCollected: state.starsCollected,
       coins: state.coinsEarned,
       stars: state.starsEarned,
-      xp: state.xpEarned,
       rewardPoints: state.rewardPoints,
       longestStreak: state.longestStreak,
       longestConstellation: state.longestConstellation,
@@ -320,7 +318,6 @@ abstract final class CatchTheFallingStarsLogic {
       GameRewardResult(
         coins: result.coins,
         stars: result.stars.clamp(0, 5),
-        xp: result.xp,
         isPerfect: result.starsCollected >= 15 && result.longestStreak >= 5,
       );
 }

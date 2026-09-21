@@ -24,7 +24,6 @@ class SessionRewardSummary extends Equatable {
     required this.gameId,
     required this.message,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.achievementPoints,
     required this.bonusCoins,
@@ -37,7 +36,6 @@ class SessionRewardSummary extends Equatable {
   final GameId gameId;
   final String message;
   final int coins;
-  final int xp;
   final int stars;
   final int achievementPoints;
   final int bonusCoins;
@@ -49,7 +47,6 @@ class SessionRewardSummary extends Equatable {
   GameRewardResult get asGameReward => GameRewardResult(
         coins: coins + bonusCoins,
         stars: stars,
-        xp: xp,
         unlockedItems: unlockedAchievements,
         isPerfect: isPerfect,
         isNewBest: isNewBest,
@@ -60,7 +57,6 @@ class SessionRewardSummary extends Equatable {
         gameId,
         message,
         coins,
-        xp,
         stars,
         achievementPoints,
         bonusCoins,
@@ -74,20 +70,18 @@ class SessionRewardSummary extends Equatable {
 class ChestReward extends Equatable {
   const ChestReward({
     required this.coins,
-    required this.xp,
     required this.stars,
     this.stickerId,
     this.bonusLabel,
   });
 
   final int coins;
-  final int xp;
   final int stars;
   final String? stickerId;
   final String? bonusLabel;
 
   @override
-  List<Object?> get props => [coins, xp, stars, stickerId, bonusLabel];
+  List<Object?> get props => [coins, stars, stickerId, bonusLabel];
 }
 
 /// Centralized reward engine used by every game.
@@ -112,7 +106,6 @@ class RewardEngine {
     List<String> unlockedAchievements = const [],
   }) {
     final baseCoins = (8 + correctActions * 2 + (combo ~/ 3)).clamp(5, 120);
-    final baseXp = (12 + correctActions * 3 + score ~/ 10).clamp(8, 200);
     final baseStars = isPerfect
         ? 3
         : correctActions >= 10
@@ -125,7 +118,6 @@ class RewardEngine {
 
     final mult = rewardMultiplier.clamp(0.5, 3.0);
     final coins = (baseCoins * mult).round();
-    final xp = (baseXp * mult).round();
     final stars = baseStars;
     final bonusCoins = (bonus * mult).round();
 
@@ -133,7 +125,6 @@ class RewardEngine {
       gameId: gameId,
       message: pickCelebrationMessage(),
       coins: coins,
-      xp: xp,
       stars: stars,
       achievementPoints: achievementPoints,
       bonusCoins: bonusCoins,
@@ -162,7 +153,6 @@ class RewardEngine {
       gameId: summary.gameId,
       message: summary.message,
       coins: summary.coins,
-      xp: summary.xp,
       stars: summary.stars,
       achievementPoints: summary.achievementPoints,
       bonusCoins: summary.bonusCoins,
@@ -187,7 +177,6 @@ class RewardEngine {
       gameId: gameId,
       message: pickCelebrationMessage(),
       coins: result.coins,
-      xp: result.xp,
       stars: result.stars,
       achievementPoints: result.isPerfect ? 25 : 10,
       bonusCoins: result.isPerfect ? 8 : 0,
@@ -203,7 +192,6 @@ class RewardEngine {
 
   ChestReward rollDailyChest({required int streakDays}) {
     final coins = 10 + streakDays * 2 + _rng.nextInt(12);
-    final xp = 15 + streakDays + _rng.nextInt(20);
     final stars = 1 + _rng.nextInt(3);
     final stickers = ['sticker_star', 'sticker_rainbow', 'sticker_rocket', 'sticker_heart'];
     final sticker = _rng.nextDouble() < 0.45
@@ -212,7 +200,6 @@ class RewardEngine {
     final bonus = _rng.nextDouble() < 0.25 ? 'Bonus Sparkles!' : null;
     return ChestReward(
       coins: coins,
-      xp: xp,
       stars: stars,
       stickerId: sticker,
       bonusLabel: bonus,

@@ -177,13 +177,12 @@ class AlphabetBridgeController extends StateNotifier<AlphabetBridgeState> {
       maxStreak: math.max(state.maxStreak, streak),
       score: state.score + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       phase: AlphabetBridgePhase.celebrating,
       feedbackMessage: phrase,
       spokenPhrase: phrase,
       lastRewardText:
-          '+${reward.points} Pts  +${reward.coins} Coins  +${reward.xp} XP',
+          '+${reward.points} Pts  +${reward.coins} Coins',
       showSparkles: true,
       showMascot: true,
     );
@@ -221,11 +220,10 @@ class AlphabetBridgeController extends StateNotifier<AlphabetBridgeState> {
       roundsCompleted: state.roundsCompleted + 1,
       score: state.score + bonus.points,
       coinsEarned: state.coinsEarned + bonus.coins,
-      xpEarned: state.xpEarned + bonus.xp,
       starsEarned: state.starsEarned + bonus.stars,
       feedbackMessage: 'Round Complete!',
       lastRewardText:
-          '+${bonus.points} Bonus  +${bonus.coins} Coins  +${bonus.xp} XP',
+          '+${bonus.points} Bonus  +${bonus.coins} Coins',
       showRoundBonus: true,
       showSparkles: true,
       showMascot: true,

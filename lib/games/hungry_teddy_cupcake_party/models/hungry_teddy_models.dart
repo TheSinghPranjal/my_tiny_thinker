@@ -439,7 +439,6 @@ class HungryTeddyState extends Equatable {
     this.goldenFed = 0,
     this.pointsEarned = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.longestStreak = 0,
     this.currentStreak = 0,
@@ -474,7 +473,6 @@ class HungryTeddyState extends Equatable {
   final int goldenFed;
   final int pointsEarned;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int longestStreak;
   final int currentStreak;
@@ -521,7 +519,6 @@ class HungryTeddyState extends Equatable {
     int? goldenFed,
     int? pointsEarned,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? longestStreak,
     int? currentStreak,
@@ -559,7 +556,6 @@ class HungryTeddyState extends Equatable {
         goldenFed: goldenFed ?? this.goldenFed,
         pointsEarned: pointsEarned ?? this.pointsEarned,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         longestStreak: longestStreak ?? this.longestStreak,
         currentStreak: currentStreak ?? this.currentStreak,
@@ -598,7 +594,6 @@ class HungryTeddyState extends Equatable {
         goldenFed,
         pointsEarned,
         coinsEarned,
-        xpEarned,
         starsEarned,
         longestStreak,
         currentStreak,
@@ -627,7 +622,6 @@ class HungryTeddyResult extends Equatable {
     required this.goldenFed,
     required this.points,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.longestStreak,
     required this.sessionSeconds,
@@ -638,7 +632,6 @@ class HungryTeddyResult extends Equatable {
   final int goldenFed;
   final int points;
   final int coins;
-  final int xp;
   final int stars;
   final int longestStreak;
   final int sessionSeconds;
@@ -650,7 +643,6 @@ class HungryTeddyResult extends Equatable {
         goldenFed,
         points,
         coins,
-        xp,
         stars,
         longestStreak,
         sessionSeconds,

@@ -118,14 +118,12 @@ abstract final class MemoryScoring {
                 : 0;
 
     final coins = (finalScore / 8).round() + stars * 3;
-    final xp = finalScore ~/ 4;
 
     return MemoryGameResult(
       gameType: state.config!.gameType,
       score: finalScore,
       stars: stars,
       coins: coins,
-      xp: xp,
       accuracy: state.accuracy,
       mistakes: state.mistakes,
       elapsedSeconds: state.elapsedSeconds,
@@ -140,7 +138,6 @@ abstract final class MemoryScoring {
     return GameRewardResult(
       coins: result.coins,
       stars: result.stars,
-      xp: result.xp,
       isPerfect: result.isPerfect,
       isNewBest: result.isNewBest,
     );

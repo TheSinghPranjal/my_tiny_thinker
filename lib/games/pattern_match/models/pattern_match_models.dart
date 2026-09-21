@@ -236,7 +236,6 @@ class PatternMatchResult extends Equatable {
     required this.score,
     required this.stars,
     required this.coins,
-    required this.xp,
     required this.longestStreak,
     required this.mistakes,
     required this.roundsSolved,
@@ -247,7 +246,6 @@ class PatternMatchResult extends Equatable {
   final int score;
   final int stars;
   final int coins;
-  final int xp;
   final int longestStreak;
   final int mistakes;
   final int roundsSolved;
@@ -259,7 +257,6 @@ class PatternMatchResult extends Equatable {
         score,
         stars,
         coins,
-        xp,
         longestStreak,
         mistakes,
         roundsSolved,

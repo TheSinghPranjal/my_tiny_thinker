@@ -360,7 +360,6 @@ class PeekABooState extends Equatable {
     this.bushesExplored = 0,
     this.pointsEarned = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.feedbackMessage,
     this.lastRewardText,
@@ -381,7 +380,6 @@ class PeekABooState extends Equatable {
   final int bushesExplored;
   final int pointsEarned;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final String? feedbackMessage;
   final String? lastRewardText;
@@ -405,7 +403,6 @@ class PeekABooState extends Equatable {
     int? bushesExplored,
     int? pointsEarned,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     String? feedbackMessage,
     String? lastRewardText,
@@ -427,7 +424,6 @@ class PeekABooState extends Equatable {
         bushesExplored: bushesExplored ?? this.bushesExplored,
         pointsEarned: pointsEarned ?? this.pointsEarned,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         feedbackMessage:
             clearFeedback ? null : (feedbackMessage ?? this.feedbackMessage),
@@ -453,7 +449,6 @@ class PeekABooState extends Equatable {
         bushesExplored,
         pointsEarned,
         coinsEarned,
-        xpEarned,
         starsEarned,
         feedbackMessage,
         lastRewardText,
@@ -472,7 +467,6 @@ class PeekABooResult extends Equatable {
     required this.bushesExplored,
     required this.points,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
   });
@@ -481,13 +475,12 @@ class PeekABooResult extends Equatable {
   final int bushesExplored;
   final int points;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
 
   @override
   List<Object?> get props =>
-      [discoveriesCount, bushesExplored, points, coins, xp, stars, sessionSeconds];
+      [discoveriesCount, bushesExplored, points, coins, stars, sessionSeconds];
 }
 
 const kPeekABooSkills = [

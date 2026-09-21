@@ -48,7 +48,6 @@ void main() {
       final r = CandyColorHuntLogic.correctReward(const CandyHuntSettings(), 1);
       expect(r.points, 10);
       expect(r.coins, greaterThan(0));
-      expect(r.xp, greaterThan(0));
     });
 
     test('settings refuse fewer than 4 colors via activeColors fallback', () {

@@ -316,7 +316,6 @@ class ButterflyWebMatchingState extends Equatable {
     this.pairsMatched = 0,
     this.boardsCleared = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.rewardPoints = 0,
     this.rainbowTokens = 0,
@@ -342,7 +341,6 @@ class ButterflyWebMatchingState extends Equatable {
   final int pairsMatched;
   final int boardsCleared;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int rewardPoints;
   final int rainbowTokens;
@@ -371,7 +369,6 @@ class ButterflyWebMatchingState extends Equatable {
     int? pairsMatched,
     int? boardsCleared,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? rewardPoints,
     int? rainbowTokens,
@@ -399,7 +396,6 @@ class ButterflyWebMatchingState extends Equatable {
         pairsMatched: pairsMatched ?? this.pairsMatched,
         boardsCleared: boardsCleared ?? this.boardsCleared,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         rewardPoints: rewardPoints ?? this.rewardPoints,
         rainbowTokens: rainbowTokens ?? this.rainbowTokens,
@@ -429,7 +425,6 @@ class ButterflyWebMatchingState extends Equatable {
         pairsMatched,
         boardsCleared,
         coinsEarned,
-        xpEarned,
         starsEarned,
         rewardPoints,
         rainbowTokens,
@@ -452,7 +447,6 @@ class ButterflyWebMatchingResult extends Equatable {
     required this.pairsMatched,
     required this.coins,
     required this.stars,
-    required this.xp,
     required this.rewardPoints,
     required this.rainbowTokens,
     required this.longestStreak,
@@ -464,7 +458,6 @@ class ButterflyWebMatchingResult extends Equatable {
   final int pairsMatched;
   final int coins;
   final int stars;
-  final int xp;
   final int rewardPoints;
   final int rainbowTokens;
   final int longestStreak;
@@ -477,7 +470,6 @@ class ButterflyWebMatchingResult extends Equatable {
         pairsMatched,
         coins,
         stars,
-        xp,
         rewardPoints,
         rainbowTokens,
         longestStreak,

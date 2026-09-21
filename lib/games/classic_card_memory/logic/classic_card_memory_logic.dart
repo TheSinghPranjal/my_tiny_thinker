@@ -71,12 +71,11 @@ abstract final class ClassicCardMemoryLogic {
     return (6, 4);
   }
 
-  static ({int points, int coins, int xp, int stars}) matchReward(int combo) {
+  static ({int points, int coins, int stars}) matchReward(int combo) {
     final bonus = combo >= 3 ? 5 : 0;
     return (
       points: 10 + bonus,
       coins: 2 + (combo >= 3 ? 1 : 0),
-      xp: 3,
       stars: combo >= 5 ? 1 : 0,
     );
   }
@@ -86,7 +85,6 @@ abstract final class ClassicCardMemoryLogic {
     return ClassicCardMemoryResult(
       score: state.score,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: math.max(stars, state.roundsCompleted > 0 ? 1 : 0),
       matches: state.matches,
       mistakes: state.mistakes,

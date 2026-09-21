@@ -115,7 +115,7 @@ abstract final class CandyColorHuntLogic {
     return list;
   }
 
-  static ({int points, int coins, int xp, int stars}) correctReward(
+  static ({int points, int coins, int stars}) correctReward(
     CandyHuntSettings settings,
     int streak,
   ) {
@@ -123,7 +123,6 @@ abstract final class CandyColorHuntLogic {
     return (
       points: (10 * mult).round(),
       coins: math.max(1, (3 * mult).round()),
-      xp: math.max(2, (3 * mult).round()),
       stars: streak > 0 && streak % 5 == 0 ? 1 : 0,
     );
   }
@@ -140,7 +139,6 @@ abstract final class CandyColorHuntLogic {
       attempts: state.attempts,
       maxStreak: state.maxStreak,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: stars.clamp(0, 5),
       sessionSeconds: state.settings.sessionSeconds,
       accuracy: accuracy,
@@ -150,7 +148,6 @@ abstract final class CandyColorHuntLogic {
   static GameRewardResult toReward(CandyHuntResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars,
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.95,
       );
 

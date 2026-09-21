@@ -400,7 +400,6 @@ class FlowerGardenState extends Equatable {
     this.remainingSeconds = 60,
     this.bloomsCount = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.showRainbow = false,
     this.showSunbeam = false,
@@ -420,7 +419,6 @@ class FlowerGardenState extends Equatable {
   final int remainingSeconds;
   final int bloomsCount;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final bool showRainbow;
   final bool showSunbeam;
@@ -441,7 +439,6 @@ class FlowerGardenState extends Equatable {
     int? remainingSeconds,
     int? bloomsCount,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     bool? showRainbow,
     bool? showSunbeam,
@@ -463,7 +460,6 @@ class FlowerGardenState extends Equatable {
         remainingSeconds: remainingSeconds ?? this.remainingSeconds,
         bloomsCount: bloomsCount ?? this.bloomsCount,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         showRainbow: showRainbow ?? this.showRainbow,
         showSunbeam: showSunbeam ?? this.showSunbeam,
@@ -487,7 +483,6 @@ class FlowerGardenState extends Equatable {
         remainingSeconds,
         bloomsCount,
         coinsEarned,
-        xpEarned,
         starsEarned,
         showRainbow,
         showSunbeam,
@@ -504,7 +499,6 @@ class FlowerGardenResult extends Equatable {
   const FlowerGardenResult({
     required this.bloomsCount,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
     this.endReason,
@@ -512,14 +506,13 @@ class FlowerGardenResult extends Equatable {
 
   final int bloomsCount;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
   final String? endReason;
 
   @override
   List<Object?> get props =>
-      [bloomsCount, coins, xp, stars, sessionSeconds, endReason];
+      [bloomsCount, coins, stars, sessionSeconds, endReason];
 }
 
 const kBloomPalettes = [

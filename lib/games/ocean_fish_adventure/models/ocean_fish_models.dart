@@ -206,7 +206,6 @@ class OceanFishState extends Equatable {
     this.remainingSeconds = 60,
     this.fishTapped = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.feedbackMessage,
     this.showMascotCelebrate = false,
@@ -219,7 +218,6 @@ class OceanFishState extends Equatable {
   final int remainingSeconds;
   final int fishTapped;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final String? feedbackMessage;
   final bool showMascotCelebrate;
@@ -235,7 +233,6 @@ class OceanFishState extends Equatable {
     int? remainingSeconds,
     int? fishTapped,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     String? feedbackMessage,
     bool? showMascotCelebrate,
@@ -250,7 +247,6 @@ class OceanFishState extends Equatable {
         remainingSeconds: remainingSeconds ?? this.remainingSeconds,
         fishTapped: fishTapped ?? this.fishTapped,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         feedbackMessage:
             clearFeedback ? null : (feedbackMessage ?? this.feedbackMessage),
@@ -267,7 +263,6 @@ class OceanFishState extends Equatable {
         remainingSeconds,
         fishTapped,
         coinsEarned,
-        xpEarned,
         starsEarned,
         feedbackMessage,
         showMascotCelebrate,
@@ -279,19 +274,17 @@ class OceanFishResult extends Equatable {
   const OceanFishResult({
     required this.fishTapped,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
   });
 
   final int fishTapped;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
 
   @override
-  List<Object?> get props => [fishTapped, coins, xp, stars, sessionSeconds];
+  List<Object?> get props => [fishTapped, coins, stars, sessionSeconds];
 }
 
 const kFishVariants = [

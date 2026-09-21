@@ -148,11 +148,10 @@ class RecallPictureController extends StateNotifier<RecallPictureState> {
       combo: combo,
       maxCombo: math.max(state.maxCombo, combo),
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       score: state.score + reward.points,
       feedbackMessage: praise,
-      lastRewardText: '+${reward.coins} Coins  +${reward.xp} XP',
+      lastRewardText: '+${reward.coins} Coins',
       bounceCorrect: true,
     );
     _scheduleNextRound(_celebrateCorrect);
@@ -273,7 +272,6 @@ class RecallPictureController extends StateNotifier<RecallPictureState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
             isPerfect: result.wrongCount == 0 && result.correctCount > 0,
             isNewBest: result.score >
                 (existing != null

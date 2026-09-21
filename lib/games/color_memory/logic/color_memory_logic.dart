@@ -57,7 +57,6 @@ abstract final class ColorMemoryLogic {
       score: score,
       stars: stars,
       coins: score ~/ 8 + stars * 2,
-      xp: score ~/ 4,
       level: state.level,
       longestStreak: state.longestStreak,
       mistakes: state.mistakes,
@@ -69,7 +68,6 @@ abstract final class ColorMemoryLogic {
   static GameRewardResult toReward(ColorMemoryResult r) => GameRewardResult(
         coins: r.coins,
         stars: r.stars,
-        xp: r.xp,
         isPerfect: r.isPerfect,
         isNewBest: r.isNewBest,
       );

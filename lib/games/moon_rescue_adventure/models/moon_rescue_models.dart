@@ -289,7 +289,6 @@ class MoonRescueState extends Equatable {
     this.streak = 0,
     this.maxStreak = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.feedbackMessage,
     this.lastRewardText,
@@ -314,7 +313,6 @@ class MoonRescueState extends Equatable {
   final int streak;
   final int maxStreak;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final String? feedbackMessage;
   final String? lastRewardText;
@@ -363,7 +361,6 @@ class MoonRescueState extends Equatable {
     int? streak,
     int? maxStreak,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     String? feedbackMessage,
     String? lastRewardText,
@@ -390,7 +387,6 @@ class MoonRescueState extends Equatable {
         streak: streak ?? this.streak,
         maxStreak: maxStreak ?? this.maxStreak,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         feedbackMessage:
             clearFeedback ? null : (feedbackMessage ?? this.feedbackMessage),
@@ -420,7 +416,6 @@ class MoonRescueState extends Equatable {
         streak,
         maxStreak,
         coinsEarned,
-        xpEarned,
         starsEarned,
         feedbackMessage,
         lastRewardText,
@@ -441,7 +436,6 @@ class MoonRescueResult extends Equatable {
     required this.rocketsLaunched,
     required this.maxStreak,
     required this.coins,
-    required this.xp,
     required this.stars,
   });
 
@@ -450,7 +444,6 @@ class MoonRescueResult extends Equatable {
   final int rocketsLaunched;
   final int maxStreak;
   final int coins;
-  final int xp;
   final int stars;
 
   @override
@@ -460,7 +453,6 @@ class MoonRescueResult extends Equatable {
         rocketsLaunched,
         maxStreak,
         coins,
-        xp,
         stars,
       ];
 }

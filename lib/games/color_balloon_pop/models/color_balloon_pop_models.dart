@@ -121,7 +121,6 @@ class ColorBalloonPopState extends Equatable {
     this.maxStreak = 0,
     this.pointsEarned = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.roundTimer = 0,
     this.colorsMastered = const {},
@@ -145,7 +144,6 @@ class ColorBalloonPopState extends Equatable {
   final int maxStreak;
   final int pointsEarned;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final double roundTimer;
   final Set<BalloonHue> colorsMastered;
@@ -169,7 +167,6 @@ class ColorBalloonPopState extends Equatable {
     int? maxStreak,
     int? pointsEarned,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     double? roundTimer,
     Set<BalloonHue>? colorsMastered,
@@ -195,7 +192,6 @@ class ColorBalloonPopState extends Equatable {
         maxStreak: maxStreak ?? this.maxStreak,
         pointsEarned: pointsEarned ?? this.pointsEarned,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         roundTimer: roundTimer ?? this.roundTimer,
         colorsMastered: colorsMastered ?? this.colorsMastered,
@@ -223,7 +219,6 @@ class ColorBalloonPopState extends Equatable {
         maxStreak,
         pointsEarned,
         coinsEarned,
-        xpEarned,
         starsEarned,
         roundTimer,
         colorsMastered,
@@ -243,7 +238,6 @@ class ColorBalloonPopResult extends Equatable {
     required this.colorsMastered,
     required this.points,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
   });
@@ -254,7 +248,6 @@ class ColorBalloonPopResult extends Equatable {
   final int colorsMastered;
   final int points;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
 
@@ -266,7 +259,6 @@ class ColorBalloonPopResult extends Equatable {
         colorsMastered,
         points,
         coins,
-        xp,
         stars,
         sessionSeconds,
       ];

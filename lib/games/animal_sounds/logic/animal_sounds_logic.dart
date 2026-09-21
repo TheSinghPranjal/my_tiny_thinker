@@ -26,7 +26,7 @@ abstract final class AnimalSoundsLogic {
     return AnimalQuestion(correct: correct, options: options);
   }
 
-  static ({int coins, int xp, int stars}) reward(
+  static ({int coins, int stars}) reward(
     AnimalSoundsSettings settings, {
     required int correctCount,
     required int streak,
@@ -35,7 +35,6 @@ abstract final class AnimalSoundsLogic {
     final combo = streak >= 3 ? 1.25 : 1.0;
     return (
       coins: (8 * m * combo).round().clamp(1, 30),
-      xp: (6 * m * combo).round().clamp(1, 25),
       stars: correctCount % 4 == 0 ? 1 : 0,
     );
   }
@@ -45,7 +44,6 @@ abstract final class AnimalSoundsLogic {
         correctCount: state.correctCount,
         attempts: state.attempts,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,
       );

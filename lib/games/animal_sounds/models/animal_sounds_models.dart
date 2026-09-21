@@ -217,7 +217,6 @@ class AnimalSoundsState extends Equatable {
     this.correctCount = 0,
     this.attempts = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.streak = 0,
     this.feedbackMessage,
@@ -235,7 +234,6 @@ class AnimalSoundsState extends Equatable {
   final int correctCount;
   final int attempts;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int streak;
   final String? feedbackMessage;
@@ -253,7 +251,6 @@ class AnimalSoundsState extends Equatable {
     int? correctCount,
     int? attempts,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? streak,
     String? feedbackMessage,
@@ -273,7 +270,6 @@ class AnimalSoundsState extends Equatable {
         correctCount: correctCount ?? this.correctCount,
         attempts: attempts ?? this.attempts,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         streak: streak ?? this.streak,
         feedbackMessage:
@@ -295,7 +291,6 @@ class AnimalSoundsState extends Equatable {
         correctCount,
         attempts,
         coinsEarned,
-        xpEarned,
         starsEarned,
         streak,
         feedbackMessage,
@@ -312,7 +307,6 @@ class AnimalSoundsResult extends Equatable {
     required this.correctCount,
     required this.attempts,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
   });
@@ -320,13 +314,12 @@ class AnimalSoundsResult extends Equatable {
   final int correctCount;
   final int attempts;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
 
   @override
   List<Object?> get props =>
-      [correctCount, attempts, coins, xp, stars, sessionSeconds];
+      [correctCount, attempts, coins, stars, sessionSeconds];
 }
 
 const kAnimalSoundsSkills = [

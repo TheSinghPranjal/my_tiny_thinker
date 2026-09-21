@@ -170,12 +170,11 @@ class AlphabetQuizController extends StateNotifier<AlphabetQuizState> {
       maxStreak: math.max(state.maxStreak, streak),
       score: state.score + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       feedbackMessage:
           kAlphabetEncouragementsRight[state.correctAnswers % kAlphabetEncouragementsRight.length],
       lastRewardText:
-          '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP',
+          '+${reward.points} Points  +${reward.coins} Coins',
       showMascot: streak % 3 == 0,
       showSparkles: true,
       phase: AlphabetQuizPhase.celebrating,

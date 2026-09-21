@@ -127,7 +127,6 @@ class ClassicCardMemoryState extends Equatable {
     this.countdown = 3,
     this.score = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.matches = 0,
     this.mistakes = 0,
@@ -148,7 +147,6 @@ class ClassicCardMemoryState extends Equatable {
   final int countdown;
   final int score;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int matches;
   final int mistakes;
@@ -172,7 +170,6 @@ class ClassicCardMemoryState extends Equatable {
     int? countdown,
     int? score,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? matches,
     int? mistakes,
@@ -196,7 +193,6 @@ class ClassicCardMemoryState extends Equatable {
         countdown: countdown ?? this.countdown,
         score: score ?? this.score,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         matches: matches ?? this.matches,
         mistakes: mistakes ?? this.mistakes,
@@ -222,7 +218,6 @@ class ClassicCardMemoryState extends Equatable {
         countdown,
         score,
         coinsEarned,
-        xpEarned,
         starsEarned,
         matches,
         mistakes,
@@ -240,7 +235,6 @@ class ClassicCardMemoryResult extends Equatable {
   const ClassicCardMemoryResult({
     required this.score,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.matches,
     required this.mistakes,
@@ -250,7 +244,6 @@ class ClassicCardMemoryResult extends Equatable {
 
   final int score;
   final int coins;
-  final int xp;
   final int stars;
   final int matches;
   final int mistakes;
@@ -259,7 +252,7 @@ class ClassicCardMemoryResult extends Equatable {
 
   @override
   List<Object?> get props =>
-      [score, coins, xp, stars, matches, mistakes, roundsCompleted, maxCombo];
+      [score, coins, stars, matches, mistakes, roundsCompleted, maxCombo];
 }
 
 const kClassicMemorySkills = [

@@ -35,7 +35,6 @@ class AnimalSoundsVictoryOverlay extends StatelessWidget {
           label: 'Happy Stars',
           value: '+${result.stars}',
         ),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
       ],
       onPlayAgain: onPlayAgain,
       onHome: onHome,

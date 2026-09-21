@@ -199,20 +199,19 @@ abstract final class FrogPondLogic {
     );
   }
 
-  static ({int points, int coins, int xp, int stars}) tapReward(
+  static ({int points, int coins, int stars}) tapReward(
     FrogPondSettings settings, {
     required bool isKing,
     required int tapCount,
   }) {
     final m = settings.rewardMultiplier * (isKing ? 2.0 : 1.0);
     if (isKing && tapCount < FrogEntity.kingTapRequired) {
-      return (points: 0, coins: 0, xp: 0, stars: 0);
+      return (points: 0, coins: 0, stars: 0);
     }
     final points = ((isKing ? 20 : 10) * m).round().clamp(5, 40);
     final coins = ((isKing ? 10 : 5) * m).round().clamp(2, 24);
-    final xp = ((isKing ? 10 : 5) * m).round().clamp(2, 24);
     final star = isKing ? 2 : (tapCount % 3 == 0 ? 1 : 0);
-    return (points: points, coins: coins, xp: xp, stars: star);
+    return (points: points, coins: coins, stars: star);
   }
 
   static bool shouldMarkKingDue(int elapsed, int nextKingAt) => elapsed >= nextKingAt;
@@ -222,7 +221,6 @@ abstract final class FrogPondLogic {
         kingFrogsRemoved: state.kingFrogsRemoved,
         points: state.pointsEarned,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         longestStreak: state.longestStreak,
         sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,

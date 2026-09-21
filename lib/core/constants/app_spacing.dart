@@ -41,7 +41,6 @@ abstract final class AppConstants {
   static const String appName = 'TinyThink';
   static const String appVersion = '1.0.0';
   static const int maxLevel = 100;
-  static const int xpPerLevel = 100;
   static const int dailyStreakBonus = 10;
   static const int coinsPerGameBase = 5;
   static const int starsPerPerfectGame = 3;

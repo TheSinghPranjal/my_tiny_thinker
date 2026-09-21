@@ -53,7 +53,6 @@ class LearningPathCompletionScreen extends ConsumerWidget {
                         children: [
                           _Stat('Games Completed', '${summary.gamesCompleted}'),
                           _Stat('Coins Earned', '${summary.totalCoins}'),
-                          _Stat('XP Gained', '${summary.totalXp}'),
                           _Stat('Happy Stars', '${summary.totalStars}'),
                           _Stat('Play Time', '$minutes min'),
                           if (summary.achievements.isNotEmpty)

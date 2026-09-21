@@ -154,7 +154,7 @@ abstract final class CleanDirtyClothesSortLogic {
 
   static String victoryTitle() => 'Clean & Dirty Clothes Celebration!';
 
-  static ({int points, int coins, int xp, int stars}) matchReward(
+  static ({int points, int coins, int stars}) matchReward(
     LaundrySortSettings settings,
     int streak,
   ) {
@@ -163,7 +163,6 @@ abstract final class CleanDirtyClothesSortLogic {
     return (
       points: (10 * mult).round(),
       coins: coins,
-      xp: math.max(2, (3 * mult).round()),
       stars: 10,
     );
   }
@@ -182,7 +181,6 @@ abstract final class CleanDirtyClothesSortLogic {
       attempts: state.attempts,
       maxStreak: state.maxStreak,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: (state.starsEarned ~/ 10) + bonusStars,
       accuracy: accuracy,
     );
@@ -191,7 +189,6 @@ abstract final class CleanDirtyClothesSortLogic {
   static GameRewardResult toReward(LaundrySortResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars.clamp(0, 5),
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.95,
       );
 }

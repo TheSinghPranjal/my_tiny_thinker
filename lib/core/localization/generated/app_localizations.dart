@@ -256,18 +256,6 @@ abstract class AppLocalizations {
   /// **'Stars'**
   String get stars;
 
-  /// No description provided for @xp.
-  ///
-  /// In en, this message translates to:
-  /// **'XP'**
-  String get xp;
-
-  /// No description provided for @level.
-  ///
-  /// In en, this message translates to:
-  /// **'Level'**
-  String get level;
-
   /// No description provided for @streak.
   ///
   /// In en, this message translates to:

@@ -396,7 +396,6 @@ class ShapeDropState extends Equatable {
     this.streak = 0,
     this.maxStreak = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.outlineGlow = false,
     this.filled = false,
@@ -423,7 +422,6 @@ class ShapeDropState extends Equatable {
   final int streak;
   final int maxStreak;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final bool outlineGlow;
   final bool filled;
@@ -450,7 +448,6 @@ class ShapeDropState extends Equatable {
     int? streak,
     int? maxStreak,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     bool? outlineGlow,
     bool? filled,
@@ -480,7 +477,6 @@ class ShapeDropState extends Equatable {
         streak: streak ?? this.streak,
         maxStreak: maxStreak ?? this.maxStreak,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         outlineGlow: outlineGlow ?? this.outlineGlow,
         filled: filled ?? this.filled,
@@ -511,7 +507,6 @@ class ShapeDropState extends Equatable {
         streak,
         maxStreak,
         coinsEarned,
-        xpEarned,
         starsEarned,
         outlineGlow,
         filled,
@@ -534,7 +529,6 @@ class ShapeDropResult extends Equatable {
     required this.attempts,
     required this.maxStreak,
     required this.coins,
-    required this.xp,
     required this.stars,
     required this.sessionSeconds,
     required this.accuracy,
@@ -547,7 +541,6 @@ class ShapeDropResult extends Equatable {
   final int attempts;
   final int maxStreak;
   final int coins;
-  final int xp;
   final int stars;
   final int sessionSeconds;
   final double accuracy;
@@ -561,7 +554,6 @@ class ShapeDropResult extends Equatable {
         attempts,
         maxStreak,
         coins,
-        xp,
         stars,
         sessionSeconds,
         accuracy,

@@ -296,20 +296,18 @@ abstract final class ButterflyWebMatchingLogic {
   static TapSparkle updateSparkle(TapSparkle s, double delta) =>
       s.copyWith(progress: (s.progress + delta * 1.8).clamp(0.0, 1.0));
 
-  static ({int coins, int xp, int stars, int rewardPoints, int rainbow})
+  static ({int coins, int stars, int rewardPoints, int rainbow})
       matchReward(ButterflyWebMatchingSettings settings, int streak) {
     final m = settings.rewardMultiplier;
     final bonus = (streak / 3).floor().clamp(0, 3);
     final coins = settings.coinRewardsEnabled
         ? ((8 + bonus * 2) * m).round().clamp(3, 20)
         : 0;
-    final xp = ((10 + bonus * 2) * m).round().clamp(4, 24);
     final rewardPoints = ((5 + bonus) * m).round().clamp(2, 16);
     final stars = streak > 0 && streak % 3 == 0 ? 1 : 0;
     final rainbow = 1;
     return (
       coins: coins,
-      xp: xp,
       stars: stars,
       rewardPoints: rewardPoints,
       rainbow: rainbow,
@@ -331,7 +329,6 @@ abstract final class ButterflyWebMatchingLogic {
       pairsMatched: state.pairsMatched,
       coins: state.coinsEarned,
       stars: state.starsEarned,
-      xp: state.xpEarned,
       rewardPoints: state.rewardPoints,
       rainbowTokens: state.rainbowTokens,
       longestStreak: state.longestStreak,
@@ -345,7 +342,6 @@ abstract final class ButterflyWebMatchingLogic {
       GameRewardResult(
         coins: result.coins,
         stars: result.stars.clamp(0, 5),
-        xp: result.xp,
         isPerfect: result.pairsMatched >= 3 && result.longestStreak >= 3,
       );
 }

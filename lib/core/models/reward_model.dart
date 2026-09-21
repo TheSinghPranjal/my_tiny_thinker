@@ -152,7 +152,7 @@ enum TimerMode { relaxed, timed, endless }
 
 enum SortMode { ascending, descending }
 
-enum RewardType { coins, stars, xp, sticker, avatar, background, bubbleSkin }
+enum RewardType { coins, stars, sticker, avatar, background, bubbleSkin }
 
 class Reward extends Equatable {
   const Reward({
@@ -173,7 +173,6 @@ class GameRewardResult extends Equatable {
   const GameRewardResult({
     required this.coins,
     required this.stars,
-    required this.xp,
     this.unlockedItems = const [],
     this.isPerfect = false,
     this.isNewBest = false,
@@ -181,14 +180,13 @@ class GameRewardResult extends Equatable {
 
   final int coins;
   final int stars;
-  final int xp;
   final List<String> unlockedItems;
   final bool isPerfect;
   final bool isNewBest;
 
   @override
   List<Object?> get props =>
-      [coins, stars, xp, unlockedItems, isPerfect, isNewBest];
+      [coins, stars, unlockedItems, isPerfect, isNewBest];
 }
 
 class Achievement extends Equatable {

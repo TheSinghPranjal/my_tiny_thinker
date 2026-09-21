@@ -290,7 +290,6 @@ abstract final class BalloonLogic {
     return BalloonPopReward(
       points: (10 * m).round().clamp(5, 30),
       coins: (5 * m).round().clamp(2, 15),
-      xp: (5 * m).round().clamp(2, 15),
       stars: poppedCount % 3 == 0 ? 1 : 0,
     );
   }

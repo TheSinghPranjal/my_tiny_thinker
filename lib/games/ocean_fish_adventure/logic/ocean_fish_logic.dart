@@ -205,11 +205,10 @@ abstract final class FishMovement {
 }
 
 abstract final class OceanFishScoring {
-  static ({int coins, int xp, int stars}) rewardForTap(OceanFishSettings s) {
+  static ({int coins, int stars}) rewardForTap(OceanFishSettings s) {
     final m = s.rewardMultiplier;
     return (
       coins: (1 * m).round().clamp(1, 5),
-      xp: (5 * m).round().clamp(1, 15),
       stars: fishTappedEveryN(1) ? 1 : 0,
     );
   }
@@ -219,7 +218,6 @@ abstract final class OceanFishScoring {
   static OceanFishResult buildResult(OceanFishState state) => OceanFishResult(
         fishTapped: state.fishTapped,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,
       );

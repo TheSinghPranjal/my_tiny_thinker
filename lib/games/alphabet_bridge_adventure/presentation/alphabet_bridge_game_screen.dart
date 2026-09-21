@@ -91,7 +91,6 @@ class _AlphabetBridgeGameScreenState
       gameId: GameId.alphabetBridgeAdventure,
       message: engine.pickCelebrationMessage(),
       coins: reward.coins,
-      xp: reward.xp,
       stars: reward.stars,
       achievementPoints: reward.isPerfect ? 25 : 10,
       bonusCoins: reward.isPerfect ? 8 : 0,

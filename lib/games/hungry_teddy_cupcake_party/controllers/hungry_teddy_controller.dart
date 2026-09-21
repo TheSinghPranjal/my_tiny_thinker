@@ -384,14 +384,13 @@ class HungryTeddyController extends StateNotifier<HungryTeddyState> {
       longestStreak: math.max(state.longestStreak, streak),
       pointsEarned: state.pointsEarned + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       flavorCounts: flavorCounts,
       favoriteFlavorIndex: favoriteIndex,
       feedbackMessage: HungryTeddyLogic.pickEncouragement(fed, isGolden: cupcake.isGolden),
       lastRewardText: cupcake.isGolden
-          ? 'Golden!  +${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP  +${reward.stars} Stars'
-          : '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
+          ? 'Golden!  +${reward.points} Points  +${reward.coins} Coins  +${reward.stars} Stars'
+          : '+${reward.points} Points  +${reward.coins} Coins${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
       showMascot: fed % 3 == 0 || cupcake.isGolden,
       showSparkles: true,
       showGoldenCelebration: cupcake.isGolden,
@@ -483,7 +482,6 @@ class HungryTeddyController extends StateNotifier<HungryTeddyState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.hungryTeddyCupcakeParty);

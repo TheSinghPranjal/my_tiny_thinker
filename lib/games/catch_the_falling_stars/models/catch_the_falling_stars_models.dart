@@ -378,7 +378,6 @@ class CatchTheFallingStarsState extends Equatable {
     this.starsCollected = 0,
     this.starsAppeared = 0,
     this.coinsEarned = 0,
-    this.xpEarned = 0,
     this.starsEarned = 0,
     this.rewardPoints = 0,
     this.currentStreak = 0,
@@ -405,7 +404,6 @@ class CatchTheFallingStarsState extends Equatable {
   final int starsCollected;
   final int starsAppeared;
   final int coinsEarned;
-  final int xpEarned;
   final int starsEarned;
   final int rewardPoints;
   final int currentStreak;
@@ -435,7 +433,6 @@ class CatchTheFallingStarsState extends Equatable {
     int? starsCollected,
     int? starsAppeared,
     int? coinsEarned,
-    int? xpEarned,
     int? starsEarned,
     int? rewardPoints,
     int? currentStreak,
@@ -463,7 +460,6 @@ class CatchTheFallingStarsState extends Equatable {
         starsCollected: starsCollected ?? this.starsCollected,
         starsAppeared: starsAppeared ?? this.starsAppeared,
         coinsEarned: coinsEarned ?? this.coinsEarned,
-        xpEarned: xpEarned ?? this.xpEarned,
         starsEarned: starsEarned ?? this.starsEarned,
         rewardPoints: rewardPoints ?? this.rewardPoints,
         currentStreak: currentStreak ?? this.currentStreak,
@@ -494,7 +490,6 @@ class CatchTheFallingStarsState extends Equatable {
         starsCollected,
         starsAppeared,
         coinsEarned,
-        xpEarned,
         starsEarned,
         rewardPoints,
         currentStreak,
@@ -518,7 +513,6 @@ class CatchTheFallingStarsResult extends Equatable {
     required this.starsCollected,
     required this.coins,
     required this.stars,
-    required this.xp,
     required this.rewardPoints,
     required this.longestStreak,
     required this.longestConstellation,
@@ -530,7 +524,6 @@ class CatchTheFallingStarsResult extends Equatable {
   final int starsCollected;
   final int coins;
   final int stars;
-  final int xp;
   final int rewardPoints;
   final int longestStreak;
   final int longestConstellation;
@@ -543,7 +536,6 @@ class CatchTheFallingStarsResult extends Equatable {
         starsCollected,
         coins,
         stars,
-        xp,
         rewardPoints,
         longestStreak,
         longestConstellation,

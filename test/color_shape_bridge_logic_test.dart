@@ -90,7 +90,6 @@ void main() {
       );
       expect(r.points, 10);
       expect(r.coins, 5);
-      expect(r.xp, 5);
       expect(r.stars, 1);
     });
 
@@ -98,7 +97,6 @@ void main() {
       final r = ColorShapeBridgeLogic.roundBonus(const ColorShapeBridgeSettings());
       expect(r.points, 50);
       expect(r.coins, 20);
-      expect(r.xp, 20);
     });
 
     test('mergeRecent prefers newest keys', () {

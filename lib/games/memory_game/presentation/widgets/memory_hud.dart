@@ -60,7 +60,6 @@ class MemoryVictoryDialog extends StatelessWidget {
               label: 'Coins',
               value: '+${result.coins}',
             ),
-            CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
             CelebrationStat(
               icon: '🎯',
               label: 'Accuracy',

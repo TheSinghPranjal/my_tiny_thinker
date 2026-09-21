@@ -223,7 +223,6 @@ class LearnToSortFoodController extends StateNotifier<FoodSortState> {
       maxStreak: math.max(state.maxStreak, streak),
       score: state.score + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       phase: FoodSortPhase.celebrating,
       feedbackMessage: isHealthy ? 'HEALTHY!' : 'JUNK FOOD',

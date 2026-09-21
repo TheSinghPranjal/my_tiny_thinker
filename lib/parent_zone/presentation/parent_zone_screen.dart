@@ -436,12 +436,12 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                   icon: Icons.keyboard_arrow_down_rounded,
                 ),
                 child: GridView.count(
-                  crossAxisCount: 3,
+                  crossAxisCount: 2,
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   mainAxisSpacing: 8,
                   crossAxisSpacing: 8,
-                  childAspectRatio: 1.45,
+                  childAspectRatio: 2.3,
                   children: [
                     ParentStatTile(
                       icon: const StatIcon(
@@ -455,34 +455,6 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                       label: 'Play Time',
                       value: '${profile.totalPlayTimeMinutes} min',
                       tint: const Color(0xFFE9F8EE),
-                    ),
-                    ParentStatTile(
-                      icon: const Icon(
-                        Icons.emoji_events_rounded,
-                        color: Color(0xFF8E5AE8),
-                        size: 36,
-                      ),
-                      label: 'Level',
-                      value: '${profile.level}',
-                      tint: const Color(0xFFF0EAFB),
-                    ),
-                    ParentStatTile(
-                      icon: StatIcon(
-                        shape: BoxShape.rectangle,
-                        colors: const [Color(0xFFFFB84D), Color(0xFFF08A1D)],
-                        child: Text(
-                          'XP',
-                          style: GoogleFonts.baloo2(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            height: 1.0,
-                          ),
-                        ),
-                      ),
-                      label: 'Total XP',
-                      value: '${profile.xp}',
-                      tint: const Color(0xFFFFF3E2),
                     ),
                     ParentStatTile(
                       icon: StatIcon(

@@ -92,7 +92,6 @@ class ClassicMemoryVictoryOverlay extends StatelessWidget {
           value: '${result.roundsCompleted}',
         ),
         CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
       ],
       onPlayAgain: onPlayAgain,
       onHome: onHome,

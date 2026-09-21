@@ -62,7 +62,6 @@ class UniversalCelebrationDialog extends StatelessWidget {
               label: 'Coins',
               value: '+${s.coins + s.bonusCoins}',
             ),
-            CelebrationStat(icon: '✨', label: 'XP', value: '+${s.xp}'),
             CelebrationStat(
               icon: '🌟',
               label: 'Happy Stars',

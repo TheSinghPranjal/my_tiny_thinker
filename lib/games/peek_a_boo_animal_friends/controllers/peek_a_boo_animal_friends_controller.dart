@@ -200,11 +200,10 @@ class PeekABooController extends StateNotifier<PeekABooState> {
       bushesExplored: bushesExplored,
       pointsEarned: state.pointsEarned + reward.points,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + reward.stars,
       feedbackMessage: PeekABooLogic.pickEncouragement(discoveries),
       lastRewardText:
-          '+${reward.points} Points  +${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
+          '+${reward.points} Points  +${reward.coins} Coins${reward.stars > 0 ? '  +${reward.stars} Star' : ''}',
       lastAnnouncement: def?.announcement,
       showMascot: discoveries % 3 == 0,
       showSparkles: true,
@@ -281,7 +280,6 @@ class PeekABooController extends StateNotifier<PeekABooState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.peekABooAnimalFriends);

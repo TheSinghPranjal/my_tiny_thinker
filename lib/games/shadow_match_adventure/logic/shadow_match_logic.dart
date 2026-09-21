@@ -25,7 +25,7 @@ abstract final class ShadowMatchLogic {
     return (shadows: shadows, items: items);
   }
 
-  static ({int coins, int xp, int stars, int points}) matchReward(
+  static ({int coins, int stars, int points}) matchReward(
     ShadowMatchSettings settings,
     int streak,
   ) {
@@ -34,7 +34,6 @@ abstract final class ShadowMatchLogic {
     return (
       points: points,
       coins: math.max(1, (5 * mult).round()),
-      xp: math.max(3, (5 * mult).round()),
       stars: streak % 4 == 0 ? 1 : 0,
     );
   }
@@ -52,7 +51,6 @@ abstract final class ShadowMatchLogic {
       attempts: state.attempts,
       maxStreak: state.maxStreak,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: stars.clamp(0, 5),
       sessionSeconds: state.settings.sessionSeconds,
       accuracy: accuracy,
@@ -62,7 +60,6 @@ abstract final class ShadowMatchLogic {
   static GameRewardResult toReward(ShadowMatchResult result) => GameRewardResult(
         coins: result.coins,
         stars: result.stars,
-        xp: result.xp,
         isPerfect: result.accuracy >= 0.95,
       );
 }

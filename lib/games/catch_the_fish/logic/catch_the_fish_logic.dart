@@ -204,22 +204,20 @@ abstract final class CatchTheFishLogic {
     );
   }
 
-  static ({int coins, int xp, int stars}) catchReward(
+  static ({int coins, int stars}) catchReward(
     CatchFishSettings settings, {
     required int caught,
   }) {
     final m = settings.rewardMultiplier;
     final coins = (10 * m).round().clamp(1, 40);
-    final xp = (5 * m).round().clamp(1, 30);
     final stars = caught % 5 == 0 ? 1 : 0;
-    return (coins: coins, xp: xp, stars: stars);
+    return (coins: coins, stars: stars);
   }
 
   static CatchTheFishResult buildResult(CatchTheFishState state) =>
       CatchTheFishResult(
         fishCaught: state.fishCaught,
         coins: state.coinsEarned,
-        xp: state.xpEarned,
         stars: state.starsEarned,
         sessionSeconds: state.settings.sessionSeconds - state.remainingSeconds,
         endReason: state.endReason,

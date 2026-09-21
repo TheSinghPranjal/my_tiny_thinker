@@ -88,7 +88,6 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
     var showSunbeam = false;
     var showSparkles = false;
     var coinsEarned = state.coinsEarned;
-    var xpEarned = state.xpEarned;
     var starsEarned = state.starsEarned;
     String? rewardText = state.lastRewardText;
 
@@ -143,10 +142,9 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
             state.bloomsCount,
           );
           coinsEarned += reward.coins;
-          xpEarned += reward.xp;
           starsEarned += reward.stars;
           rewardText =
-              '+${reward.coins} Coins  +${reward.xp} XP${reward.stars > 0 ? '  +${reward.stars} Star' : ''}';
+              '+${reward.coins} Coins${reward.stars > 0 ? '  +${reward.stars} Star' : ''}';
           showSparkles = true;
         },
       );
@@ -221,7 +219,6 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
       showSunbeam: showSunbeam,
       showSparkles: showSparkles,
       coinsEarned: coinsEarned,
-      xpEarned: xpEarned,
       starsEarned: starsEarned,
       lastRewardText: rewardText,
       feedbackMessage: feedbackMessage,
@@ -273,12 +270,11 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
       clearBird: true,
       bloomsCount: blooms,
       coinsEarned: state.coinsEarned + reward.coins,
-      xpEarned: state.xpEarned + reward.xp,
       starsEarned: state.starsEarned + (blooms % 4 == 0 ? 1 : 0),
       showSunbeam: true,
       showSparkles: true,
       feedbackMessage: msg,
-      lastRewardText: '+${reward.coins} Coins  +${reward.xp} XP',
+      lastRewardText: '+${reward.coins} Coins',
       showMascot: blooms % 3 == 0,
     );
     _pollinatorsSpawnedForBloom = false;
@@ -370,7 +366,6 @@ class FlowerGardenController extends StateNotifier<FlowerGardenState> {
           GameRewardResult(
             coins: result.coins,
             stars: result.stars,
-            xp: result.xp,
           ),
         );
     await _ref.read(dailyPlayLimitsProvider.notifier).recordPlay(GameId.magicalFlowerGarden);

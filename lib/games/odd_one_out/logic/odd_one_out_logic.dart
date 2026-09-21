@@ -152,7 +152,6 @@ abstract final class OddOneOutScoring {
       score: score,
       stars: stars,
       coins: (score ~/ 8 + stars * 2),
-      xp: score ~/ 5,
       longestStreak: state.longestStreak,
       mistakes: state.mistakes,
       roundsSolved: solved,
@@ -164,7 +163,6 @@ abstract final class OddOneOutScoring {
   static GameRewardResult toReward(OddOneOutResult r) => GameRewardResult(
         coins: r.coins,
         stars: r.stars,
-        xp: r.xp,
         isPerfect: r.isPerfect,
         isNewBest: r.isNewBest,
       );

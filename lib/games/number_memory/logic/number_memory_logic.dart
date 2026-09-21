@@ -18,11 +18,10 @@ abstract final class NumberMemoryLogic {
     return next;
   }
 
-  static ({int coins, int xp, int points, int stars}) correctReward(int combo) {
+  static ({int coins, int points, int stars}) correctReward(int combo) {
     final comboBonus = combo >= 3 ? 1 : 0;
     return (
       coins: 10 + comboBonus,
-      xp: 5 + comboBonus,
       points: 15 + (combo >= 3 ? 5 : 0),
       stars: combo >= 5 ? 1 : 0,
     );
@@ -40,7 +39,6 @@ abstract final class NumberMemoryLogic {
       wrongCount: state.wrongCount,
       accuracy: state.accuracy,
       coins: state.coinsEarned,
-      xp: state.xpEarned,
       stars: stars,
       maxCombo: state.maxCombo,
       encouragement: praise,

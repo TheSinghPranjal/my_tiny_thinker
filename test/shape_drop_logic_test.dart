@@ -31,7 +31,6 @@ void main() {
       final r = ShapeDropLogic.matchReward(const ShapeDropSettings(), 1);
       expect(r.points, greaterThan(0));
       expect(r.coins, greaterThan(0));
-      expect(r.xp, greaterThan(0));
     });
 
     test('calculate accuracy', () {
@@ -39,7 +38,6 @@ void main() {
         correctMatches: 8,
         attempts: 10,
         coinsEarned: 20,
-        xpEarned: 20,
       );
       final result = ShapeDropLogic.calculate(state);
       expect(result.accuracy, closeTo(0.8, 0.001));

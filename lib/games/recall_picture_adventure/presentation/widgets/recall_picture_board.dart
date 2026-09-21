@@ -533,7 +533,6 @@ class RecallPictureVictoryOverlay extends StatelessWidget {
         ),
         CelebrationStat(icon: '⭐', label: 'Score', value: '${result.score}'),
         CelebrationStat(icon: '🪙', label: 'Coins', value: '+${result.coins}'),
-        CelebrationStat(icon: '✨', label: 'XP', value: '+${result.xp}'),
         CelebrationStat(
           icon: '🌟',
           label: 'Happy Stars',

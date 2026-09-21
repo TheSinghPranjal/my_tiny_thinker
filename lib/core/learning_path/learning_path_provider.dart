@@ -94,7 +94,6 @@ class LearningPathSession extends Equatable {
     this.queue = const [],
     this.currentIndex = 0,
     this.totalCoins = 0,
-    this.totalXp = 0,
     this.totalStars = 0,
     this.gamesCompleted = 0,
     this.totalPlaySeconds = 0,
@@ -106,7 +105,6 @@ class LearningPathSession extends Equatable {
   final List<GameId> queue;
   final int currentIndex;
   final int totalCoins;
-  final int totalXp;
   final int totalStars;
   final int gamesCompleted;
   final int totalPlaySeconds;
@@ -123,7 +121,6 @@ class LearningPathSession extends Equatable {
     List<GameId>? queue,
     int? currentIndex,
     int? totalCoins,
-    int? totalXp,
     int? totalStars,
     int? gamesCompleted,
     int? totalPlaySeconds,
@@ -135,7 +132,6 @@ class LearningPathSession extends Equatable {
         queue: queue ?? this.queue,
         currentIndex: currentIndex ?? this.currentIndex,
         totalCoins: totalCoins ?? this.totalCoins,
-        totalXp: totalXp ?? this.totalXp,
         totalStars: totalStars ?? this.totalStars,
         gamesCompleted: gamesCompleted ?? this.gamesCompleted,
         totalPlaySeconds: totalPlaySeconds ?? this.totalPlaySeconds,
@@ -149,7 +145,6 @@ class LearningPathSession extends Equatable {
         queue,
         currentIndex,
         totalCoins,
-        totalXp,
         totalStars,
         gamesCompleted,
         totalPlaySeconds,
@@ -195,7 +190,6 @@ class LearningPathSessionNotifier extends StateNotifier<LearningPathSession> {
     if (!state.active) return;
     state = state.copyWith(
       totalCoins: state.totalCoins + reward.coins,
-      totalXp: state.totalXp + reward.xp,
       totalStars: state.totalStars + reward.stars,
       gamesCompleted: state.gamesCompleted + 1,
       totalPlaySeconds: state.totalPlaySeconds + playSeconds,
