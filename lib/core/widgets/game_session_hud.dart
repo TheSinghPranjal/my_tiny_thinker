@@ -19,6 +19,8 @@ class GameSessionHud extends StatelessWidget {
     this.largerFonts = false,
     this.accentColor = const Color(0xFF5E35B1),
     this.highlightColor = AppColors.error,
+    this.showStars = true,
+    this.flat = false,
   });
 
   final int remainingSeconds;
@@ -29,6 +31,12 @@ class GameSessionHud extends StatelessWidget {
   final bool largerFonts;
   final Color accentColor;
   final Color highlightColor;
+
+  /// Hide the stars pill (coins only).
+  final bool showStars;
+
+  /// Draw the pills without the enclosing capsule bar.
+  final bool flat;
 
   static const Color _navy = Color(0xFF2D1E5F);
 
@@ -53,31 +61,34 @@ class GameSessionHud extends StatelessWidget {
       child: Container(
         height: largerFonts ? 58 : 54,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(999),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFFEAF7FF).withValues(alpha: 0.78),
-              const Color(0xFFBFE8FF).withValues(alpha: 0.62),
-            ],
-          ),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.92),
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF4FC3F7).withValues(alpha: 0.38),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
+        decoration: flat
+            ? null
+            : BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFFEAF7FF).withValues(alpha: 0.78),
+                    const Color(0xFFBFE8FF).withValues(alpha: 0.62),
+                  ],
+                ),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF4FC3F7).withValues(alpha: 0.38),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
         child: Stack(
           children: [
-            const Positioned.fill(child: IgnorePointer(child: _BarGloss())),
+            if (!flat)
+              const Positioned.fill(child: IgnorePointer(child: _BarGloss())),
             Row(
               children: [
                 _StatPill(
@@ -99,14 +110,16 @@ class GameSessionHud extends StatelessWidget {
                   large: largerFonts,
                   leading: const _GoldCoin(),
                 ),
-                const SizedBox(width: 6),
-                _StatPill(
-                  label: '+$starsEarned',
-                  borderColor: const Color(0xFFD1C4E9),
-                  glowColor: const Color(0xFFB388FF),
-                  large: largerFonts,
-                  leading: const _SparkleCluster(),
-                ),
+                if (showStars) ...[
+                  const SizedBox(width: 6),
+                  _StatPill(
+                    label: '+$starsEarned',
+                    borderColor: const Color(0xFFD1C4E9),
+                    glowColor: const Color(0xFFB388FF),
+                    large: largerFonts,
+                    leading: const _SparkleCluster(),
+                  ),
+                ],
                 const SizedBox(width: 8),
                 _GlossyPauseButton(onPause: onPause, large: largerFonts),
               ],

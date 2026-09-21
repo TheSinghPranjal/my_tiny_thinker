@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum CupcakeTopping { cherry, strawberry, sprinkles, star, heart, whipped, chocolateChip, rainbow }
+enum CupcakeTopping { cherry, strawberry, sprinkles, star, heart, hearts, whipped, chocolateChip, rainbow }
 
 class CupcakeDef extends Equatable {
   const CupcakeDef({
@@ -10,6 +10,7 @@ class CupcakeDef extends Equatable {
     required this.topping,
     this.accentColor = 0xFFFFFFFF,
     this.sizeScale = 1.0,
+    this.sprinkles = false,
   });
 
   final String name;
@@ -19,9 +20,12 @@ class CupcakeDef extends Equatable {
   final int accentColor;
   final double sizeScale;
 
+  /// Tiny coloured sprinkles scattered over the frosting.
+  final bool sprinkles;
+
   @override
   List<Object?> get props =>
-      [name, frostingColor, wrapperColor, topping, accentColor, sizeScale];
+      [name, frostingColor, wrapperColor, topping, accentColor, sizeScale, sprinkles];
 }
 
 abstract final class CupcakeVarieties {
@@ -35,6 +39,10 @@ abstract final class CupcakeVarieties {
   );
 
   static const all = <CupcakeDef>[
+    CupcakeDef(name: 'Strawberry Vanilla', frostingColor: 0xFFFFF4E6, wrapperColor: 0xFFEE5C8A, topping: CupcakeTopping.whipped, sprinkles: true),
+    CupcakeDef(name: 'Chocolate Cherry', frostingColor: 0xFF7B4A33, wrapperColor: 0xFF3F8FE6, topping: CupcakeTopping.cherry, sprinkles: true),
+    CupcakeDef(name: 'Pink Hearts', frostingColor: 0xFFF8A6C6, wrapperColor: 0xFFFFB92E, topping: CupcakeTopping.hearts),
+    CupcakeDef(name: 'Green Star', frostingColor: 0xFF8FD46A, wrapperColor: 0xFF8A5AE0, topping: CupcakeTopping.star, sprinkles: true),
     CupcakeDef(name: 'Pink Cherry', frostingColor: 0xFFF48FB1, wrapperColor: 0xFFEC407A, topping: CupcakeTopping.cherry),
     CupcakeDef(name: 'Blue Berry', frostingColor: 0xFF90CAF9, wrapperColor: 0xFF42A5F5, topping: CupcakeTopping.strawberry, accentColor: 0xFFE53935),
     CupcakeDef(name: 'Yellow Star', frostingColor: 0xFFFFF176, wrapperColor: 0xFFFFCA28, topping: CupcakeTopping.star),

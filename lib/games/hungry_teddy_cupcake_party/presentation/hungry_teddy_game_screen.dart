@@ -225,6 +225,8 @@ class _HungryTeddyGameScreenState extends ConsumerState<HungryTeddyGameScreen>
                         hungryTeddyControllerProvider.select((s) => s.starsEarned),
                       ),
                       largerFonts: settings.largerTouchTargets,
+                      showStars: false,
+                      flat: true,
                       onPause: _showPauseMenu,
                     ),
                     Expanded(
@@ -296,7 +298,22 @@ class _HappyTeddyBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(60, 2, 60, 8),
+      padding: const EdgeInsets.fromLTRB(14, 2, 14, 6),
+      child: Row(
+        children: [
+          const _BannerDashes(flip: false),
+          const SizedBox(width: 4),
+          Expanded(child: _bannerBody(context)),
+          const SizedBox(width: 4),
+          const _BannerDashes(flip: true),
+        ],
+      ),
+    );
+  }
+
+  Widget _bannerBody(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.zero,
       child: Container(
         height: 56,
         decoration: BoxDecoration(
@@ -373,6 +390,41 @@ class _HappyTeddyBanner extends StatelessWidget {
   }
 }
 
+/// Little yellow sparkle dashes beside the banner.
+class _BannerDashes extends StatelessWidget {
+  const _BannerDashes({required this.flip});
+
+  final bool flip;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.flip(
+      flipX: flip,
+      child: SizedBox(
+        width: 34,
+        height: 44,
+        child: CustomPaint(painter: _DashesPainter()),
+      ),
+    );
+  }
+}
+
+class _DashesPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final p = Paint()
+      ..color = const Color(0xFFFFC928)
+      ..strokeWidth = 4.5
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(Offset(size.width * 0.3, size.height * 0.12), Offset(size.width * 0.8, size.height * 0.3), p);
+    canvas.drawLine(Offset(size.width * 0.1, size.height * 0.5), Offset(size.width * 0.75, size.height * 0.5), p);
+    canvas.drawLine(Offset(size.width * 0.3, size.height * 0.88), Offset(size.width * 0.8, size.height * 0.7), p);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 class _BannerBearPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -440,7 +492,7 @@ class _PlayArea extends ConsumerWidget {
     final elapsedSeconds = ref.watch(
       hungryTeddyControllerProvider.select((s) => s.elapsedSeconds),
     );
-    final showDragHint = elapsedSeconds < 5;
+    final showDragHint = elapsedSeconds < 12;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -486,14 +538,17 @@ class _PlayArea extends ConsumerWidget {
                 draggingId == null &&
                 teddy.phase == TeddyPhase.idle &&
                 cupcakes.any((c) => c.canDrag))
-              Positioned(
-                left: 12,
-                right: 12,
-                top: area.height * 0.40,
-                child: IgnorePointer(
-                  child: _DragHint(larger: settings.largerTouchTargets),
-                ),
-              ),
+              Builder(builder: (context) {
+                final first = cupcakes.firstWhere((c) => c.canDrag);
+                return Positioned.fill(
+                  child: IgnorePointer(
+                    child: _DragTutorial(
+                      from: Offset(first.x, first.y),
+                      to: Offset(mouthX, mouthY),
+                    ),
+                  ),
+                );
+              }),
             ...cupcakes.map(
               (c) => CupcakeWidget(
                 cupcake: c,
@@ -583,23 +638,26 @@ class _FeedZoneGlowState extends State<_FeedZoneGlow>
   }
 }
 
-class _DragHint extends StatefulWidget {
-  const _DragHint({required this.larger});
+/// Animated pointing hand that shows a cupcake being dragged to Teddy.
+class _DragTutorial extends StatefulWidget {
+  const _DragTutorial({required this.from, required this.to});
 
-  final bool larger;
+  final Offset from;
+  final Offset to;
 
   @override
-  State<_DragHint> createState() => _DragHintState();
+  State<_DragTutorial> createState() => _DragTutorialState();
 }
 
-class _DragHintState extends State<_DragHint> with SingleTickerProviderStateMixin {
+class _DragTutorialState extends State<_DragTutorial>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _c;
 
   @override
   void initState() {
     super.initState();
-    _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
-      ..repeat(reverse: true);
+    _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))
+      ..repeat();
   }
 
   @override
@@ -612,51 +670,71 @@ class _DragHintState extends State<_DragHint> with SingleTickerProviderStateMixi
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _c,
-      builder: (context, child) {
+      builder: (context, _) {
         final t = _c.value;
-        return Transform.scale(
-          scale: 0.98 + t * 0.06,
-          child: child,
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFFFF80AB), Color(0xFFEA80FC), Color(0xFF82B1FF)],
+        // 0-0.15 press, 0.15-0.8 drag, 0.8-1 fade out.
+        final move = Curves.easeInOut.transform(((t - 0.15) / 0.65).clamp(0.0, 1.0));
+        final pos = Offset.lerp(widget.from, widget.to, move)!;
+        final opacity = t < 0.08
+            ? t / 0.08
+            : (t > 0.85 ? (1 - (t - 0.85) / 0.15) : 1.0);
+        return CustomPaint(
+          painter: _DragPathPainter(
+            from: widget.from,
+            to: widget.to,
+            progress: move,
+            opacity: opacity,
           ),
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: Colors.white, width: 3),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFEC407A).withValues(alpha: 0.45),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('👆', style: TextStyle(fontSize: 26)),
-            const SizedBox(width: 10),
-            Flexible(
-              child: Text(
-                'Drag a cupcake to Teddy!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: widget.larger ? 20 : 18,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 0.2,
+          child: Stack(
+            children: [
+              Positioned(
+                left: pos.dx - 6,
+                top: pos.dy - 8,
+                child: Opacity(
+                  opacity: opacity.clamp(0.0, 1.0),
+                  child: Transform.scale(
+                    scale: t < 0.15 ? 1.0 - t * 0.6 : 0.9,
+                    child: const Text('👆', style: TextStyle(fontSize: 44, height: 1)),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 10),
-            const Text('🧁🧸', style: TextStyle(fontSize: 24)),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
+}
+
+class _DragPathPainter extends CustomPainter {
+  _DragPathPainter({
+    required this.from,
+    required this.to,
+    required this.progress,
+    required this.opacity,
+  });
+
+  final Offset from;
+  final Offset to;
+  final double progress;
+  final double opacity;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Dotted guide from the cupcake toward Teddy's mouth.
+    const dots = 9;
+    for (var i = 1; i < dots; i++) {
+      final f = i / dots;
+      if (f > progress) break;
+      canvas.drawCircle(
+        Offset.lerp(from, to, f)!,
+        3.6,
+        Paint()..color = const Color(0xFFEC407A).withValues(alpha: 0.75 * opacity.clamp(0.0, 1.0)),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DragPathPainter old) =>
+      old.progress != progress || old.opacity != opacity;
 }

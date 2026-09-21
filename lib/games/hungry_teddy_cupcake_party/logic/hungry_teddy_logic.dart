@@ -10,22 +10,24 @@ abstract final class HungryTeddyLogic {
 
   /// Teddy sits on a rug at the bottom of the play area.
   static const teddyXFrac = 0.5;
-  static const teddyYFrac = 0.74;
+  static const teddyYFrac = 0.69;
   static const rugCenterXFrac = 0.5;
   static const rugCenterYFrac = 0.88;
 
   /// Cupcake slots — two roomy rows across the top (supports up to 10).
   static const tableSlots = <(double, double)>[
-    (0.15, 0.22),
-    (0.42, 0.22),
-    (0.63, 0.22),
-    (0.85, 0.22),
-    (0.30, 0.40),
-    (0.68, 0.37),
-    (0.12, 0.42),
-    (0.50, 0.42),
-    (0.88, 0.40),
-    (0.30, 0.12),
+    // The main row on the table (matches the four cupcakes in the design).
+    (0.14, 0.40),
+    (0.37, 0.40),
+    (0.62, 0.40),
+    (0.85, 0.40),
+    // Extra slots for larger cupcake counts.
+    (0.27, 0.27),
+    (0.73, 0.27),
+    (0.5, 0.2),
+    (0.12, 0.2),
+    (0.88, 0.2),
+    (0.5, 0.31),
   ];
 
   static const minSlotDistance = 0.08;
@@ -48,7 +50,6 @@ abstract final class HungryTeddyLogic {
     for (var i = 0; i < tableSlots.length; i++) {
       if (!exclude.contains(i)) available.add(i);
     }
-    available.shuffle(random);
     final picked = <int>[];
     for (final slot in available) {
       if (picked.length >= count) break;

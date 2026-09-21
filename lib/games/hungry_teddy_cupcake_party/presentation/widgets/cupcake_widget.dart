@@ -25,7 +25,7 @@ class CupcakeWidget extends StatelessWidget {
     if (cupcake.phase == CupcakePhase.gone) return const SizedBox.shrink();
 
     final def = CupcakeVarieties.byIndex(cupcake.varietyIndex, isGolden: cupcake.isGolden);
-    final size = (largerTouch ? 108.0 : 98.0) * cupcake.scale;
+    final size = (largerTouch ? 132.0 : 120.0) * cupcake.scale;
     final touchPad = size * 1.35;
     final isDragging = cupcake.phase == CupcakePhase.dragging;
     final isSnapping = cupcake.phase == CupcakePhase.snapping;
@@ -94,12 +94,17 @@ class _CupcakePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2 + 10;
+    // The cupcake is drawn on a 98-unit design grid and scaled to fit.
+    const design = 98.0;
+    final k = size.width / design;
+    final cx = design / 2;
+    final cy = design / 2 + 10;
     final alpha = (1.0 - snapProgress * 0.4).clamp(0.3, 1.0);
 
+    canvas.save();
+    canvas.scale(k);
     canvas.saveLayer(
-      (Offset.zero & size).inflate(28),
+      const Rect.fromLTWH(0, 0, design, design).inflate(28),
       Paint()..color = Colors.white.withValues(alpha: alpha),
     );
 
@@ -116,7 +121,7 @@ class _CupcakePainter extends CustomPainter {
     if (glow > 0 || isGolden || dragging) {
       canvas.drawCircle(
         Offset(cx, cy - 4),
-        size.width * 0.52,
+        design * 0.52,
         Paint()
           ..color = (isGolden ? const Color(0xFFFFD54F) : const Color(0xFFFF80AB))
               .withValues(alpha: 0.2 + glow * 0.4),
@@ -128,6 +133,7 @@ class _CupcakePainter extends CustomPainter {
 
     _drawLiner(canvas, cx, cy, wrapper);
     _drawFrosting(canvas, cx, cy, frosting);
+    if (def.sprinkles) _drawSprinkles(canvas, cx, cy);
     _drawTopping(canvas, cx, cy - 34, def.topping, def.accentColor);
 
     if (baking) {
@@ -162,6 +168,7 @@ class _CupcakePainter extends CustomPainter {
       }
     }
 
+    canvas.restore();
     canvas.restore();
   }
 
@@ -262,6 +269,29 @@ class _CupcakePainter extends CustomPainter {
     );
   }
 
+  /// Tiny multicoloured sprinkles across the frosting tiers.
+  void _drawSprinkles(Canvas canvas, double cx, double cy) {
+    const colors = [0xFF42A5F5, 0xFFFF7043, 0xFFFFCA28, 0xFFAB47BC, 0xFF66BB6A, 0xFFF06292];
+    const spots = [
+      (-24.0, 2.0), (-14.0, -6.0), (-4.0, 6.0), (8.0, -2.0), (20.0, 3.0),
+      (-18.0, -16.0), (-6.0, -22.0), (6.0, -14.0), (14.0, -20.0), (26.0, 8.0),
+    ];
+    for (var i = 0; i < spots.length; i++) {
+      final (dx, dy) = spots[i];
+      canvas.save();
+      canvas.translate(cx + dx, cy + dy);
+      canvas.rotate(i * 0.8);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(center: Offset.zero, width: 2.4, height: 6.4),
+          const Radius.circular(1.2),
+        ),
+        Paint()..color = Color(colors[i % colors.length]),
+      );
+      canvas.restore();
+    }
+  }
+
   void _drawTopping(Canvas canvas, double cx, double cy, CupcakeTopping t, int accent) {
     switch (t) {
       case CupcakeTopping.cherry:
@@ -315,6 +345,20 @@ class _CupcakePainter extends CustomPainter {
           Rect.fromCenter(center: Offset(cx - 7, cy - 6), width: 6, height: 8),
           Paint()..color = Colors.white.withValues(alpha: 0.55),
         );
+      case CupcakeTopping.hearts:
+        // Three small hearts sitting on the frosting swirl.
+        for (final (dx, dy, r) in [(2.0, -6.0, 6.5), (-13.0, 8.0, 5.5), (13.0, 10.0, 5.5)]) {
+          final c = Offset(cx + dx, cy + dy);
+          canvas.drawPath(
+            Path()
+              ..moveTo(c.dx, c.dy + r)
+              ..cubicTo(c.dx - r * 1.7, c.dy - r * 0.2, c.dx - r * 0.9, c.dy - r * 1.4, c.dx, c.dy - r * 0.4)
+              ..cubicTo(c.dx + r * 0.9, c.dy - r * 1.4, c.dx + r * 1.7, c.dy - r * 0.2, c.dx, c.dy + r)
+              ..close(),
+            Paint()..color = const Color(0xFFEC407A),
+          );
+          canvas.drawCircle(c + Offset(-r * 0.4, -r * 0.35), r * 0.22, Paint()..color = Colors.white.withValues(alpha: 0.6));
+        }
       case CupcakeTopping.sprinkles:
         const colors = [0xFFFF7043, 0xFF42A5F5, 0xFFAB47BC, 0xFFFFEE58, 0xFF66BB6A, 0xFFF06292];
         final spots = [
