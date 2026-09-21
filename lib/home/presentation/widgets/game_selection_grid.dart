@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_tiny_thinker/core/models/player_profile.dart';
 import 'package:my_tiny_thinker/core/models/reward_model.dart';
 import 'package:my_tiny_thinker/core/providers/game_stats_provider.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
 import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
+import 'package:my_tiny_thinker/home/presentation/widgets/game_list_card.dart';
 
 class GameSelectionGrid extends ConsumerWidget {
   const GameSelectionGrid({
@@ -319,30 +318,29 @@ class GameSelectionGrid extends ConsumerWidget {
 
     return ResponsiveGrid(
       itemCount: games.length + (includeComingSoon ? 1 : 0),
-      phoneColumns: largeLayout ? 1 : 2,
-      tabletColumns: largeLayout ? 2 : 3,
-      childAspectRatio: largeLayout ? 2.4 : 0.78,
+      phoneColumns: 1,
+      tabletColumns: 2,
+      childAspectRatio: 2.55,
       itemBuilder: (context, index) {
         if (includeComingSoon && index == games.length) {
-          return const TTGameCard(
+          return GameListCard(
             emoji: '✨',
             title: 'More Coming Soon!',
-            color: AppColors.softPurple,
+            subtitle: 'New games are on the way.',
+            theme: GameCardTheme.byIndex(index),
             comingSoon: true,
           );
         }
         final gameId = games[index];
-        final (emoji, title, subtitle, difficulty) = _meta[gameId]!;
+        final (emoji, title, subtitle, _) = _meta[gameId]!;
         final stats = allStats[gameId] ?? GameStats(gameId: gameId);
 
-        return TTGameCard(
+        return GameListCard(
           emoji: emoji,
           title: title,
           subtitle: subtitle,
-          color: AppColors.gameCardColors[index % AppColors.gameCardColors.length],
-          difficulty: largeLayout ? null : difficulty,
-          starsEarned: largeLayout ? 0 : stats.starsEarned,
-          bestScore: largeLayout ? 0 : stats.bestScore,
+          theme: GameCardTheme.byIndex(index),
+          starsEarned: stats.starsEarned,
           onPlay: () => onGameTap(gameId),
         );
       },

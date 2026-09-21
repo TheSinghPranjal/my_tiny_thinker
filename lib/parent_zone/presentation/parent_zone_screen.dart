@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:my_tiny_thinker/parent_zone/presentation/widgets/parent_lock_art.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/models/age_group.dart';
@@ -154,97 +156,221 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
   }
 
   Widget _buildLockScreen() {
-    return AnimatedSkyBackground(
-      showGrass: false,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        resizeToAvoidBottomInset: true,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => context.pop(),
-          ),
-          title: const Text('Parent Zone'),
-        ),
-        body: SafeArea(
+    const navy = Color(0xFF14224D);
+    const greyBlue = Color(0xFF5F7290);
+
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      resizeToAvoidBottomInset: true,
+      body: ParentLockBackground(
+        child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
               return SingleChildScrollView(
                 padding: EdgeInsets.only(
-                  left: AppSpacing.xl,
-                  right: AppSpacing.xl,
-                  top: AppSpacing.lg,
-                  bottom: AppSpacing.xl + MediaQuery.viewInsetsOf(context).bottom,
+                  bottom: MediaQuery.viewInsetsOf(context).bottom,
                 ),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight - AppSpacing.lg),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('🔒', style: TextStyle(fontSize: 64)),
-                      const SizedBox(height: AppSpacing.lg),
-                      Text('Parents Only', style: context.textTheme.headlineLarge),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        'Solve this to enter:',
-                        style: context.textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary,
+                      // Header: back button, title and subtitle.
+                      SizedBox(
+                        height: 78,
+                        child: Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Positioned(
+                              left: 14,
+                              top: 6,
+                              child: GestureDetector(
+                                onTap: () => context.pop(),
+                                child: Container(
+                                  width: 46,
+                                  height: 46,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.85),
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(0xFF5B9BE8).withValues(alpha: 0.25),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(Icons.chevron_left_rounded, size: 34, color: navy),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 6),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Parent Zone',
+                                    style: GoogleFonts.baloo2(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w800,
+                                      color: navy,
+                                      height: 1.1,
+                                    ),
+                                  ),
+                                  Text(
+                                    'A safe space for grown-ups',
+                                    style: GoogleFonts.nunito(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: greyBlue,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.xl),
-                      TTCard(
+                      const SizedBox(height: 56),
+                      const GoldPadlock(size: 96),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Parents Only',
+                        style: GoogleFonts.baloo2(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          color: navy,
+                          height: 1.1,
+                        ),
+                      ),
+                      Text(
+                        'Solve this to enter:',
+                        style: GoogleFonts.nunito(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: greyBlue,
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 22),
+                        padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(26),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF5B9BE8).withValues(alpha: 0.25),
+                              blurRadius: 18,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
                         child: Column(
                           children: [
                             Text(
                               'What is $_a × $_b?',
-                              style: context.textTheme.displaySmall,
+                              style: GoogleFonts.baloo2(
+                                fontSize: 30,
+                                fontWeight: FontWeight.w800,
+                                color: navy,
+                                height: 1.1,
+                              ),
                             ),
-                            const SizedBox(height: AppSpacing.lg),
+                            const SizedBox(height: 14),
                             TextField(
                               controller: _answerController,
                               focusNode: _answerFocus,
                               keyboardType: TextInputType.number,
                               textInputAction: TextInputAction.done,
                               textAlign: TextAlign.center,
-                              style: context.textTheme.headlineMedium,
+                              style: GoogleFonts.baloo2(
+                                fontSize: 26,
+                                fontWeight: FontWeight.w700,
+                                color: navy,
+                              ),
                               decoration: InputDecoration(
                                 hintText: '?',
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(AppSpacing.radiusMd),
+                                hintStyle: GoogleFonts.baloo2(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF7B8598),
+                                ),
+                                filled: true,
+                                fillColor: const Color(0xFFF3F8FD),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: const BorderSide(color: Color(0xFFB7C8DF), width: 1.6),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: const BorderSide(color: Color(0xFF3F8DF0), width: 2),
                                 ),
                               ),
                               onSubmitted: (_) => _checkAnswer(),
                             ),
-                            const SizedBox(height: AppSpacing.lg),
-                            TTButton(
-                              label: 'Enter',
-                              expanded: true,
-                              onPressed: _checkAnswer,
+                            const SizedBox(height: 14),
+                            GestureDetector(
+                              onTap: _checkAnswer,
+                              child: Container(
+                                height: 54,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [Color(0xFF6BBBF4), Color(0xFF3F84DA)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(28),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFF2F6FD0).withValues(alpha: 0.35),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Enter',
+                                  style: GoogleFonts.baloo2(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                    height: 1.1,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.xl),
+                      const SizedBox(height: 14),
                       Text(
                         'Or long-press the lock for 3 seconds',
-                        style: context.textTheme.bodySmall,
+                        style: GoogleFonts.nunito(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: greyBlue,
+                        ),
                       ),
-                      const SizedBox(height: AppSpacing.md),
+                      const SizedBox(height: 10),
                       GestureDetector(
                         onLongPress: () {
                           HapticFeedback.heavyImpact();
                           setState(() => _unlocked = true);
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(AppSpacing.lg),
+                          width: 64,
+                          height: 64,
                           decoration: BoxDecoration(
-                            color: AppColors.white.withValues(alpha: 0.5),
+                            color: Colors.white.withValues(alpha: 0.75),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.lock_open_rounded, size: 32),
+                          child: const Icon(Icons.lock_outline_rounded, size: 32, color: navy),
                         ),
                       ),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
