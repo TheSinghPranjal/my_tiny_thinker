@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_tiny_thinker/parent_zone/presentation/widgets/parent_dashboard_widgets.dart';
 import 'package:my_tiny_thinker/parent_zone/presentation/widgets/parent_lock_art.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
 import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
@@ -16,10 +17,6 @@ import 'package:my_tiny_thinker/core/premium/premium_provider.dart';
 import 'package:my_tiny_thinker/core/providers/game_stats_provider.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
-import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_button.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/core/widgets/tt_dialog.dart';
 import 'package:my_tiny_thinker/games/ocean_fish_adventure/models/ocean_fish_models.dart';
@@ -96,6 +93,7 @@ class ParentZoneScreen extends ConsumerStatefulWidget {
 
 class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
   bool _unlocked = false;
+  bool _showAllScores = false;
   int _a = 0;
   int _b = 0;
   int _expectedAnswer = 0;
@@ -193,13 +191,19 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF5B9BE8).withValues(alpha: 0.25),
+                                        color: const Color(
+                                          0xFF5B9BE8,
+                                        ).withValues(alpha: 0.25),
                                         blurRadius: 8,
                                         offset: const Offset(0, 3),
                                       ),
                                     ],
                                   ),
-                                  child: const Icon(Icons.chevron_left_rounded, size: 34, color: navy),
+                                  child: const Icon(
+                                    Icons.chevron_left_rounded,
+                                    size: 34,
+                                    color: navy,
+                                  ),
                                 ),
                               ),
                             ),
@@ -259,7 +263,9 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                           borderRadius: BorderRadius.circular(26),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF5B9BE8).withValues(alpha: 0.25),
+                              color: const Color(
+                                0xFF5B9BE8,
+                              ).withValues(alpha: 0.25),
                               blurRadius: 18,
                               offset: const Offset(0, 8),
                             ),
@@ -297,14 +303,22 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                                 ),
                                 filled: true,
                                 fillColor: const Color(0xFFF3F8FD),
-                                contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: const BorderSide(color: Color(0xFFB7C8DF), width: 1.6),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFFB7C8DF),
+                                    width: 1.6,
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(16),
-                                  borderSide: const BorderSide(color: Color(0xFF3F8DF0), width: 2),
+                                  borderSide: const BorderSide(
+                                    color: Color(0xFF3F8DF0),
+                                    width: 2,
+                                  ),
                                 ),
                               ),
                               onSubmitted: (_) => _checkAnswer(),
@@ -319,12 +333,17 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                                   gradient: const LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
-                                    colors: [Color(0xFF6BBBF4), Color(0xFF3F84DA)],
+                                    colors: [
+                                      Color(0xFF6BBBF4),
+                                      Color(0xFF3F84DA),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(28),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF2F6FD0).withValues(alpha: 0.35),
+                                      color: const Color(
+                                        0xFF2F6FD0,
+                                      ).withValues(alpha: 0.35),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     ),
@@ -367,7 +386,11 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
                             color: Colors.white.withValues(alpha: 0.75),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.lock_outline_rounded, size: 32, color: navy),
+                          child: const Icon(
+                            Icons.lock_outline_rounded,
+                            size: 32,
+                            color: navy,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -387,94 +410,159 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
     final gameStats = ref.watch(allGameStatsProvider);
     final onboarding = ref.watch(onboardingProvider);
 
-    return AnimatedSkyBackground(
-      showGrass: false,
+    final allIds = GameId.values;
+    final shownIds = _showAllScores ? allIds : allIds.take(4).toList();
+
+    return ParentDashboardBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => context.pop(),
-          ),
-          title: const Text('Parent Dashboard'),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          children: [
-            if (!ref.watch(isPremiumProvider)) ...[
-              TTCard(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFB39DDB), Color(0xFFCE93D8)],
+        body: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, AppSpacing.lg),
+            children: [
+              ParentDashboardHeader(onBack: () => context.pop()),
+              const SizedBox(height: 10),
+              if (!ref.watch(isPremiumProvider)) ...[
+                ParentPremiumCard(
+                  onSeePremium: () => context.push(AppRoutes.premium),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: AppSpacing.lg),
+              ],
+              ParentSectionCard(
+                title: 'Statistics',
+                leading: const BarsIcon(),
+                trailing: const ParentPill(
+                  label: 'All Time',
+                  icon: Icons.keyboard_arrow_down_rounded,
+                ),
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 1.45,
                   children: [
-                    Text(
-                      'TinyThink Premium',
-                      style: context.textTheme.headlineMedium?.copyWith(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w800,
+                    ParentStatTile(
+                      icon: const StatIcon(
+                        colors: [Color(0xFF7ED98A), Color(0xFF3FB35A)],
+                        child: Icon(
+                          Icons.schedule_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
                       ),
+                      label: 'Play Time',
+                      value: '${profile.totalPlayTimeMinutes} min',
+                      tint: const Color(0xFFE9F8EE),
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      'Unlock unlimited play, parent controls, and Learning Path sessions.',
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.white.withValues(alpha: 0.95),
-                        fontWeight: FontWeight.w600,
+                    ParentStatTile(
+                      icon: const Icon(
+                        Icons.emoji_events_rounded,
+                        color: Color(0xFF8E5AE8),
+                        size: 36,
                       ),
+                      label: 'Level',
+                      value: '${profile.level}',
+                      tint: const Color(0xFFF0EAFB),
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    TTButton(
-                      label: 'See Premium',
-                      expanded: true,
-                      onPressed: () => context.push(AppRoutes.premium),
+                    ParentStatTile(
+                      icon: StatIcon(
+                        shape: BoxShape.rectangle,
+                        colors: const [Color(0xFFFFB84D), Color(0xFFF08A1D)],
+                        child: Text(
+                          'XP',
+                          style: GoogleFonts.baloo2(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                      label: 'Total XP',
+                      value: '${profile.xp}',
+                      tint: const Color(0xFFFFF3E2),
+                    ),
+                    ParentStatTile(
+                      icon: StatIcon(
+                        colors: const [Color(0xFFFFE066), Color(0xFFFFB300)],
+                        child: Text(
+                          r'$',
+                          style: GoogleFonts.baloo2(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFFE08A00),
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                      label: 'Coins',
+                      value: '${profile.coins}',
+                      tint: const Color(0xFFFFF6DF),
+                    ),
+                    ParentStatTile(
+                      icon: const Icon(
+                        Icons.star_rounded,
+                        color: Color(0xFFEE5C7E),
+                        size: 38,
+                      ),
+                      label: 'Stars',
+                      value: '${profile.stars}',
+                      tint: const Color(0xFFFDE8EE),
+                    ),
+                    ParentStatTile(
+                      icon: const Icon(
+                        Icons.local_fire_department_rounded,
+                        color: Color(0xFFF5892A),
+                        size: 38,
+                      ),
+                      label: 'Daily Streak',
+                      value: profile.dailyStreak == 1
+                          ? '1 day'
+                          : '${profile.dailyStreak} days',
+                      tint: const Color(0xFFFFF1E0),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-            ],
-            TTCard(
-              gradient: AppGradients.welcomeCard,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Statistics', style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.lg),
-                  _StatRow('Play Time', '${profile.totalPlayTimeMinutes} min'),
-                  _StatRow('Level', '${profile.level}'),
-                  _StatRow('Total XP', '${profile.xp}'),
-                  _StatRow('Coins', '${profile.coins}'),
-                  _StatRow('Stars', '${profile.stars}'),
-                  _StatRow('Daily Streak', '${profile.dailyStreak} days'),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            TTCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Game Scores', style: context.textTheme.headlineMedium),
-                  const SizedBox(height: AppSpacing.md),
-                  ...GameId.values.map((id) {
-                    final s = gameStats[id] ?? GameStats(gameId: id);
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                      child: Text(
-                        '${id.emoji} ${id.displayName}: best ${s.bestScore}, '
-                        'played ${s.timesPlayed}×, ⭐ ${s.starsEarned}',
-                        style: context.textTheme.bodySmall,
+              ParentSectionCard(
+                title: 'Game Scores',
+                background: const Color(0xFFF8FBFF),
+                leading: const Icon(
+                  Icons.sports_esports_rounded,
+                  color: Color(0xFF6C8BD8),
+                  size: 34,
+                ),
+                trailing: ParentPill(
+                  label: _showAllScores ? 'Show Less' : 'View All',
+                  icon: _showAllScores
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.chevron_right_rounded,
+                  onTap: () => setState(() => _showAllScores = !_showAllScores),
+                ),
+                child: Column(
+                  children: [
+                    for (var i = 0; i < shownIds.length; i++)
+                      Builder(
+                        builder: (context) {
+                          final id = shownIds[i];
+                          final st = gameStats[id] ?? GameStats(gameId: id);
+                          return ParentScoreRow(
+                            emoji: id.emoji,
+                            name: id.displayName,
+                            best: st.bestScore,
+                            played: st.timesPlayed,
+                            stars: st.starsEarned,
+                            showDivider: i != shownIds.length - 1,
+                          );
+                        },
                       ),
-                    );
-                  }),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.lg),
             TTCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -744,26 +832,7 @@ class _ParentZoneScreenState extends ConsumerState<ParentZoneScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _StatRow extends StatelessWidget {
-  const _StatRow(this.label, this.value);
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: context.textTheme.bodyLarge),
-          Text(value, style: context.textTheme.titleMedium),
-        ],
+        ),
       ),
     );
   }
