@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/games/shared/frog_varieties.dart';
 
 /// The friendly green frog for Feed the Frog: bulging eyes, rosy cheeks,
 /// an open smile, a cream belly and webbed hands and feet.
@@ -15,13 +16,30 @@ class FeedFrogCharacter extends StatelessWidget {
     this.chew = false,
     this.feeding = false,
     this.size = 168,
+    this.bodyColor = defaultBodyColor,
+    this.bellyColor = defaultBellyColor,
+    this.spotColor,
+    this.pattern = FrogPattern.smooth,
+    this.waveAngle = 0,
   });
+
+  static const defaultBodyColor = Color(0xFF67BD43);
+  static const defaultBellyColor = Color(0xFFF5EBC4);
 
   final double animPhase;
   final bool blink;
   final bool chew;
   final bool feeding;
   final double size;
+
+  /// Skin colours, so other games can reuse this frog in other varieties.
+  final Color bodyColor;
+  final Color bellyColor;
+  final Color? spotColor;
+  final FrogPattern pattern;
+
+  /// Arm swing in radians (positive raises the frog's left arm).
+  final double waveAngle;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +50,11 @@ class FeedFrogCharacter extends StatelessWidget {
         blink: blink,
         chew: chew,
         feeding: feeding,
+        bodyColor: bodyColor,
+        bellyColor: bellyColor,
+        spotColor: spotColor,
+        pattern: pattern,
+        waveAngle: waveAngle,
       ),
     );
   }
@@ -43,19 +66,29 @@ class FeedFrogPainter extends CustomPainter {
     required this.blink,
     required this.chew,
     required this.feeding,
+    this.bodyColor = FeedFrogCharacter.defaultBodyColor,
+    this.bellyColor = FeedFrogCharacter.defaultBellyColor,
+    this.spotColor,
+    this.pattern = FrogPattern.smooth,
+    this.waveAngle = 0,
   });
 
   final double animPhase;
   final bool blink;
   final bool chew;
   final bool feeding;
+  final Color bodyColor;
+  final Color bellyColor;
+  final Color? spotColor;
+  final FrogPattern pattern;
+  final double waveAngle;
 
-  static const _light = Color(0xFF9BDF66);
-  static const _green = Color(0xFF67BD43);
-  static const _dark = Color(0xFF3F9A2E);
-  static const _outline = Color(0xFF35852A);
-  static const _belly = Color(0xFFF5EBC4);
-  static const _bellyShade = Color(0xFFE6D8A2);
+  Color get _green => bodyColor;
+  Color get _light => Color.lerp(bodyColor, Colors.white, 0.3)!;
+  Color get _dark => Color.lerp(bodyColor, Colors.black, 0.25)!;
+  Color get _outline => Color.lerp(bodyColor, Colors.black, 0.4)!;
+  Color get _belly => bellyColor;
+  Color get _bellyShade => Color.lerp(bellyColor, Colors.black, 0.1)!;
 
   Paint get _line => Paint()
     ..color = _outline.withValues(alpha: 0.85)
@@ -63,12 +96,12 @@ class FeedFrogPainter extends CustomPainter {
     ..strokeWidth = 2
     ..strokeJoin = StrokeJoin.round;
 
-  Paint _fill(Rect r, {Color top = _light, Color mid = _green, Color bottom = _dark}) =>
+  Paint _fill(Rect r) =>
       Paint()
         ..shader = RadialGradient(
           center: const Alignment(-0.3, -0.55),
           radius: 1.05,
-          colors: [top, mid, bottom],
+          colors: [_light, _green, _dark],
           stops: const [0.0, 0.62, 1.0],
         ).createShader(r);
 
@@ -81,6 +114,7 @@ class FeedFrogPainter extends CustomPainter {
 
     _hindLegs(canvas);
     _body(canvas);
+    _pattern(canvas);
     _belly_(canvas);
     _hands(canvas);
     _feet(canvas);
@@ -114,21 +148,58 @@ class FeedFrogPainter extends CustomPainter {
     canvas.drawOval(r, _line);
   }
 
+  void _pattern(Canvas canvas) {
+    final spot = Paint()
+      ..color = (spotColor ?? _dark).withValues(alpha: 0.5);
+    switch (pattern) {
+      case FrogPattern.spotted:
+        canvas.drawCircle(const Offset(-30, 0), 5, spot);
+        canvas.drawCircle(const Offset(31, 6), 4.5, spot);
+        canvas.drawCircle(const Offset(-28, 26), 3.5, spot);
+        canvas.drawCircle(const Offset(29, 30), 3.5, spot);
+      case FrogPattern.striped:
+        for (final y in [-2.0, 8.0]) {
+          canvas.drawLine(
+            Offset(-38, y),
+            Offset(-24, y),
+            spot
+              ..strokeWidth = 3
+              ..strokeCap = StrokeCap.round,
+          );
+          canvas.drawLine(Offset(24, y), Offset(38, y), spot);
+        }
+      case FrogPattern.leafy:
+        canvas.drawOval(Rect.fromCenter(center: const Offset(32, 4), width: 12, height: 7), spot);
+        canvas.drawOval(Rect.fromCenter(center: const Offset(-32, 20), width: 12, height: 7), spot);
+      case FrogPattern.mossy:
+        canvas.drawCircle(const Offset(-31, 14), 6, spot);
+        canvas.drawCircle(const Offset(30, 22), 5, spot);
+        canvas.drawCircle(const Offset(-24, 36), 3.5, spot);
+      case FrogPattern.shiny:
+        canvas.drawOval(
+          Rect.fromCenter(center: const Offset(-26, -6), width: 14, height: 8),
+          Paint()..color = Colors.white.withValues(alpha: 0.4),
+        );
+      case FrogPattern.smooth:
+        break;
+    }
+  }
+
   void _belly_(Canvas canvas) {
     final r = Rect.fromCenter(center: const Offset(0, 22), width: 50, height: 56);
     canvas.drawOval(
       r,
       Paint()
-        ..shader = const RadialGradient(
-          center: Alignment(-0.15, -0.35),
-          colors: [Color(0xFFFFF9DE), _belly, _bellyShade],
+        ..shader = RadialGradient(
+          center: const Alignment(-0.15, -0.35),
+          colors: [Color.lerp(_belly, Colors.white, 0.5)!, _belly, _bellyShade],
           stops: [0.0, 0.62, 1.0],
         ).createShader(r),
     );
     canvas.drawOval(
       r,
       Paint()
-        ..color = const Color(0xFFD9C98A)
+        ..color = Color.lerp(_belly, Colors.black, 0.18)!
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.5,
     );
@@ -136,6 +207,11 @@ class FeedFrogPainter extends CustomPainter {
 
   void _hands(Canvas canvas) {
     for (final dir in [-1.0, 1.0]) {
+      canvas.save();
+      // Swing the whole arm about the shoulder (used by the waving frogs).
+      canvas.translate(dir * 22, 8);
+      canvas.rotate(-dir * waveAngle);
+      canvas.translate(-dir * 22, -8);
       // Arm: a tapered limb from the shoulder down to the pad.
       final arm = Path()
         ..moveTo(dir * 22, 8)
@@ -147,6 +223,7 @@ class FeedFrogPainter extends CustomPainter {
       canvas.drawPath(arm, _fill(bounds));
       canvas.drawPath(arm, _line);
       _webbedHand(canvas, Offset(dir * 29, 56), dir);
+      canvas.restore();
     }
   }
 
@@ -314,6 +391,11 @@ class FeedFrogPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant FeedFrogPainter old) =>
       old.animPhase != animPhase ||
+      old.bodyColor != bodyColor ||
+      old.bellyColor != bellyColor ||
+      old.spotColor != spotColor ||
+      old.pattern != pattern ||
+      old.waveAngle != waveAngle ||
       old.blink != blink ||
       old.chew != chew ||
       old.feeding != feeding;

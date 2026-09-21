@@ -304,11 +304,16 @@ abstract final class HungryMonkeyLogic {
       actionTimer = 0;
       idleAction = random.nextInt(4);
     }
+    // Ease any leftover pose (arms up, chewing) back to rest instead of
+    // snapping, so the end of the feed loop flows into idle.
+    final relax = delta * 3.0 * speed;
     return m.copyWith(
       actionTimer: actionTimer,
       idleAction: idleAction,
       earDroop: 0,
       headShake: 0,
+      reachProgress: math.max(0.0, m.reachProgress - relax),
+      eatProgress: math.max(0.0, m.eatProgress - relax),
     );
   }
 
@@ -362,10 +367,20 @@ abstract final class HungryMonkeyLogic {
 
   static MonkeyEntity _updateClap(MonkeyEntity m, double delta, double speed) {
     final t = m.actionTimer + delta;
-    if (t >= 0.8 / speed) {
-      return m.copyWith(phase: MonkeyPhase.idle, actionTimer: 0, reachProgress: 0, eatProgress: 0);
+    final duration = 0.8 / speed;
+    if (t >= duration) {
+      return m.copyWith(phase: MonkeyPhase.idle, actionTimer: 0);
     }
-    return m.copyWith(actionTimer: t);
+    // Lower the arms gently over the last part of the celebration.
+    const lowerTime = 0.3;
+    final remaining = duration - t;
+    final reach = remaining < lowerTime
+        ? (remaining / lowerTime).clamp(0.0, 1.0)
+        : m.reachProgress;
+    final eat = remaining < lowerTime
+        ? math.min(m.eatProgress, (remaining / lowerTime).clamp(0.0, 1.0))
+        : m.eatProgress;
+    return m.copyWith(actionTimer: t, reachProgress: reach, eatProgress: eat);
   }
 
   static ({int points, int coins, int xp, int stars}) feedReward(

@@ -58,30 +58,72 @@ class _ApplePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final cx = size.width / 2;
-    final cy = size.height / 2 + 2;
+    final cy = size.height / 2 + 6;
+    final base = wasTapped ? const Color(0xFFC62828) : const Color(0xFFE53935);
 
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, cy + 2), width: 34, height: 36),
+    // Apple body: two soft lobes with a dimple at the top.
+    final body = Path()
+      ..moveTo(cx, cy - 14)
+      ..cubicTo(cx - 8, cy - 22, cx - 30, cy - 18, cx - 28, cy + 4)
+      ..cubicTo(cx - 27, cy + 24, cx - 12, cy + 32, cx, cy + 26)
+      ..cubicTo(cx + 12, cy + 32, cx + 27, cy + 24, cx + 28, cy + 4)
+      ..cubicTo(cx + 30, cy - 18, cx + 8, cy - 22, cx, cy - 14)
+      ..close();
+    final r = Rect.fromCenter(center: Offset(cx, cy + 4), width: 58, height: 52);
+    canvas.drawPath(
+      body,
       Paint()
-        ..color = wasTapped ? const Color(0xFFD32F2F) : const Color(0xFFE53935),
+        ..shader = RadialGradient(
+          center: const Alignment(-0.35, -0.5),
+          radius: 1.0,
+          colors: [const Color(0xFFFF6B6B), base, const Color(0xFFB71C1C)],
+          stops: const [0.0, 0.55, 1.0],
+        ).createShader(r),
     );
-    canvas.drawCircle(
-      Offset(cx - 8, cy - 4),
-      6,
-      Paint()..color = Colors.white.withValues(alpha: 0.35),
+    canvas.drawPath(
+      body,
+      Paint()
+        ..color = const Color(0xFF8E1B1B).withValues(alpha: 0.55)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+    // Gloss
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(cx - 13, cy - 6), width: 11, height: 18),
+      Paint()..color = Colors.white.withValues(alpha: 0.5),
     );
 
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(cx, cy - 20), width: 4, height: 10),
-        const Radius.circular(2),
-      ),
-      Paint()..color = const Color(0xFF5D4037),
+    // Stem
+    canvas.drawPath(
+      Path()
+        ..moveTo(cx, cy - 14)
+        ..quadraticBezierTo(cx + 1, cy - 24, cx + 5, cy - 28),
+      Paint()
+        ..color = const Color(0xFF6D4C41)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3.4
+        ..strokeCap = StrokeCap.round,
     );
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx + 8, cy - 22), width: 14, height: 8),
-      Paint()..color = const Color(0xFF43A047),
-    );
+    // Two leaves
+    for (final dir in [-1.0, 1.0]) {
+      canvas.save();
+      canvas.translate(cx + 4, cy - 24);
+      canvas.rotate(dir * 0.7 - 0.2);
+      final leaf = Path()
+        ..moveTo(0, 0)
+        ..quadraticBezierTo(dir * 8, -10, dir * 19, -6)
+        ..quadraticBezierTo(dir * 10, 4, 0, 0)
+        ..close();
+      canvas.drawPath(leaf, Paint()..color = const Color(0xFF66BB47));
+      canvas.drawLine(
+        Offset.zero,
+        Offset(dir * 15, -5),
+        Paint()
+          ..color = const Color(0xFF2E7D32).withValues(alpha: 0.6)
+          ..strokeWidth = 1.2,
+      );
+      canvas.restore();
+    }
   }
 
   @override

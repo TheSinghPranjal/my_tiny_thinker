@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -212,6 +213,7 @@ class _HungryTeddyGameScreenState extends ConsumerState<HungryTeddyGameScreen>
               children: [
                 Column(
                   children: [
+                    const _HappyTeddyBanner(),
                     GameSessionHud(
                       remainingSeconds: ref.watch(
                         hungryTeddyControllerProvider.select((s) => s.remainingSeconds),
@@ -285,6 +287,130 @@ class _HungryTeddyGameScreenState extends ConsumerState<HungryTeddyGameScreen>
       ),
     );
   }
+}
+
+/// Pink "Happy Teddy!" banner above the HUD.
+class _HappyTeddyBanner extends StatelessWidget {
+  const _HappyTeddyBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(60, 2, 60, 8),
+      child: Container(
+        height: 56,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFFF6FA8), Color(0xFFF03E86)],
+          ),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: const Color(0xFFFFD1E3), width: 3),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFD81B60).withValues(alpha: 0.28),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 6),
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFFF3E0),
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: CustomPaint(painter: _BannerBearPainter()),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Happy Teddy!',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.fredoka(
+                      fontSize: 22,
+                      height: 1.0,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      shadows: const [
+                        Shadow(color: Color(0x55B0124F), offset: Offset(0, 2), blurRadius: 2),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Drag the cupcakes to feed Teddy!',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.nunito(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white.withValues(alpha: 0.95),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: Text('🎉', style: TextStyle(fontSize: 22)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BannerBearPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final c = Offset(size.width / 2, size.height / 2 + 1);
+    const fur = Color(0xFF9A6A4D);
+    canvas.drawCircle(c + const Offset(-13, -11), 6.5, Paint()..color = fur);
+    canvas.drawCircle(c + const Offset(13, -11), 6.5, Paint()..color = fur);
+    canvas.drawCircle(c + const Offset(-13, -11), 3.2, Paint()..color = const Color(0xFFF2A7A0));
+    canvas.drawCircle(c + const Offset(13, -11), 3.2, Paint()..color = const Color(0xFFF2A7A0));
+    canvas.drawCircle(c, 15, Paint()..color = fur);
+    canvas.drawOval(
+      Rect.fromCenter(center: c + const Offset(0, 5), width: 18, height: 13),
+      Paint()..color = const Color(0xFFF7DDB8),
+    );
+    canvas.drawCircle(c + const Offset(-6, -3), 2.2, Paint()..color = const Color(0xFF2E1B12));
+    canvas.drawCircle(c + const Offset(6, -3), 2.2, Paint()..color = const Color(0xFF2E1B12));
+    canvas.drawOval(
+      Rect.fromCenter(center: c + const Offset(0, 3), width: 5, height: 3.6),
+      Paint()..color = const Color(0xFF4A2F22),
+    );
+    canvas.drawArc(
+      Rect.fromCenter(center: c + const Offset(0, 6), width: 8, height: 6),
+      0.2,
+      3.1 - 0.4,
+      false,
+      Paint()
+        ..color = const Color(0xFF4A2F22)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..strokeCap = StrokeCap.round,
+    );
+    final cheek = Paint()..color = const Color(0xFFFF8A9A).withValues(alpha: 0.6);
+    canvas.drawCircle(c + const Offset(-10, 4), 3, cheek);
+    canvas.drawCircle(c + const Offset(10, 4), 3, cheek);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _PlayArea extends ConsumerWidget {

@@ -216,9 +216,13 @@ class HungryMonkeyController extends StateNotifier<HungryMonkeyState> {
 
     state = state.copyWith(
       bananas: bananas,
+      // Restart the reach -> catch -> chew -> clap loop. Keep the current
+      // reachProgress so tapping again mid-celebration flows on smoothly
+      // instead of snapping the arms back down.
       monkey: state.monkey.copyWith(
         phase: MonkeyPhase.reaching,
-        reachProgress: 0,
+        actionTimer: 0,
+        eatProgress: 0,
         x: mx,
         y: my,
       ),

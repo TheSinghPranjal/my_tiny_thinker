@@ -10,22 +10,22 @@ abstract final class HungryTeddyLogic {
 
   /// Teddy sits on a rug at the bottom of the play area.
   static const teddyXFrac = 0.5;
-  static const teddyYFrac = 0.82;
+  static const teddyYFrac = 0.74;
   static const rugCenterXFrac = 0.5;
   static const rugCenterYFrac = 0.88;
 
   /// Cupcake slots — two roomy rows across the top (supports up to 10).
   static const tableSlots = <(double, double)>[
-    (0.12, 0.15),
-    (0.30, 0.15),
-    (0.50, 0.15),
-    (0.70, 0.15),
-    (0.88, 0.15),
-    (0.12, 0.27),
-    (0.30, 0.27),
-    (0.50, 0.27),
-    (0.70, 0.27),
-    (0.88, 0.27),
+    (0.15, 0.22),
+    (0.42, 0.22),
+    (0.63, 0.22),
+    (0.85, 0.22),
+    (0.30, 0.40),
+    (0.68, 0.37),
+    (0.12, 0.42),
+    (0.50, 0.42),
+    (0.88, 0.40),
+    (0.30, 0.12),
   ];
 
   static const minSlotDistance = 0.08;
@@ -35,7 +35,7 @@ abstract final class HungryTeddyLogic {
 
   static (double, double) teddyMouth(Size area) {
     final (tx, ty) = teddyAnchor(area);
-    return (tx, ty - 52);
+    return (tx, ty - 8);
   }
 
   static (double, double) slotPosition(Size area, int slotIndex) {

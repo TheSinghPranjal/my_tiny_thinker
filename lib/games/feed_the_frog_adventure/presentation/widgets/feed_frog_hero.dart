@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/games/feed_the_frog_adventure/models/feed_frog_models.dart';
-import 'package:my_tiny_thinker/games/feed_the_frog_adventure/presentation/widgets/feed_frog_character.dart';
+import 'package:my_tiny_thinker/games/shared/feed_frog_character.dart';
 
 class FeedFrogHero extends StatelessWidget {
   const FeedFrogHero({
