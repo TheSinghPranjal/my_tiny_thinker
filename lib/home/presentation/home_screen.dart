@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:my_tiny_thinker/core/constants/app_spacing.dart';
-import 'package:my_tiny_thinker/core/extensions/context_extensions.dart';
 import 'package:my_tiny_thinker/core/models/age_group.dart';
 import 'package:my_tiny_thinker/core/providers/onboarding_provider.dart';
 import 'package:my_tiny_thinker/core/providers/settings_provider.dart';
 import 'package:my_tiny_thinker/core/routing/app_router.dart';
 import 'package:my_tiny_thinker/core/routing/game_navigation.dart';
 import 'package:my_tiny_thinker/core/services/audio_service.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_colors.dart';
-import 'package:my_tiny_thinker/core/theme/colors/app_gradients.dart';
 import 'package:my_tiny_thinker/core/widgets/animated_sky_background.dart';
-import 'package:my_tiny_thinker/core/widgets/mascot_widget.dart';
 import 'package:my_tiny_thinker/core/widgets/responsive_layout.dart';
 import 'package:my_tiny_thinker/core/widgets/tiny_think_title.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_badge.dart';
-import 'package:my_tiny_thinker/core/widgets/tt_card.dart';
 import 'package:my_tiny_thinker/home/presentation/widgets/game_selection_grid.dart';
 import 'package:my_tiny_thinker/home/presentation/widgets/learning_path_card.dart';
 
@@ -69,7 +64,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       coins: profile.coins,
                       stars: profile.stars,
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    const SizedBox(height: AppSpacing.md),
                     _WelcomeCard(
                       ageGroup: ageGroup,
                       avatarEmoji: avatarEmoji,
@@ -77,14 +72,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: AppSpacing.xl),
                     const LearningPathCard(),
                     const SizedBox(height: AppSpacing.xl),
-                    Text(
-                      'Choose a Game',
-                      style: context.textTheme.headlineMedium?.copyWith(
-                        color: AppColors.white,
-                        shadows: const [
-                          Shadow(color: AppColors.skyBlueDark, blurRadius: 4),
-                        ],
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Choose a Game',
+                            style: GoogleFonts.baloo2(
+                              fontSize: 27,
+                              fontWeight: FontWeight.w800,
+                              color: const Color(0xFF15245A),
+                              height: 1.1,
+                            ),
+                          ),
+                        ),
+                        _ViewAllButton(onTap: () => context.go(AppRoutes.games)),
+                      ],
                     ),
                     const SizedBox(height: AppSpacing.md),
                   ],
@@ -131,70 +133,143 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        const Expanded(
+          child: Padding(
+            padding: EdgeInsets.only(top: 14),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: TinyThinkTitle(fontSize: 46, showTagline: true),
+            ),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Flexible(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: const TinyThinkTitle(),
-                    ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _StatPill(
+                  leading: const _CoinIcon(),
+                  value: coins,
+                ),
+                const SizedBox(width: 8),
+                _StatPill(
+                  leading: const Icon(
+                    Icons.star_rounded,
+                    size: 22,
+                    color: Color(0xFFFF9A1F),
                   ),
-                  const SizedBox(width: 8),
-                  const MascotWidget(size: 40, waving: true),
-                ],
-              ),
+                  value: stars,
+                ),
+              ],
             ),
-            const SizedBox(width: AppSpacing.xs),
-            TTCurrencyBadge(
-              icon: Icons.monetization_on_rounded,
-              value: coins,
-              color: AppColors.sunYellow,
-            ),
-            const SizedBox(width: AppSpacing.xs),
-            TTCurrencyBadge(
-              icon: Icons.star_rounded,
-              value: stars,
-              color: AppColors.orange,
+            const SizedBox(height: 10),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _IconButton(
+                  icon: soundEnabled
+                      ? Icons.volume_up_rounded
+                      : Icons.volume_off_rounded,
+                  onTap: onSettings,
+                ),
+                const SizedBox(width: 6),
+                _IconButton(
+                  icon: Icons.emoji_events_rounded,
+                  onTap: onAchievements,
+                ),
+                const SizedBox(width: 6),
+                _IconButton(
+                  icon: Icons.lock_rounded,
+                  onTap: onParentZone,
+                ),
+                const SizedBox(width: 6),
+                _IconButton(
+                  icon: Icons.settings_rounded,
+                  onTap: onSettings,
+                ),
+              ],
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.sm),
-        Align(
-          alignment: Alignment.centerRight,
-          child: Wrap(
-            spacing: AppSpacing.xxs,
-            runSpacing: AppSpacing.xxs,
-            alignment: WrapAlignment.end,
-            children: [
-              _IconButton(
-                icon: soundEnabled
-                    ? Icons.volume_up_rounded
-                    : Icons.volume_off_rounded,
-                onTap: onSettings,
-              ),
-              _IconButton(
-                icon: Icons.emoji_events_rounded,
-                onTap: onAchievements,
-              ),
-              _IconButton(
-                icon: Icons.lock_rounded,
-                onTap: onParentZone,
-              ),
-              _IconButton(
-                icon: Icons.settings_rounded,
-                onTap: onSettings,
-              ),
-            ],
-          ),
-        ),
       ],
+    );
+  }
+}
+
+class _CoinIcon extends StatelessWidget {
+  const _CoinIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFFFE066), Color(0xFFFFB300)],
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        r'$',
+        style: GoogleFonts.baloo2(
+          fontSize: 14,
+          height: 1.0,
+          fontWeight: FontWeight.w900,
+          color: const Color(0xFFE08A00),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatPill extends StatelessWidget {
+  const _StatPill({required this.leading, required this.value});
+
+  final Widget leading;
+  final int value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF5B9BE8).withValues(alpha: 0.25),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          leading,
+          const SizedBox(width: 6),
+          Text(
+            '$value',
+            style: GoogleFonts.baloo2(
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              color: const Color(0xFF15245A),
+              height: 1.0,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -210,18 +285,63 @@ class _IconButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sm),
+        width: 38,
+        height: 38,
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.85),
+          color: const Color(0xFFEAF5FF).withValues(alpha: 0.92),
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: AppColors.skyBlue.withValues(alpha: 0.2),
+              color: const Color(0xFF5B9BE8).withValues(alpha: 0.22),
               blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
-        child: Icon(icon, size: 20, color: AppColors.skyBlueDark),
+        child: Icon(icon, size: 21, color: const Color(0xFF2F86E6)),
+      ),
+    );
+  }
+}
+
+class _ViewAllButton extends StatelessWidget {
+  const _ViewAllButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF5B9BE8).withValues(alpha: 0.25),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'View All',
+              style: GoogleFonts.baloo2(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF15245A),
+                height: 1.1,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.chevron_right_rounded, size: 20, color: Color(0xFF15245A)),
+          ],
+        ),
       ),
     );
   }
@@ -254,37 +374,134 @@ class _WelcomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TTCard(
-      gradient: AppGradients.welcomeCard,
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          height: 150,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF5B9BE8).withValues(alpha: 0.25),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                Text(
-                  _greeting,
-                  style: context.textTheme.headlineMedium,
+                // Card artwork (cream sky, leaves and the waving bunny). It is
+                // anchored to the right so the bunny is never cropped.
+                Image.asset(
+                  'assets/images/hello_buddy_card.png',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.centerRight,
                 ),
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  _subtitle,
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.textSecondary,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(22, 18, 158, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          _greeting,
+                          style: GoogleFonts.baloo2(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF14224D),
+                            height: 1.05,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _subtitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.nunito(
+                          fontSize: 15,
+                          height: 1.2,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF66738F),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD5EDFB),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(ageGroup.emoji, style: const TextStyle(fontSize: 17)),
+                            const SizedBox(width: 6),
+                            Flexible(
+                              child: Text(
+                                ageGroup.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.baloo2(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF14224D),
+                                  height: 1.1,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.chevron_right_rounded, size: 18, color: Color(0xFF14224D)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                TTBadge(
-                  label: '${ageGroup.emoji} ${ageGroup.title}',
-                  color: AppColors.skyBlue,
                 ),
               ],
             ),
           ),
-          Text(avatarEmoji, style: const TextStyle(fontSize: 56)),
-        ],
-      ),
+        ),
+        // Speech bubble sticking out of the top-right corner.
+        Positioned(
+          top: -12,
+          right: -6,
+          child: Transform.rotate(
+            angle: 0.1,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFEEB0),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Text(
+                "Let's\nLearn ♥\nTogether!",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.baloo2(
+                  fontSize: 12,
+                  height: 1.05,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF3B2A14),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

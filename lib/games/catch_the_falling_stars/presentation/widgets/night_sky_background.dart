@@ -93,246 +93,276 @@ class _NightSkyPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    _drawAurora(canvas, size);
+    _drawSkyGlow(canvas, size);
     _drawBgStars(canvas, size);
-    _drawPlanets(canvas, size);
-    _drawClouds(canvas, size);
-    _drawFireflies(canvas, size);
+    _drawFourPointStars(canvas, size);
     _drawShootingStars(canvas, size);
+    _drawPlanet(canvas, size);
     _drawMoon(canvas, size);
-    _drawTreeSilhouette(canvas, size);
+    _drawClouds(canvas, size);
+    _drawLandscape(canvas, size);
+    _drawFireflies(canvas, size);
     if (celebrate) _drawCelebration(canvas, size);
   }
 
-  void _drawAurora(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-    for (var i = 0; i < 3; i++) {
-      final y = size.height * (0.12 + i * 0.08);
-      final wave = math.sin(phase * 0.4 + i) * 18;
-      paint.color = [
-        const Color(0xFF69F0AE),
-        const Color(0xFF80D8FF),
-        const Color(0xFFE040FB),
-      ][i]
-          .withValues(alpha: 0.07 + 0.03 * math.sin(phase + i));
-      final path = Path()
-        ..moveTo(0, y + wave)
-        ..quadraticBezierTo(
-          size.width * 0.25,
-          y - 30 + wave,
-          size.width * 0.5,
-          y + 10 - wave,
-        )
-        ..quadraticBezierTo(
-          size.width * 0.75,
-          y + 40 + wave,
-          size.width,
-          y - 10 - wave,
-        )
-        ..lineTo(size.width, y + 60)
-        ..lineTo(0, y + 60)
-        ..close();
-      canvas.drawPath(path, paint);
-    }
+  void _drawSkyGlow(Canvas canvas, Size size) {
+    // Deep navy that lifts to a soft indigo haze near the horizon.
+    final r = Rect.fromLTWH(0, 0, size.width, size.height);
+    canvas.drawRect(
+      r,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF0B1550), Color(0xFF1B2A86), Color(0xFF2A3AA0), Color(0xFF26358F)],
+          stops: [0.0, 0.4, 0.75, 1.0],
+        ).createShader(r),
+    );
   }
 
   void _drawBgStars(Canvas canvas, Size size) {
     final paint = Paint();
-    for (var i = 0; i < 120; i++) {
+    for (var i = 0; i < 150; i++) {
       final x = (i * 97 % 1000) / 1000 * size.width;
-      final y = (i * 53 % 900) / 1000 * size.height * 0.85;
+      final y = (i * 53 % 900) / 1000 * size.height * 0.82;
       final twinkle =
-          0.25 + 0.75 * (0.5 + 0.5 * math.sin(phase * 2.5 + i * 0.7));
-      paint.color = Colors.white
-          .withValues(alpha: (twinkle * twinkleIntensity).clamp(0.1, 1.0));
-      canvas.drawCircle(Offset(x, y), 0.8 + (i % 4) * 0.55, paint);
-    }
-    // Soft constellation dots near top.
-    final glow = Paint()
-      ..color = Colors.white.withValues(alpha: 0.15 + constellationPieces * 0.05);
-    for (var i = 0; i < constellationPieces.clamp(0, 5); i++) {
-      final x = size.width * (0.55 + i * 0.06);
-      final y = size.height * (0.14 + (i % 2) * 0.03);
-      canvas.drawCircle(Offset(x, y), 3.5, glow);
+          0.35 + 0.65 * (0.5 + 0.5 * math.sin(phase * 1.6 + i * 1.3)) * twinkleIntensity;
+      paint.color = Colors.white.withValues(alpha: (0.25 + twinkle * 0.55).clamp(0.0, 1.0));
+      canvas.drawCircle(Offset(x, y), 0.7 + (i % 4) * 0.35, paint);
     }
   }
 
-  void _drawPlanets(Canvas canvas, Size size) {
-    final p1 = Offset(size.width * 0.82, size.height * 0.18);
+  void _sparkle(Canvas canvas, Offset c, double r, Color color, double alpha) {
+    final path = Path()
+      ..moveTo(c.dx, c.dy - r)
+      ..quadraticBezierTo(c.dx, c.dy, c.dx + r, c.dy)
+      ..quadraticBezierTo(c.dx, c.dy, c.dx, c.dy + r)
+      ..quadraticBezierTo(c.dx, c.dy, c.dx - r, c.dy)
+      ..quadraticBezierTo(c.dx, c.dy, c.dx, c.dy - r);
     canvas.drawCircle(
-      p1,
-      18,
-      Paint()..color = const Color(0xFFFFAB91).withValues(alpha: 0.85),
-    );
-    canvas.drawOval(
-      Rect.fromCenter(center: p1, width: 44, height: 10),
+      c,
+      r * 1.4,
       Paint()
-        ..color = const Color(0xFFFFCC80).withValues(alpha: 0.45)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5,
+        ..color = color.withValues(alpha: alpha * 0.25)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
     );
-
-    final p2 = Offset(size.width * 0.12, size.height * 0.28);
-    canvas.drawCircle(
-      p2,
-      12,
-      Paint()..color = const Color(0xFF80CBC4).withValues(alpha: 0.8),
-    );
+    canvas.drawPath(path, Paint()..color = color.withValues(alpha: alpha));
   }
 
-  void _drawClouds(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white.withValues(alpha: 0.12);
-    for (var i = 0; i < 4; i++) {
-      final drift = (phase * (8 + i * 3) + i * 90) % (size.width + 120);
-      final x = drift - 60;
-      final y = size.height * (0.55 + i * 0.08);
-      _cloud(canvas, Offset(x, y), 28 + i * 4.0, paint);
-    }
-  }
-
-  void _cloud(Canvas canvas, Offset c, double r, Paint paint) {
-    canvas.drawCircle(c, r, paint);
-    canvas.drawCircle(c.translate(-r * 0.7, 4), r * 0.7, paint);
-    canvas.drawCircle(c.translate(r * 0.65, 6), r * 0.75, paint);
-  }
-
-  void _drawFireflies(Canvas canvas, Size size) {
-    final paint = Paint();
-    for (var i = 0; i < 14; i++) {
-      final x = size.width * (0.05 + (i * 0.07) % 0.9) +
-          math.sin(phase * 1.2 + i) * 10;
-      final y = size.height * (0.55 + (i % 5) * 0.08) +
-          math.cos(phase * 1.5 + i) * 8;
-      final a = 0.3 + 0.5 * (0.5 + 0.5 * math.sin(phase * 4 + i));
-      paint.color = const Color(0xFFFFF59D).withValues(alpha: a);
-      canvas.drawCircle(Offset(x, y), 2.2, paint);
+  void _drawFourPointStars(Canvas canvas, Size size) {
+    const spots = <(double, double, double)>[
+      (0.61, 0.253, 15), (0.1, 0.35, 9), (0.61, 0.42, 11), (0.11, 0.54, 17),
+      (0.2, 0.65, 8), (0.66, 0.62, 8), (0.49, 0.71, 17), (0.2, 0.74, 8),
+      (0.61, 0.77, 8), (0.9, 0.42, 7), (0.03, 0.25, 6),
+    ];
+    for (var i = 0; i < spots.length; i++) {
+      final (nx, ny, r) = spots[i];
+      final pulse = 0.7 + 0.3 * math.sin(phase * 1.8 + i);
+      _sparkle(
+        canvas,
+        Offset(size.width * nx, size.height * ny),
+        r * (0.85 + 0.15 * pulse),
+        const Color(0xFFFFE066),
+        0.85 * pulse,
+      );
     }
   }
 
   void _drawShootingStars(Canvas canvas, Size size) {
-    final t = (phase * 0.35) % 6;
-    if (t > 1.2) return;
-    final p = t / 1.2;
-    final start = Offset(size.width * 0.1, size.height * 0.2);
-    final end = Offset(size.width * 0.55, size.height * 0.45);
-    final pos = Offset.lerp(start, end, p)!;
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 1 - p)
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(pos, pos.translate(-28, -14), paint);
-    canvas.drawCircle(pos, 2.5, paint);
+    for (final (nx, ny, len) in [(0.36, 0.245, 110.0), (0.7, 0.53, 130.0)]) {
+      final head = Offset(size.width * nx, size.height * ny);
+      final tail = head + Offset(len * 0.8, -len * 0.6);
+      canvas.drawLine(
+        head,
+        tail,
+        Paint()
+          ..shader = LinearGradient(
+            colors: [const Color(0xFF6FA8FF).withValues(alpha: 0.9), Colors.transparent],
+          ).createShader(Rect.fromPoints(head, tail))
+          ..strokeWidth = 5
+          ..strokeCap = StrokeCap.round,
+      );
+      _sparkle(canvas, head, 9, const Color(0xFFFFE066), 1.0);
+    }
+  }
+
+  void _drawPlanet(Canvas canvas, Size size) {
+    final c = Offset(size.width * 0.82, size.height * 0.272);
+    canvas.drawCircle(
+      c,
+      46,
+      Paint()
+        ..color = const Color(0xFF5C6BC0).withValues(alpha: 0.25)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    );
+    // Back half of ring, planet, then front half of ring.
+    final ring = Rect.fromCenter(center: c, width: 128, height: 32);
+    canvas.save();
+    canvas.translate(c.dx, c.dy);
+    canvas.rotate(-0.28);
+    canvas.translate(-c.dx, -c.dy);
+    final ringPaint = Paint()
+      ..color = const Color(0xFF9FA8DA)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5;
+    canvas.drawArc(ring, math.pi, math.pi, false, ringPaint);
+    final r = Rect.fromCircle(center: c, radius: 32);
+    canvas.drawCircle(
+      c,
+      32,
+      Paint()
+        ..shader = const RadialGradient(
+          center: Alignment(-0.4, -0.5),
+          colors: [Color(0xFF6E8BE8), Color(0xFF4A63C8), Color(0xFF2E3F9E)],
+        ).createShader(r),
+    );
+    canvas.drawArc(ring, 0, math.pi, false, ringPaint);
+    canvas.restore();
   }
 
   void _drawMoon(Canvas canvas, Size size) {
-    final c = Offset(size.width * 0.18, size.height * 0.14);
-    final r = size.width * 0.09;
-    final bounce = moonCheer > 0 ? math.sin(moonCheer * math.pi) * 6 : 0.0;
-
+    final c = Offset(size.width * 0.15, size.height * 0.235);
+    final cheer = 1 + moonCheer * 0.06;
+    final r = 62.0 * cheer;
     canvas.drawCircle(
-      c.translate(0, bounce),
-      r + 14,
-      Paint()..color = const Color(0xFFFFF59D).withValues(alpha: 0.18),
-    );
-    canvas.drawCircle(
-      c.translate(0, bounce),
-      r,
-      Paint()..color = const Color(0xFFFFF8E1),
-    );
-    // Cheeks.
-    canvas.drawCircle(
-      c.translate(-r * 0.42, r * 0.18 + bounce),
-      r * 0.14,
-      Paint()..color = const Color(0xFFFFAB91).withValues(alpha: 0.7),
-    );
-    canvas.drawCircle(
-      c.translate(r * 0.42, r * 0.18 + bounce),
-      r * 0.14,
-      Paint()..color = const Color(0xFFFFAB91).withValues(alpha: 0.7),
-    );
-    // Eyes blink.
-    final blink = (math.sin(phase * 0.7) + 1) / 2;
-    final eyeH = blink > 0.92 ? 1.5 : r * 0.12;
-    final eyePaint = Paint()..color = const Color(0xFF5D4037);
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: c.translate(-r * 0.28, -r * 0.08 + bounce),
-        width: r * 0.16,
-        height: eyeH,
-      ),
-      eyePaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: c.translate(r * 0.28, -r * 0.08 + bounce),
-        width: r * 0.16,
-        height: eyeH,
-      ),
-      eyePaint,
-    );
-    // Smile.
-    final smile = Path()
-      ..moveTo(c.dx - r * 0.28, c.dy + r * 0.28 + bounce)
-      ..quadraticBezierTo(
-        c.dx,
-        c.dy + r * (moonCheer > 0.3 ? 0.55 : 0.42) + bounce,
-        c.dx + r * 0.28,
-        c.dy + r * 0.28 + bounce,
-      );
-    canvas.drawPath(
-      smile,
+      c,
+      r * 1.6,
       Paint()
-        ..color = const Color(0xFF5D4037)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5
-        ..strokeCap = StrokeCap.round,
+        ..shader = RadialGradient(
+          colors: [const Color(0xFFFFF3B0).withValues(alpha: 0.35), Colors.transparent],
+        ).createShader(Rect.fromCircle(center: c, radius: r * 1.6)),
     );
-    // Craters.
     canvas.drawCircle(
-      c.translate(r * 0.2, -r * 0.35 + bounce),
-      r * 0.1,
-      Paint()..color = const Color(0xFFFFE082).withValues(alpha: 0.55),
+      c,
+      r,
+      Paint()
+        ..shader = const RadialGradient(
+          center: Alignment(-0.35, -0.4),
+          colors: [Color(0xFFFFF6C8), Color(0xFFFCE9A0), Color(0xFFF2D77C)],
+          stops: [0.0, 0.6, 1.0],
+        ).createShader(Rect.fromCircle(center: c, radius: r)),
     );
+    final crater = Paint()..color = const Color(0xFFE6C876).withValues(alpha: 0.6);
+    for (final (dx, dy, cr) in [(-0.35, -0.3, 0.18), (0.3, -0.05, 0.14), (-0.1, 0.4, 0.2), (0.4, 0.4, 0.1)]) {
+      canvas.drawCircle(c + Offset(dx * r, dy * r), cr * r, crater);
+    }
   }
 
-  void _drawTreeSilhouette(Canvas canvas, Size size) {
-    final paint = Paint()..color = const Color(0xFF0A1635).withValues(alpha: 0.55);
-    final ground = Path()
-      ..moveTo(0, size.height)
-      ..lineTo(0, size.height * 0.92)
-      ..quadraticBezierTo(
-        size.width * 0.5,
-        size.height * 0.88,
-        size.width,
-        size.height * 0.93,
-      )
-      ..lineTo(size.width, size.height)
-      ..close();
-    canvas.drawPath(ground, paint);
+  void _drawClouds(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    // Soft dark-blue night clouds along the edges.
+    void cloud(Offset c, double s, Color color) {
+      final p = Paint()..color = color;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(center: c + Offset(0, 16 * s), width: 170 * s, height: 44 * s),
+          Radius.circular(22 * s),
+        ),
+        p,
+      );
+      canvas.drawCircle(c + Offset(-46 * s, 4 * s), 30 * s, p);
+      canvas.drawCircle(c + Offset(-6 * s, -14 * s), 42 * s, p);
+      canvas.drawCircle(c + Offset(44 * s, 2 * s), 32 * s, p);
+    }
 
-    // Left tree + owl perch.
+    const dark = Color(0xFF2B3A9A);
+    const mid = Color(0xFF34449F);
+    final drift = reducedMotionShift();
+    cloud(Offset(w * 0.08 + drift, h * 0.29), 1.0, dark);
+    cloud(Offset(w * 0.97 - drift, h * 0.31), 0.6, dark);
+    cloud(Offset(w * 0.02, h * 0.43), 0.6, dark);
+    cloud(Offset(w * 0.04 + drift, h * 0.7), 1.1, mid);
+    cloud(Offset(w * 0.98 - drift, h * 0.72), 0.95, mid);
+    cloud(Offset(w * 0.06, h * 0.55), 0.7, dark);
+    cloud(Offset(w * 0.98, h * 0.55), 0.6, dark);
+    cloud(Offset(w * 0.3, h * 0.82), 1.3, dark.withValues(alpha: 0.8));
+  }
+
+  double reducedMotionShift() => math.sin(phase * 0.3) * 4;
+
+  void _drawLandscape(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    // Distant mountains
+    final mtn = Path()
+      ..moveTo(w * 0.22, h * 0.885)
+      ..lineTo(w * 0.42, h * 0.835)
+      ..lineTo(w * 0.55, h * 0.87)
+      ..lineTo(w * 0.72, h * 0.83)
+      ..lineTo(w * 0.95, h * 0.885)
+      ..close();
+    canvas.drawPath(mtn, Paint()..color = const Color(0xFF1B2A70));
+    // Lake
     canvas.drawRect(
-      Rect.fromLTWH(size.width * 0.06, size.height * 0.78, 10, size.height * 0.15),
-      paint,
+      Rect.fromLTWH(w * 0.2, h * 0.885, w * 0.6, h * 0.03),
+      Paint()..color = const Color(0xFF2A47A8),
     );
-    canvas.drawCircle(
-      Offset(size.width * 0.08, size.height * 0.76),
-      28,
-      paint,
+    for (var i = 0; i < 3; i++) {
+      canvas.drawLine(
+        Offset(w * 0.42 + i * 6, h * 0.893 + i * 5),
+        Offset(w * 0.62 - i * 6, h * 0.893 + i * 5),
+        Paint()
+          ..color = const Color(0xFF6F9BFF).withValues(alpha: 0.5)
+          ..strokeWidth = 2,
+      );
+    }
+    // Rolling dark hills and bushes
+    final hill = Path()
+      ..moveTo(0, h * 0.92)
+      ..quadraticBezierTo(w * 0.3, h * 0.885, w * 0.6, h * 0.93)
+      ..quadraticBezierTo(w * 0.85, h * 0.89, w, h * 0.92)
+      ..lineTo(w, h)
+      ..lineTo(0, h)
+      ..close();
+    canvas.drawPath(
+      hill,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF1E3A6E), Color(0xFF16305A)],
+        ).createShader(Rect.fromLTWH(0, h * 0.88, w, h * 0.12)),
     );
-    // Tiny owl emoji drawn as circles.
-    final owl = Offset(size.width * 0.08, size.height * 0.74);
-    canvas.drawCircle(owl, 8, Paint()..color = const Color(0xFF6D4C41));
-    canvas.drawCircle(
-      owl.translate(-3, -1),
-      2,
-      Paint()..color = const Color(0xFFFFF59D),
-    );
-    canvas.drawCircle(
-      owl.translate(3, -1),
-      2,
-      Paint()..color = const Color(0xFFFFF59D),
-    );
+    void bush(Offset c, double r, Color color) {
+      canvas.drawCircle(c, r, Paint()..color = color);
+      canvas.drawCircle(c + Offset(-r * 0.6, r * 0.2), r * 0.7, Paint()..color = color);
+      canvas.drawCircle(c + Offset(r * 0.6, r * 0.25), r * 0.7, Paint()..color = color);
+    }
+
+    const b1 = Color(0xFF14284F);
+    const b2 = Color(0xFF0F1F42);
+    bush(Offset(w * 0.02, h * 0.87), 52, b2);
+    bush(Offset(w * 0.11, h * 0.93), 44, b1);
+    bush(Offset(w * 0.27, h * 0.905), 28, b1);
+    bush(Offset(w * 0.68, h * 0.905), 30, b1);
+    bush(Offset(w * 0.98, h * 0.88), 56, b2);
+    bush(Offset(w * 0.88, h * 0.94), 46, b1);
+    bush(Offset(w * 0.05, h * 0.99), 60, b2);
+    bush(Offset(w * 0.96, h * 1.0), 60, b2);
+  }
+
+  void _drawFireflies(Canvas canvas, Size size) {
+    const spots = <(double, double)>[
+      (0.07, 0.91), (0.14, 0.955), (0.2, 0.975), (0.32, 0.98),
+      (0.55, 0.985), (0.86, 0.945), (0.92, 0.905), (0.05, 0.965),
+    ];
+    for (var i = 0; i < spots.length; i++) {
+      final (nx, ny) = spots[i];
+      final pulse = 0.55 + 0.45 * math.sin(phase * 2 + i * 1.7);
+      final c = Offset(
+        size.width * nx + math.sin(phase * 0.8 + i) * 3,
+        size.height * ny + math.cos(phase * 0.7 + i) * 3,
+      );
+      canvas.drawCircle(
+        c,
+        9,
+        Paint()
+          ..color = const Color(0xFFFFEE58).withValues(alpha: 0.45 * pulse)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      );
+      canvas.drawCircle(c, 3, Paint()..color = const Color(0xFFFFF59D).withValues(alpha: 0.6 + 0.4 * pulse));
+    }
   }
 
   void _drawCelebration(Canvas canvas, Size size) {

@@ -66,6 +66,10 @@ abstract final class CatchTheFallingStarsLogic {
     return null;
   }
 
+  /// Monotonic counter so every star id is unique (timestamps can collide
+  /// when several stars spawn in the same frame).
+  static int _nextStarId = 0;
+
   static FallingStarEntity createStar(
     Offset pos,
     double radius,
@@ -75,7 +79,7 @@ abstract final class CatchTheFallingStarsLogic {
     final accessories = StarAccessory.values;
     final idles = StarIdleAnim.values;
     return FallingStarEntity(
-      id: 'star_${DateTime.now().microsecondsSinceEpoch}_${random.nextInt(9999)}',
+      id: 'star_${_nextStarId++}',
       x: pos.dx,
       y: pos.dy,
       radius: radius,
@@ -203,12 +207,12 @@ abstract final class CatchTheFallingStarsLogic {
     final ny = s.y + speed * delta;
     final nx = s.x + side * delta * 0.35;
 
+    // A star only ever leaves the sky when the child taps it. If it falls past
+    // the bottom it floats back in from the top instead of vanishing.
     if (ny > playHeight + s.radius) {
       return s.copyWith(
-        phase: StarLifePhase.driftedOff,
-        y: ny,
+        y: -s.radius,
         x: nx,
-        driftProgress: 0,
         animPhase: anim,
         swayPhase: sway,
         glowPulse: glow,

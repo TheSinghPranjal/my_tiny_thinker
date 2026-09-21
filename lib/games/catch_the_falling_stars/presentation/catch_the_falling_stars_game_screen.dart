@@ -345,6 +345,7 @@ class _PlayArea extends ConsumerWidget {
                   final size =
                       star.radius * 2 * (largerTouch ? 1.08 : 1.0);
                   return Positioned(
+                    key: ValueKey(star.id),
                     left: star.x - size / 2,
                     top: star.y - size / 2,
                     child: FallingStarWidget(
