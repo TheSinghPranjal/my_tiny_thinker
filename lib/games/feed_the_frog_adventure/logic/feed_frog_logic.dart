@@ -8,7 +8,7 @@ abstract final class FeedFrogLogic {
 
   static (double frogX, double frogY, double padRadius) frogAnchor(Size area) => (
         area.width / 2,
-        area.height * 0.78,
+        area.height * 0.72,
         area.width * 0.22,
       );
 
