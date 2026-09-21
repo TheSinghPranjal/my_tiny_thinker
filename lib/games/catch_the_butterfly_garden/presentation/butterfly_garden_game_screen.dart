@@ -392,10 +392,12 @@ class _TapHintState extends State<_TapHint> with SingleTickerProviderStateMixin 
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFF66BB6A), Color(0xFF42A5F5), Color(0xFFAB47BC)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.white, Color(0xFFF3E9FF)],
                 ),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white, width: 2.5),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: const Color(0xFF7E57C2), width: 2.5),
                 boxShadow: [
                   BoxShadow(
                     color: const Color(0xFF7B1FA2).withValues(alpha: 0.3),
@@ -410,7 +412,7 @@ class _TapHintState extends State<_TapHint> with SingleTickerProviderStateMixin 
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: Color(0xFF3B2A6B),
                 ),
               ),
             ),

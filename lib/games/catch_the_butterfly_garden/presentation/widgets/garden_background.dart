@@ -70,19 +70,21 @@ class _GardenPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     _drawSky(canvas, size);
-    _drawRainbow(canvas, size);
-    _drawHills(canvas, size);
-    _drawClouds(canvas, size);
     _drawSun(canvas, size);
+    _drawRainbow(canvas, size);
+    _drawClouds(canvas, size);
+    _drawMountains(canvas, size);
+    _drawHills(canvas, size);
+    _drawTrees(canvas, size);
     _drawGrass(canvas, size);
     _drawFence(canvas, size);
-    _drawFlowers(canvas, size);
-    _drawPond(canvas, size);
     _drawBushes(canvas, size);
+    _drawPond(canvas, size);
+    _drawFlowers(canvas, size);
     if (!reducedMotion) {
       _drawDandelion(canvas, size);
-      _drawLadybug(canvas, size, 0.14, 0.76);
-      _drawLadybug(canvas, size, 0.84, 0.79);
+      _drawLadybug(canvas, size, 0.18, 0.77);
+      _drawLadybug(canvas, size, 0.83, 0.79);
     }
   }
 
@@ -95,232 +97,402 @@ class _GardenPainter extends CustomPainter {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Color(0xFF81D4FA),
-            Color(0xFFB3E5FC),
+            Color(0xFF64B5F6),
+            Color(0xFF90CAF9),
+            Color(0xFFBBDEFB),
             Color(0xFFE1F5FE),
-            Color(0xFFC8E6C9),
           ],
-          stops: [0.0, 0.35, 0.65, 1.0],
+          stops: [0.0, 0.3, 0.55, 1.0],
         ).createShader(rect),
     );
   }
 
   void _drawRainbow(Canvas canvas, Size size) {
     final cx = size.width * 0.5;
-    final cy = size.height * 0.58;
+    final cy = size.height * 0.6;
     const colors = [
-      Color(0xFFEF5350),
-      Color(0xFFFF9800),
-      Color(0xFFFFEB3B),
-      Color(0xFF66BB6A),
-      Color(0xFF42A5F5),
-      Color(0xFF7E57C2),
-      Color(0xFFEC407A),
+      Color(0xFFF06292),
+      Color(0xFFFF8A65),
+      Color(0xFFFFD54F),
+      Color(0xFF9CCC65),
+      Color(0xFF4FC3F7),
+      Color(0xFF7986CB),
+      Color(0xFFBA68C8),
     ];
-    final baseW = size.width * 1.05;
-    final baseH = size.height * 0.52;
+    final baseW = size.width * 1.12;
+    final baseH = size.height * 0.62;
+    const band = 13.0;
     for (var i = 0; i < colors.length; i++) {
-      final shrink = i * 14.0;
+      final shrink = i * (band * 2 - 2);
       canvas.drawArc(
         Rect.fromCenter(
           center: Offset(cx, cy),
           width: baseW - shrink,
-          height: baseH - shrink * 0.55,
+          height: baseH - shrink * 0.9,
         ),
-        math.pi + 0.08,
-        math.pi - 0.16,
+        math.pi,
+        math.pi,
         false,
         Paint()
-          ..color = colors[i].withValues(alpha: 0.55)
+          ..color = colors[i].withValues(alpha: 0.92)
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 11
-          ..strokeCap = StrokeCap.round,
+          ..strokeWidth = band + 1,
       );
     }
+    // Soft highlight along the top of the outer band.
+    canvas.drawArc(
+      Rect.fromCenter(
+        center: Offset(cx, cy),
+        width: baseW - 6,
+        height: baseH - 5,
+      ),
+      math.pi + 0.25,
+      math.pi - 0.5,
+      false,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.28)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
+  }
+
+  void _drawMountains(Canvas canvas, Size size) {
+    final base = size.height * 0.64;
+    final path = Path()
+      ..moveTo(size.width * 0.15, base)
+      ..quadraticBezierTo(
+        size.width * 0.3, size.height * 0.52, size.width * 0.42, base,
+      )
+      ..close();
+    canvas.drawPath(path, Paint()..color = const Color(0xFF80CBC4).withValues(alpha: 0.6));
+    final path2 = Path()
+      ..moveTo(size.width * 0.55, base)
+      ..quadraticBezierTo(
+        size.width * 0.75, size.height * 0.5, size.width * 0.95, base,
+      )
+      ..close();
+    canvas.drawPath(path2, Paint()..color = const Color(0xFF7FB8C8).withValues(alpha: 0.55));
   }
 
   void _drawHills(Canvas canvas, Size size) {
     final far = Path()
       ..moveTo(0, size.height * 0.62)
-      ..quadraticBezierTo(size.width * 0.25, size.height * 0.52, size.width * 0.5, size.height * 0.6)
-      ..quadraticBezierTo(size.width * 0.75, size.height * 0.68, size.width, size.height * 0.56)
-      ..lineTo(size.width, size.height * 0.72)
-      ..lineTo(0, size.height * 0.72)
+      ..quadraticBezierTo(
+        size.width * 0.22, size.height * 0.55, size.width * 0.48, size.height * 0.62,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.75, size.height * 0.69, size.width, size.height * 0.6,
+      )
+      ..lineTo(size.width, size.height * 0.75)
+      ..lineTo(0, size.height * 0.75)
       ..close();
-    canvas.drawPath(far, Paint()..color = const Color(0xFF81C784).withValues(alpha: 0.55));
+    canvas.drawPath(
+      far,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFA5D6A7), Color(0xFF81C784)],
+        ).createShader(Rect.fromLTWH(0, size.height * 0.55, size.width, size.height * 0.2)),
+    );
 
     final near = Path()
       ..moveTo(0, size.height * 0.68)
-      ..quadraticBezierTo(size.width * 0.3, size.height * 0.62, size.width * 0.55, size.height * 0.7)
-      ..quadraticBezierTo(size.width * 0.8, size.height * 0.74, size.width, size.height * 0.66)
-      ..lineTo(size.width, size.height * 0.74)
-      ..lineTo(0, size.height * 0.74)
+      ..quadraticBezierTo(
+        size.width * 0.3, size.height * 0.62, size.width * 0.58, size.height * 0.69,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.82, size.height * 0.74, size.width, size.height * 0.66,
+      )
+      ..lineTo(size.width, size.height * 0.76)
+      ..lineTo(0, size.height * 0.76)
       ..close();
-    canvas.drawPath(near, Paint()..color = const Color(0xFF66BB6A).withValues(alpha: 0.65));
+    canvas.drawPath(
+      near,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF9CCC65), Color(0xFF66BB6A)],
+        ).createShader(Rect.fromLTWH(0, size.height * 0.62, size.width, size.height * 0.14)),
+    );
+  }
+
+  void _drawTree(Canvas canvas, Offset base, double s) {
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(base.dx - 3 * s, base.dy - 14 * s, 6 * s, 16 * s),
+        Radius.circular(2 * s),
+      ),
+      Paint()..color = const Color(0xFF8D6E63),
+    );
+    for (final (dx, dy, r, c) in [
+      (-10.0, -22.0, 12.0, 0xFF43A047),
+      (10.0, -22.0, 12.0, 0xFF43A047),
+      (0.0, -30.0, 14.0, 0xFF66BB6A),
+      (-3.0, -26.0, 9.0, 0xFF81C784),
+    ]) {
+      canvas.drawCircle(
+        base + Offset(dx * s, dy * s),
+        r * s,
+        Paint()..color = Color(c),
+      );
+    }
+  }
+
+  void _drawTrees(Canvas canvas, Size size) {
+    for (final (nx, ny, s) in [
+      (0.06, 0.68, 1.5),
+      (0.16, 0.7, 1.0),
+      (0.3, 0.665, 0.7),
+      (0.62, 0.67, 0.75),
+      (0.78, 0.7, 1.0),
+      (0.93, 0.68, 1.55),
+    ]) {
+      _drawTree(canvas, Offset(size.width * nx, size.height * ny), s);
+    }
+  }
+
+  void _drawCloud(Canvas canvas, Offset c, double s) {
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.95);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: c + Offset(0, 8 * s), width: 74 * s, height: 22 * s),
+        Radius.circular(12 * s),
+      ),
+      paint,
+    );
+    canvas.drawCircle(c + Offset(-14 * s, 0), 15 * s, paint);
+    canvas.drawCircle(c + Offset(6 * s, -8 * s), 19 * s, paint);
+    canvas.drawCircle(c + Offset(24 * s, 0), 13 * s, paint);
   }
 
   void _drawClouds(Canvas canvas, Size size) {
-    final paint = Paint()..color = Colors.white.withValues(alpha: 0.9);
-    for (var i = 0; i < 4; i++) {
-      final x = (size.width * (0.05 + i * 0.28) + t * size.width * 0.03) % (size.width + 100) - 40;
-      final y = size.height * 0.06 + i * 7.0;
-      canvas.drawCircle(Offset(x, y), 22, paint);
-      canvas.drawCircle(Offset(x + 24, y + 3), 17, paint);
-      canvas.drawCircle(Offset(x + 10, y - 10), 14, paint);
-      canvas.drawCircle(Offset(x - 14, y + 2), 12, paint);
+    final drift = t * size.width * 0.04;
+    for (final (nx, ny, s) in [
+      (0.16, 0.18, 1.1),
+      (0.62, 0.2, 1.0),
+      (0.95, 0.3, 1.2),
+      (0.06, 0.6, 0.9),
+      (0.9, 0.62, 0.9),
+    ]) {
+      final x = (size.width * nx + drift) % (size.width + 120) - 40;
+      _drawCloud(canvas, Offset(x, size.height * ny), s);
     }
   }
 
   void _drawSun(Canvas canvas, Size size) {
-    final sun = Offset(size.width * 0.88, size.height * 0.1);
+    final sun = Offset(size.width * 0.84, size.height * 0.13);
     canvas.drawCircle(
       sun,
-      40,
+      62,
       Paint()
         ..shader = const RadialGradient(
-          colors: [Color(0xFFFFF59D), Color(0xFFFFB74D), Color(0x00FFB74D)],
-          stops: [0.2, 0.55, 1.0],
-        ).createShader(Rect.fromCircle(center: sun, radius: 40)),
+          colors: [Color(0x99FFF59D), Color(0x00FFF59D)],
+        ).createShader(Rect.fromCircle(center: sun, radius: 62)),
     );
-    canvas.drawCircle(sun, 22, Paint()..color = const Color(0xFFFFF176));
     if (!reducedMotion) {
-      for (var i = 0; i < 8; i++) {
-        final a = t * math.pi * 2 + i * (math.pi / 4);
+      for (var i = 0; i < 12; i++) {
+        final a = t * math.pi * 2 + i * (math.pi / 6);
         canvas.drawLine(
-          sun + Offset(math.cos(a) * 28, math.sin(a) * 28),
-          sun + Offset(math.cos(a) * 42, math.sin(a) * 42),
+          sun + Offset(math.cos(a) * 34, math.sin(a) * 34),
+          sun + Offset(math.cos(a) * 50, math.sin(a) * 50),
           Paint()
-            ..color = const Color(0xFFFFF59D).withValues(alpha: 0.55)
-            ..strokeWidth = 3.5
+            ..color = const Color(0xFFFFF176).withValues(alpha: 0.75)
+            ..strokeWidth = 5
             ..strokeCap = StrokeCap.round,
         );
       }
     }
+    canvas.drawCircle(sun, 30, Paint()..color = const Color(0xFFFFF176));
+    canvas.drawCircle(sun + const Offset(-8, -8), 14, Paint()..color = Colors.white.withValues(alpha: 0.35));
+    // Face
+    final face = Paint()..color = const Color(0xFF6D4C41);
+    canvas.drawCircle(sun + const Offset(-9, -3), 2.4, face);
+    canvas.drawCircle(sun + const Offset(9, -3), 2.4, face);
+    canvas.drawArc(
+      Rect.fromCenter(center: sun + const Offset(0, 5), width: 16, height: 11),
+      0.2,
+      math.pi - 0.4,
+      false,
+      Paint()
+        ..color = const Color(0xFF6D4C41)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round,
+    );
+    final cheek = Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.6);
+    canvas.drawCircle(sun + const Offset(-16, 4), 4, cheek);
+    canvas.drawCircle(sun + const Offset(16, 4), 4, cheek);
   }
 
   void _drawFence(Canvas canvas, Size size) {
     final y = size.height * 0.71;
-    canvas.drawLine(
-      Offset(0, y),
-      Offset(size.width, y),
-      Paint()
-        ..color = const Color(0xFF8D6E63)
-        ..strokeWidth = 4,
-    );
-    canvas.drawLine(
-      Offset(0, y + 14),
-      Offset(size.width, y + 14),
-      Paint()
-        ..color = const Color(0xFF8D6E63)
-        ..strokeWidth = 4,
-    );
-    for (var i = 0; i < 18; i++) {
-      final x = size.width * i / 17;
+    final rail = Paint()..color = const Color(0xFF8D6E63);
+    for (final ry in [y + 4, y + 20]) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-          Rect.fromLTWH(x - 3, y - 8, 6, 36),
+          Rect.fromLTWH(0, ry, size.width, 5),
           const Radius.circular(2),
         ),
-        Paint()..color = const Color(0xFFA1887F),
+        rail,
+      );
+    }
+    const n = 18;
+    for (var i = 0; i < n; i++) {
+      final x = size.width * (i + 0.5) / n;
+      final post = Path()
+        ..moveTo(x - 6, y + 34)
+        ..lineTo(x - 6, y - 4)
+        ..lineTo(x, y - 12)
+        ..lineTo(x + 6, y - 4)
+        ..lineTo(x + 6, y + 34)
+        ..close();
+      canvas.drawPath(post, Paint()..color = const Color(0xFFA1887F));
+      canvas.drawLine(
+        Offset(x + 3, y - 4),
+        Offset(x + 3, y + 34),
+        Paint()
+          ..color = const Color(0xFF6D4C41).withValues(alpha: 0.25)
+          ..strokeWidth = 2,
       );
     }
   }
 
   void _drawGrass(Canvas canvas, Size size) {
-    final grassTop = size.height * 0.72;
+    final grassTop = size.height * 0.73;
+    final rect = Rect.fromLTWH(0, grassTop, size.width, size.height - grassTop);
     canvas.drawRect(
-      Rect.fromLTWH(0, grassTop, size.width, size.height * 0.28),
+      rect,
       Paint()
         ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF81C784), Color(0xFF66BB6A), Color(0xFF43A047)],
-        ).createShader(Rect.fromLTWH(0, grassTop, size.width, size.height * 0.28)),
+          colors: [Color(0xFF9CCC65), Color(0xFF7CB342), Color(0xFF558B2F)],
+        ).createShader(rect),
     );
 
-    for (var i = 0; i < 32; i++) {
+    for (var i = 0; i < 40; i++) {
       final gx = size.width * ((i * 37) % 100) / 100;
-      final sway = math.sin(t * 4 + i + envPhase) * 3.5 * intensity;
-      final h = 10.0 + (i % 4) * 4;
+      final gy = grassTop + 10 + ((i * 53) % 100) / 100 * (size.height - grassTop - 20);
+      final sway = math.sin(t * 4 + i + envPhase) * 3 * intensity;
+      final h = 9.0 + (i % 4) * 3;
       canvas.drawLine(
-        Offset(gx, grassTop + 8),
-        Offset(gx + sway, grassTop + 8 - h),
+        Offset(gx, gy),
+        Offset(gx + sway, gy - h),
         Paint()
-          ..color = Color.lerp(const Color(0xFF9CCC65), const Color(0xFF2E7D32), (i % 5) / 5)!
+          ..color = Color.lerp(const Color(0xFFAED581), const Color(0xFF33691E), (i % 5) / 5)!
           ..strokeWidth = 2.2
           ..strokeCap = StrokeCap.round,
       );
     }
   }
 
+  void _drawFlower(Canvas canvas, Offset c, Color petal, {double r = 1}) {
+    canvas.drawLine(
+      c,
+      c + Offset(0, 22 * r),
+      Paint()
+        ..color = const Color(0xFF388E3C)
+        ..strokeWidth = 3
+        ..strokeCap = StrokeCap.round,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(center: c + Offset(8 * r, 16 * r), width: 12 * r, height: 6 * r),
+      Paint()..color = const Color(0xFF66BB6A),
+    );
+    final shade = Paint()..color = Color.lerp(petal, Colors.black, 0.12)!;
+    for (var p = 0; p < 5; p++) {
+      final a = p * math.pi * 2 / 5 - math.pi / 2;
+      final pc = c + Offset(math.cos(a) * 11 * r, math.sin(a) * 11 * r);
+      canvas.drawCircle(pc + const Offset(0, 1.5), 9 * r, shade);
+    }
+    for (var p = 0; p < 5; p++) {
+      final a = p * math.pi * 2 / 5 - math.pi / 2;
+      final pc = c + Offset(math.cos(a) * 11 * r, math.sin(a) * 11 * r);
+      canvas.drawCircle(pc, 9 * r, Paint()..color = petal);
+      canvas.drawCircle(
+        pc + Offset(-2 * r, -2 * r),
+        3.5 * r,
+        Paint()..color = Colors.white.withValues(alpha: 0.28),
+      );
+    }
+    canvas.drawCircle(c, 6.5 * r, Paint()..color = const Color(0xFFFFEB3B));
+    canvas.drawCircle(
+      c + Offset(-1.5 * r, -1.5 * r),
+      2.5 * r,
+      Paint()..color = Colors.white.withValues(alpha: 0.5),
+    );
+  }
+
   void _drawFlowers(Canvas canvas, Size size) {
     final spots = [
-      (0.08, 0.80, 0xFFEC407A),
-      (0.18, 0.86, 0xFFFFB74D),
-      (0.30, 0.79, 0xFFAB47BC),
-      (0.42, 0.85, 0xFF42A5F5),
-      (0.55, 0.78, 0xFFFFEE58),
-      (0.68, 0.84, 0xFFEF5350),
-      (0.80, 0.80, 0xFF66BB6A),
-      (0.92, 0.86, 0xFFF48FB1),
-      (0.24, 0.92, 0xFFCE93D8),
-      (0.72, 0.92, 0xFFFFCC80),
+      (0.10, 0.8, 0xFFEC407A, 1.0),
+      (0.05, 0.9, 0xFFFFFFFF, 0.9),
+      (0.22, 0.85, 0xFFAB47BC, 1.0),
+      (0.16, 0.93, 0xFFFFCA28, 1.1),
+      (0.53, 0.77, 0xFFFFFFFF, 0.9),
+      (0.70, 0.83, 0xFFFF7043, 1.0),
+      (0.80, 0.78, 0xFF81C784, 0.9),
+      (0.90, 0.87, 0xFFF48FB1, 1.0),
+      (0.60, 0.92, 0xFFFFF176, 0.9),
+      (0.93, 0.96, 0xFFFFCA28, 1.0),
+      (0.08, 0.97, 0xFFCE93D8, 1.0),
     ];
-    for (final (nx, ny, color) in spots) {
+    for (final (nx, ny, color, r) in spots) {
       final sway = math.sin(t * 3 + nx * 10) * 3 * intensity;
-      final c = Offset(size.width * nx + sway, size.height * ny);
-      canvas.drawLine(
-        c,
-        c + const Offset(0, 16),
-        Paint()
-          ..color = const Color(0xFF388E3C)
-          ..strokeWidth = 2.5
-          ..strokeCap = StrokeCap.round,
+      _drawFlower(
+        canvas,
+        Offset(size.width * nx + sway, size.height * ny),
+        Color(color),
+        r: r,
       );
-      for (var p = 0; p < 6; p++) {
-        final a = p * math.pi / 3;
-        canvas.drawCircle(
-          c + Offset(math.cos(a) * 10, math.sin(a) * 10 - 6),
-          6,
-          Paint()..color = Color(color),
-        );
-      }
-      canvas.drawCircle(c + const Offset(0, -6), 5, Paint()..color = const Color(0xFFFFEB3B));
     }
   }
 
   void _drawPond(Canvas canvas, Size size) {
     for (final (nx, ny, w, h) in [
-      (0.16, 0.90, 90.0, 32.0),
-      (0.88, 0.91, 70.0, 26.0),
+      (0.1, 0.9, 130.0, 42.0),
+      (0.9, 0.91, 110.0, 36.0),
     ]) {
       final c = Offset(size.width * nx, size.height * ny);
+      final rect = Rect.fromCenter(center: c, width: w, height: h);
       canvas.drawOval(
-        Rect.fromCenter(center: c, width: w, height: h),
+        rect.inflate(3),
+        Paint()..color = const Color(0xFF4E7F3A).withValues(alpha: 0.5),
+      );
+      canvas.drawOval(
+        rect,
         Paint()
           ..shader = const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [Color(0xFF81D4FA), Color(0xFF29B6F6)],
-          ).createShader(Rect.fromCenter(center: c, width: w, height: h)),
+          ).createShader(rect),
       );
       canvas.drawOval(
-        Rect.fromCenter(center: c + const Offset(-8, -4), width: w * 0.35, height: h * 0.3),
-        Paint()..color = Colors.white.withValues(alpha: 0.35),
+        Rect.fromCenter(center: c + Offset(-w * 0.15, -h * 0.15), width: w * 0.35, height: h * 0.25),
+        Paint()..color = Colors.white.withValues(alpha: 0.4),
       );
+      for (final (ox, oy, rw) in [(-0.48, 0.2, 16.0), (-0.36, 0.34, 11.0), (0.44, 0.28, 14.0)]) {
+        canvas.drawOval(
+          Rect.fromCenter(center: c + Offset(w * ox, h * oy), width: rw, height: rw * 0.7),
+          Paint()..color = const Color(0xFF9E9E9E),
+        );
+      }
     }
   }
 
   void _drawBushes(Canvas canvas, Size size) {
-    for (final (nx, ny) in [(0.05, 0.74), (0.95, 0.75)]) {
+    for (final (nx, ny, s) in [(0.03, 0.76, 1.5), (0.97, 0.77, 1.5)]) {
       final c = Offset(size.width * nx, size.height * ny);
-      for (final o in [
-        const Offset(0, 0),
-        const Offset(-14, 4),
-        const Offset(14, 4),
-        const Offset(0, -10),
+      for (final (o, shade) in [
+        (const Offset(0, 0), 0xFF558B2F),
+        (const Offset(-14, 4), 0xFF689F38),
+        (const Offset(14, 4), 0xFF689F38),
+        (const Offset(0, -10), 0xFF7CB342),
       ]) {
-        canvas.drawCircle(c + o, 16, Paint()..color = const Color(0xFF558B2F));
+        canvas.drawCircle(c + o * s, 16 * s, Paint()..color = Color(shade));
       }
     }
   }

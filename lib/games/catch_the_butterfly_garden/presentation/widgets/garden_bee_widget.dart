@@ -31,7 +31,11 @@ class GardenBeeWidget extends StatelessWidget {
       child: Transform.translate(
         offset: Offset(wobble, fleeing ? -4 : 0),
         child: Transform.rotate(
-          angle: fleeing ? -0.25 : bee.vx < 0 ? 0.08 : -0.08,
+          angle: fleeing
+              ? (bee.vx < 0 ? 0.25 : -0.25)
+              : bee.vx < 0
+                  ? 0.08
+                  : -0.08,
           child: SizedBox(
             width: touch,
             height: touch,
@@ -73,7 +77,8 @@ class _BeePainter extends CustomPainter {
 
     canvas.save();
     canvas.translate(cx, cy);
-    if (!facingRight) canvas.scale(-1, 1);
+    // The bee is drawn head-left; mirror it so the head leads the direction.
+    if (facingRight) canvas.scale(-1, 1);
 
     // Soft shadow
     canvas.drawOval(
