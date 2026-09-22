@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 class JungleBackground extends StatefulWidget {
   const JungleBackground({
@@ -101,72 +102,11 @@ class _JunglePainter extends CustomPainter {
   }
 
   void _drawSun(Canvas canvas, Size size) {
-    final sun = Offset(size.width * 0.84, size.height * 0.195);
-    canvas.drawCircle(
-      sun,
-      76,
-      Paint()
-        ..shader = const RadialGradient(
-          colors: [Color(0xAAFFF59D), Color(0x00FFF59D)],
-        ).createShader(Rect.fromCircle(center: sun, radius: 76)),
-    );
-    for (var i = 0; i < 12; i++) {
-      final a = (reducedMotion ? 0 : t * math.pi * 2) + i * math.pi / 6;
-      canvas.drawLine(
-        sun + Offset(math.cos(a) * 42, math.sin(a) * 42),
-        sun + Offset(math.cos(a) * 60, math.sin(a) * 60),
-        Paint()
-          ..color = const Color(0xFFFFF176).withValues(alpha: 0.75)
-          ..strokeWidth = 5
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-    canvas.drawCircle(sun, 40, Paint()..color = const Color(0xFFFFEE58));
-    canvas.drawCircle(
-      sun + const Offset(-10, -10),
-      17,
-      Paint()..color = Colors.white.withValues(alpha: 0.35),
-    );
-    final face = Paint()..color = const Color(0xFF6D4C41);
-    canvas.drawCircle(sun + const Offset(-12, -4), 3, face);
-    canvas.drawCircle(sun + const Offset(12, -4), 3, face);
-    canvas.drawArc(
-      Rect.fromCenter(center: sun + const Offset(0, 6), width: 22, height: 14),
-      0.2,
-      math.pi - 0.4,
-      false,
-      Paint()
-        ..color = const Color(0xFF6D4C41)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.6
-        ..strokeCap = StrokeCap.round,
-    );
-    final cheek = Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.6);
-    canvas.drawCircle(sun + const Offset(-22, 6), 6, cheek);
-    canvas.drawCircle(sun + const Offset(22, 6), 6, cheek);
-  }
-
-  void _drawCloud(Canvas canvas, Offset c, double s) {
-    final shade = Paint()..color = const Color(0xFFC4DFF5).withValues(alpha: 0.95);
-    final body = Paint()..color = Colors.white.withValues(alpha: 0.97);
-    void puffs(Paint p, double dy) {
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: c + Offset(0, 14 * s + dy), width: 100 * s, height: 30 * s),
-          Radius.circular(15 * s),
-        ),
-        p,
-      );
-      canvas.drawCircle(c + Offset(-24 * s, 4 * s + dy), 20 * s, p);
-      canvas.drawCircle(c + Offset(4 * s, -8 * s + dy), 27 * s, p);
-      canvas.drawCircle(c + Offset(32 * s, 6 * s + dy), 18 * s, p);
-    }
-
-    puffs(shade, 4 * s);
-    puffs(body, 0);
-    canvas.drawOval(
-      Rect.fromCenter(center: c + Offset(-2 * s, -20 * s), width: 30 * s, height: 10 * s),
-      Paint()..color = Colors.white.withValues(alpha: 0.7),
+    paintSmilingSun(
+      canvas,
+      Offset(size.width * 0.84, size.height * 0.195),
+      40,
+      rayPhase: reducedMotion ? 0 : t * math.pi * 2,
     );
   }
 
@@ -178,7 +118,14 @@ class _JunglePainter extends CustomPainter {
       (0.95, 0.62, 0.9),
     ]) {
       final x = (size.width * nx + t * size.width * 0.04) % (size.width + 160) - 50;
-      _drawCloud(canvas, Offset(x, size.height * ny), sc);
+      paintPuffyCloud(
+        canvas,
+        Offset(x, size.height * ny),
+        sc,
+        width: 100,
+        highlight: true,
+        shadeColor: const Color(0xFFC4DFF5),
+      );
     }
   }
 

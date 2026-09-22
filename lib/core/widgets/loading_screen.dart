@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({
@@ -315,11 +316,11 @@ class _SplashScenePainter extends CustomPainter {
       Paint()
         ..shader = const RadialGradient(
           center: Alignment(-0.3, -0.4),
-          colors: [Color(0xFFFFF3A0), Color(0xFFFFE566), Color(0xFFFFD84A)],
+          colors: [Color(0xFFFFF3A0), Color(0xFFFFE566), SharedArtColors.sparkle],
         ).createShader(disc),
     );
     final ink = Paint()
-      ..color = const Color(0xFF6D4C41)
+      ..color = SharedArtColors.ink
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
       ..strokeCap = StrokeCap.round;
@@ -373,7 +374,7 @@ class _SplashScenePainter extends CustomPainter {
       i == 0 ? path.moveTo(p.dx, p.dy) : path.lineTo(p.dx, p.dy);
     }
     path.close();
-    canvas.drawPath(path, Paint()..color = const Color(0xFFFFD84A));
+    canvas.drawPath(path, Paint()..color = SharedArtColors.sparkle);
   }
 
   void _butterfly(Canvas canvas, Offset c, Color a, Color b, double phase) {
