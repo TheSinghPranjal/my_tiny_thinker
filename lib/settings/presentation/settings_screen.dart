@@ -80,6 +80,20 @@ class SettingsScreen extends ConsumerWidget {
                       value: settings.hintsEnabled,
                       onChanged: (_) => settingsNotifier.toggleHints(),
                     ),
+                  ),
+                  // Testing switch: turns Premium on/off so premium features
+                  // (Learning Path, parent controls, unlimited play) can be tried.
+                  _SettingRow(
+                    icon: Icons.workspace_premium_rounded,
+                    iconColor: const Color(0xFFE59A12),
+                    tint: const Color(0xFFFFF0CC),
+                    title: 'Premium',
+                    subtitle: isPremium ? 'Premium is on' : 'Turn on to unlock premium',
+                    trailing: _BlueSwitch(
+                      value: isPremium,
+                      onChanged: (v) =>
+                          ref.read(isPremiumProvider.notifier).setPremium(v),
+                    ),
                     showDivider: false,
                   ),
                 ],
