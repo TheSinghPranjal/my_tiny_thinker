@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 import 'package:my_tiny_thinker/games/clean_dirty_clothes_sort/models/clean_dirty_clothes_sort_models.dart';
 import 'package:my_tiny_thinker/games/clean_dirty_clothes_sort/presentation/widgets/clothes_item_widget.dart';
 import 'package:my_tiny_thinker/games/clean_dirty_clothes_sort/presentation/widgets/laundry_target_widgets.dart';
@@ -35,20 +37,8 @@ class ClothesSortBoard extends StatelessWidget {
 
     return Column(
       children: [
+        const _SortHeader(),
         Expanded(flex: 6, child: _playArea(itemSize)),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-          child: Text(
-            'Drag dirty clothes to the washer, clean clothes to the cupboard!',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF1565C0),
-              shadows: [Shadow(color: Colors.white, blurRadius: 6)],
-            ),
-          ),
-        ),
         Expanded(flex: 4, child: _targets(targetSize)),
       ],
     );
@@ -178,4 +168,63 @@ class _DraggableClothesItem extends StatelessWidget {
       child: child,
     );
   }
+}
+
+/// "Sort the clothes!" title, subtitle and a smiling sun — sits above the
+/// play area, matching the other games' setup/game headers.
+class _SortHeader extends StatelessWidget {
+  const _SortHeader();
+
+  static const _navy = Color(0xFF14224D);
+  static const _greyBlue = Color(0xFF5F7290);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 8, 6),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Sort the clothes!',
+                  style: GoogleFonts.baloo2(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    color: _navy,
+                    height: 1.1,
+                  ),
+                ),
+                Text(
+                  'Dirty → washer  •  Clean → cupboard',
+                  style: GoogleFonts.nunito(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                    color: _greyBlue,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 52,
+            height: 52,
+            child: CustomPaint(painter: _SunPainter()),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SunPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    paintSmilingSun(canvas, size.center(Offset.zero), size.width * 0.42);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

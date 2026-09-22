@@ -36,19 +36,19 @@ class ClothesItemWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: isClean
                   ? const Color(0xFFE8F5E9)
-                  : const Color(0xFFEFEBE9),
+                  : const Color(0xFFE3F2FD),
               borderRadius: BorderRadius.circular(size * 0.22),
               border: Border.all(
                 color: isClean
                     ? const Color(0xFF66BB6A)
-                    : const Color(0xFF8D6E63),
+                    : const Color(0xFF42A5F5),
                 width: glow ? 4 : 2.5,
               ),
               boxShadow: [
                 BoxShadow(
                   color: (isClean
                           ? const Color(0xFF66BB6A)
-                          : const Color(0xFF8D6E63))
+                          : const Color(0xFF42A5F5))
                       .withValues(alpha: glow ? 0.45 : 0.2),
                   blurRadius: glow ? 18 : 10,
                   offset: const Offset(0, 5),
@@ -96,7 +96,7 @@ class ClothesItemWidget extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     color: isClean
                         ? const Color(0xFF2E7D32)
-                        : const Color(0xFF5D4037),
+                        : const Color(0xFF1565C0),
                   ),
                 ),
               ),
