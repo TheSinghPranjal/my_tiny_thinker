@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 const _navy = Color(0xFF14224D);
 const _greyBlue = Color(0xFF5F7290);
@@ -52,62 +53,10 @@ class _DashScenePainter extends CustomPainter {
       );
     }
     // Sun
-    final c = Offset(w * 0.86, h * 0.085);
-    canvas.drawCircle(
-      c,
-      70,
-      Paint()
-        ..shader = const RadialGradient(
-          colors: [Color(0x99FFF59D), Color(0x00FFF59D)],
-        ).createShader(Rect.fromCircle(center: c, radius: 70)),
-    );
-    for (var i = 0; i < 14; i++) {
-      final a = i * math.pi * 2 / 14;
-      canvas.drawLine(
-        c + Offset(math.cos(a) * 38, math.sin(a) * 38),
-        c + Offset(math.cos(a) * 52, math.sin(a) * 52),
-        Paint()
-          ..color = const Color(0xFFFFD84A).withValues(alpha: 0.9)
-          ..strokeWidth = 4.5
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-    canvas.drawCircle(c, 36, Paint()..color = const Color(0xFFFFEE58));
-    canvas.drawCircle(c + const Offset(-9, -9), 15, Paint()..color = Colors.white.withValues(alpha: 0.35));
-    final face = Paint()..color = const Color(0xFF6D4C41);
-    canvas.drawCircle(c + const Offset(-11, -4), 2.8, face);
-    canvas.drawCircle(c + const Offset(11, -4), 2.8, face);
-    canvas.drawArc(
-      Rect.fromCenter(center: c + const Offset(0, 6), width: 22, height: 14),
-      0.2,
-      math.pi - 0.4,
-      false,
-      Paint()
-        ..color = const Color(0xFFE4553A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.6
-        ..strokeCap = StrokeCap.round,
-    );
-    final cheek = Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.6);
-    canvas.drawCircle(c + const Offset(-21, 6), 5.5, cheek);
-    canvas.drawCircle(c + const Offset(21, 6), 5.5, cheek);
+    paintSmilingSun(canvas, Offset(w * 0.86, h * 0.085), 36, rayCount: 14, rayColor: SharedArtColors.sparkle);
 
-    void cloud(Offset o, double s) {
-      final p = Paint()..color = Colors.white.withValues(alpha: 0.9);
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: o + Offset(0, 12 * s), width: 96 * s, height: 26 * s),
-          Radius.circular(13 * s),
-        ),
-        p,
-      );
-      canvas.drawCircle(o + Offset(-22 * s, 3 * s), 19 * s, p);
-      canvas.drawCircle(o + Offset(4 * s, -8 * s), 25 * s, p);
-      canvas.drawCircle(o + Offset(30 * s, 5 * s), 17 * s, p);
-    }
-
-    cloud(Offset(w * 0.06, h * 0.135), 1.2);
-    cloud(Offset(w * 0.96, h * 0.13), 0.9);
+    paintPuffyCloud(canvas, Offset(w * 0.06, h * 0.135), 1.2, shaded: false, bodyAlpha: 0.9);
+    paintPuffyCloud(canvas, Offset(w * 0.96, h * 0.13), 0.9, shaded: false, bodyAlpha: 0.9);
     // Meadow at the bottom corners
     for (final (nx, ny, rad) in [(0.0, 0.93, 60.0), (1.0, 0.94, 66.0), (0.1, 1.0, 50.0), (0.92, 1.0, 54.0)]) {
       canvas.drawCircle(Offset(w * nx, h * ny), rad, Paint()..color = const Color(0xFF7CC552).withValues(alpha: 0.8));

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 /// Sunny sky behind the Parent Zone lock screen: smiling sun, clouds, a
 /// butterfly, birds, balloons, a pastel rainbow, a bee and grassy hills.
@@ -32,14 +33,14 @@ class _LockScenePainter extends CustomPainter {
         ).createShader(r),
     );
 
-    _sun(canvas, Offset(w * 0.845, h * 0.105));
+    paintSmilingSun(canvas, Offset(w * 0.845, h * 0.105), 40, rayCount: 14, rayColor: SharedArtColors.sparkle);
     for (final (nx, ny, s) in [
       (0.09, 0.195, 0.85),
       (0.24, 0.115, 0.95),
       (0.52, 0.2, 0.9),
       (0.92, 0.2, 1.0),
     ]) {
-      _cloud(canvas, Offset(w * nx, h * ny), s);
+      paintPuffyCloud(canvas, Offset(w * nx, h * ny), s);
     }
     _butterfly(canvas, Offset(w * 0.25, h * 0.185));
     _bird(canvas, Offset(w * 0.19, h * 0.238), 1.0);
@@ -48,71 +49,6 @@ class _LockScenePainter extends CustomPainter {
     _balloons(canvas, size);
     _bee(canvas, Offset(w * 0.84, h * 0.3));
     _hills(canvas, size);
-  }
-
-  void _sun(Canvas canvas, Offset c) {
-    canvas.drawCircle(
-      c,
-      78,
-      Paint()
-        ..shader = const RadialGradient(
-          colors: [Color(0x99FFF59D), Color(0x00FFF59D)],
-        ).createShader(Rect.fromCircle(center: c, radius: 78)),
-    );
-    for (var i = 0; i < 14; i++) {
-      final a = i * math.pi * 2 / 14;
-      canvas.drawLine(
-        c + Offset(math.cos(a) * 42, math.sin(a) * 42),
-        c + Offset(math.cos(a) * 58, math.sin(a) * 58),
-        Paint()
-          ..color = const Color(0xFFFFD84A).withValues(alpha: 0.9)
-          ..strokeWidth = 5
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-    canvas.drawCircle(c, 40, Paint()..color = const Color(0xFFFFEE58));
-    canvas.drawCircle(
-      c + const Offset(-10, -10),
-      17,
-      Paint()..color = Colors.white.withValues(alpha: 0.35),
-    );
-    final face = Paint()..color = const Color(0xFF6D4C41);
-    canvas.drawCircle(c + const Offset(-12, -4), 3.2, face);
-    canvas.drawCircle(c + const Offset(12, -4), 3.2, face);
-    canvas.drawArc(
-      Rect.fromCenter(center: c + const Offset(0, 6), width: 24, height: 15),
-      0.2,
-      math.pi - 0.4,
-      false,
-      Paint()
-        ..color = const Color(0xFF6D4C41)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.8
-        ..strokeCap = StrokeCap.round,
-    );
-    final cheek = Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.6);
-    canvas.drawCircle(c + const Offset(-24, 6), 6, cheek);
-    canvas.drawCircle(c + const Offset(24, 6), 6, cheek);
-  }
-
-  void _cloud(Canvas canvas, Offset c, double s) {
-    final shade = Paint()..color = const Color(0xFFC9E3F5);
-    final body = Paint()..color = Colors.white.withValues(alpha: 0.97);
-    void puffs(Paint p, double dy) {
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: c + Offset(0, 12 * s + dy), width: 96 * s, height: 26 * s),
-          Radius.circular(13 * s),
-        ),
-        p,
-      );
-      canvas.drawCircle(c + Offset(-22 * s, 3 * s + dy), 19 * s, p);
-      canvas.drawCircle(c + Offset(4 * s, -8 * s + dy), 25 * s, p);
-      canvas.drawCircle(c + Offset(30 * s, 5 * s + dy), 17 * s, p);
-    }
-
-    puffs(shade, 3 * s);
-    puffs(body, 0);
   }
 
   void _butterfly(Canvas canvas, Offset c) {
