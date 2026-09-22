@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 class FeedPondBackground extends StatefulWidget {
   const FeedPondBackground({
@@ -174,77 +175,27 @@ class _FeedPondPainter extends CustomPainter {
   }
 
   void _drawSun(Canvas canvas, Size size, double day) {
-    final sun = Offset(size.width * 0.19, size.height * 0.205);
-    canvas.drawCircle(
-      sun,
-      70,
-      Paint()
-        ..shader = RadialGradient(
-          colors: [
-            const Color(0xFFFFF59D).withValues(alpha: 0.7 * day),
-            const Color(0x00FFF59D),
-          ],
-        ).createShader(Rect.fromCircle(center: sun, radius: 70)),
+    paintSmilingSun(
+      canvas,
+      Offset(size.width * 0.19, size.height * 0.205),
+      38,
+      rayPhase: reducedMotion ? 0 : t * math.pi * 2,
+      faceColor: const Color(0xFF8D5A2B),
+      alpha: day,
     );
-    for (var i = 0; i < 12; i++) {
-      final a = (reducedMotion ? 0 : t * math.pi * 2) + i * (math.pi / 6);
-      canvas.drawLine(
-        sun + Offset(math.cos(a) * 40, math.sin(a) * 40),
-        sun + Offset(math.cos(a) * 56, math.sin(a) * 56),
-        Paint()
-          ..color = const Color(0xFFFFF176).withValues(alpha: 0.85 * day)
-          ..strokeWidth = 5
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-    canvas.drawCircle(sun, 38, Paint()..color = const Color(0xFFFFEE58).withValues(alpha: day));
-    canvas.drawCircle(
-      sun + const Offset(-9, -9),
-      16,
-      Paint()..color = Colors.white.withValues(alpha: 0.35 * day),
-    );
-    final face = Paint()..color = const Color(0xFF8D5A2B).withValues(alpha: day);
-    canvas.drawCircle(sun + const Offset(-11, -3), 2.8, face);
-    canvas.drawCircle(sun + const Offset(11, -3), 2.8, face);
-    canvas.drawArc(
-      Rect.fromCenter(center: sun + const Offset(0, 6), width: 20, height: 13),
-      0.2,
-      math.pi - 0.4,
-      false,
-      Paint()
-        ..color = const Color(0xFF8D5A2B).withValues(alpha: day)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.4
-        ..strokeCap = StrokeCap.round,
-    );
-    final cheek = Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.6 * day);
-    canvas.drawCircle(sun + const Offset(-21, 5), 5.5, cheek);
-    canvas.drawCircle(sun + const Offset(21, 5), 5.5, cheek);
   }
 
   void _drawClouds(Canvas canvas, Size size, double day) {
     void cloud(Offset c, double s) {
-      final shadeP = Paint()..color = const Color(0xFFBFDCF5).withValues(alpha: 0.9 * day);
-      final bodyP = Paint()..color = Colors.white.withValues(alpha: 0.97 * day);
-      void puffs(Paint p, double dy) {
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            Rect.fromCenter(center: c + Offset(0, 14 * s + dy), width: 100 * s, height: 30 * s),
-            Radius.circular(15 * s),
-          ),
-          p,
-        );
-        canvas.drawCircle(c + Offset(-24 * s, 4 * s + dy), 20 * s, p);
-        canvas.drawCircle(c + Offset(4 * s, -8 * s + dy), 27 * s, p);
-        canvas.drawCircle(c + Offset(32 * s, 6 * s + dy), 18 * s, p);
-      }
-
-      puffs(shadeP, 4 * s);
-      puffs(bodyP, 0);
-      // Soft highlight on top.
-      canvas.drawOval(
-        Rect.fromCenter(center: c + Offset(-2 * s, -20 * s), width: 30 * s, height: 10 * s),
-        Paint()..color = Colors.white.withValues(alpha: 0.7 * day),
+      paintPuffyCloud(
+        canvas,
+        c,
+        s,
+        width: 100,
+        highlight: true,
+        shadeColor: const Color(0xFFBFDCF5),
+        shadeAlpha: 0.9 * day,
+        bodyAlpha: 0.97 * day,
       );
     }
 
