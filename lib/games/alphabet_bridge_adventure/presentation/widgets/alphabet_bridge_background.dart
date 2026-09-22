@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 /// Bright meadow for the Alphabet Bridge board: sky, sun, clouds, rolling
 /// hills, fence ends, daisies and big foreground leaves.
@@ -59,69 +60,12 @@ class _BridgeMeadowPainter extends CustomPainter {
   }
 
   void _sun(Canvas canvas, Size size) {
-    final c = Offset(size.width * 0.88, size.height * 0.262);
-    canvas.drawCircle(
-      c,
-      64,
-      Paint()
-        ..shader = const RadialGradient(
-          colors: [Color(0xAAFFF59D), Color(0x00FFF59D)],
-        ).createShader(Rect.fromCircle(center: c, radius: 64)),
+    paintSmilingSun(
+      canvas,
+      Offset(size.width * 0.88, size.height * 0.262),
+      30,
+      rayPhase: phase * 0.2,
     );
-    for (var i = 0; i < 12; i++) {
-      final a = phase * 0.2 + i * math.pi / 6;
-      canvas.drawLine(
-        c + Offset(math.cos(a) * 33, math.sin(a) * 33),
-        c + Offset(math.cos(a) * 46, math.sin(a) * 46),
-        Paint()
-          ..color = const Color(0xFFFFF176).withValues(alpha: 0.75)
-          ..strokeWidth = 4.5
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-    canvas.drawCircle(c, 30, Paint()..color = const Color(0xFFFFEE58));
-    canvas.drawCircle(
-      c + const Offset(-8, -8),
-      13,
-      Paint()..color = Colors.white.withValues(alpha: 0.35),
-    );
-    final face = Paint()..color = const Color(0xFF6D4C41);
-    canvas.drawCircle(c + const Offset(-9, -3), 2.4, face);
-    canvas.drawCircle(c + const Offset(9, -3), 2.4, face);
-    canvas.drawArc(
-      Rect.fromCenter(center: c + const Offset(0, 6), width: 17, height: 11),
-      0.2,
-      math.pi - 0.4,
-      false,
-      Paint()
-        ..color = const Color(0xFF6D4C41)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2
-        ..strokeCap = StrokeCap.round,
-    );
-    final cheek = Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.6);
-    canvas.drawCircle(c + const Offset(-16, 5), 4, cheek);
-    canvas.drawCircle(c + const Offset(16, 5), 4, cheek);
-  }
-
-  void _cloud(Canvas canvas, Offset c, double s) {
-    final shade = Paint()..color = const Color(0xFFCBE3F6);
-    final body = Paint()..color = Colors.white.withValues(alpha: 0.97);
-    void puffs(Paint p, double dy) {
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: c + Offset(0, 12 * s + dy), width: 94 * s, height: 26 * s),
-          Radius.circular(13 * s),
-        ),
-        p,
-      );
-      canvas.drawCircle(c + Offset(-22 * s, 3 * s + dy), 18 * s, p);
-      canvas.drawCircle(c + Offset(4 * s, -8 * s + dy), 25 * s, p);
-      canvas.drawCircle(c + Offset(30 * s, 5 * s + dy), 16 * s, p);
-    }
-
-    puffs(shade, 3 * s);
-    puffs(body, 0);
   }
 
   void _clouds(Canvas canvas, Size size) {
@@ -133,7 +77,7 @@ class _BridgeMeadowPainter extends CustomPainter {
       (0.05, 0.58, 0.55),
       (0.96, 0.53, 0.7),
     ]) {
-      _cloud(canvas, Offset(size.width * nx + drift % 6, size.height * ny), sc);
+      paintPuffyCloud(canvas, Offset(size.width * nx + drift % 6, size.height * ny), sc, width: 94);
     }
   }
 

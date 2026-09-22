@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 /// Sunny meadow behind the Alphabet Adventure quiz: blue sky, smiling sun,
 /// fluffy clouds, round trees, a picket fence and a grassy foreground.
@@ -82,69 +83,12 @@ class _MeadowPainter extends CustomPainter {
   }
 
   void _sun(Canvas canvas, Size size) {
-    final c = Offset(size.width * 0.87, size.height * 0.195);
-    canvas.drawCircle(
-      c,
-      70,
-      Paint()
-        ..shader = const RadialGradient(
-          colors: [Color(0xAAFFF59D), Color(0x00FFF59D)],
-        ).createShader(Rect.fromCircle(center: c, radius: 70)),
+    paintSmilingSun(
+      canvas,
+      Offset(size.width * 0.87, size.height * 0.195),
+      32,
+      rayPhase: t * math.pi * 2,
     );
-    for (var i = 0; i < 12; i++) {
-      final a = t * math.pi * 2 + i * math.pi / 6;
-      canvas.drawLine(
-        c + Offset(math.cos(a) * 36, math.sin(a) * 36),
-        c + Offset(math.cos(a) * 50, math.sin(a) * 50),
-        Paint()
-          ..color = const Color(0xFFFFF176).withValues(alpha: 0.8)
-          ..strokeWidth = 4.5
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-    canvas.drawCircle(c, 32, Paint()..color = const Color(0xFFFFEE58));
-    canvas.drawCircle(
-      c + const Offset(-8, -8),
-      14,
-      Paint()..color = Colors.white.withValues(alpha: 0.35),
-    );
-    final face = Paint()..color = const Color(0xFF6D4C41);
-    canvas.drawCircle(c + const Offset(-9, -3), 2.6, face);
-    canvas.drawCircle(c + const Offset(9, -3), 2.6, face);
-    canvas.drawArc(
-      Rect.fromCenter(center: c + const Offset(0, 6), width: 18, height: 12),
-      0.2,
-      math.pi - 0.4,
-      false,
-      Paint()
-        ..color = const Color(0xFF6D4C41)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.2
-        ..strokeCap = StrokeCap.round,
-    );
-    final cheek = Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.6);
-    canvas.drawCircle(c + const Offset(-17, 5), 4.5, cheek);
-    canvas.drawCircle(c + const Offset(17, 5), 4.5, cheek);
-  }
-
-  void _cloud(Canvas canvas, Offset c, double s) {
-    final shade = Paint()..color = const Color(0xFFC9E2F6);
-    final body = Paint()..color = Colors.white.withValues(alpha: 0.97);
-    void puffs(Paint p, double dy) {
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: c + Offset(0, 12 * s + dy), width: 92 * s, height: 26 * s),
-          Radius.circular(13 * s),
-        ),
-        p,
-      );
-      canvas.drawCircle(c + Offset(-22 * s, 3 * s + dy), 18 * s, p);
-      canvas.drawCircle(c + Offset(4 * s, -8 * s + dy), 24 * s, p);
-      canvas.drawCircle(c + Offset(30 * s, 5 * s + dy), 16 * s, p);
-    }
-
-    puffs(shade, 3 * s);
-    puffs(body, 0);
   }
 
   void _clouds(Canvas canvas, Size size) {
@@ -157,7 +101,7 @@ class _MeadowPainter extends CustomPainter {
       (0.28, 0.375, 0.5),
     ]) {
       final x = (size.width * nx + t * size.width * 0.03) % (size.width + 120) - 40;
-      _cloud(canvas, Offset(x, size.height * ny), sc);
+      paintPuffyCloud(canvas, Offset(x, size.height * ny), sc, width: 92);
     }
   }
 
