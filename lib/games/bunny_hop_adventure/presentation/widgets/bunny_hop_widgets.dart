@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:my_tiny_thinker/games/bunny_hop_adventure/models/bunny_hop_models.dart';
+import 'package:my_tiny_thinker/games/shared/bunny_character.dart';
 
 class BunnyWidget extends StatelessWidget {
   const BunnyWidget({
@@ -17,156 +18,26 @@ class BunnyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = largerTouch ? 118.0 : 104.0;
     final blink = (bunny.blinkTimer % 3.5) < 0.12;
-
-    return Positioned(
-      left: bunny.x - size / 2,
-      top: bunny.y - size / 2,
-      child: Transform.scale(
-        scaleY: bunny.squash,
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: CustomPaint(
-            painter: _BunnyPainter(bunny: bunny, blink: blink),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BunnyPainter extends CustomPainter {
-  _BunnyPainter({required this.bunny, required this.blink});
-
-  final BunnyEntity bunny;
-  final bool blink;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2 + 8;
-    final breathe = math.sin(bunny.animPhase * 2) * 1.8;
-    final celebrate = bunny.celebrateProgress;
     final wet = bunny.phase == BunnyPhase.swimming || bunny.shakeWater > 0;
     final waving = bunny.phase == BunnyPhase.celebrating ||
         bunny.idleAction == 1 ||
         bunny.phase == BunnyPhase.idle;
 
-    canvas.save();
-    canvas.translate(0, breathe - celebrate * 8);
-
-    if (!bunny.facingRight) {
-      canvas.translate(cx, 0);
-      canvas.scale(-1, 1);
-      canvas.translate(-cx, 0);
-    }
-
-    // Soft ground shadow
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, cy + 34), width: 44, height: 12),
-      Paint()..color = const Color(0xFF33691E).withValues(alpha: 0.18),
+    return Positioned(
+      left: bunny.x - size / 2,
+      top: bunny.y - size / 2,
+      child: BunnyCharacter(
+        size: size,
+        facingRight: bunny.facingRight,
+        animPhase: bunny.animPhase,
+        blink: blink,
+        waving: waving,
+        wet: wet,
+        squash: bunny.squash,
+        celebrateProgress: bunny.celebrateProgress,
+      ),
     );
-
-    // Body
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset(cx, cy + 20), width: 46, height: 34),
-      Paint()..color = const Color(0xFFFFF8E7),
-    );
-
-    // Head
-    canvas.drawCircle(
-      Offset(cx, cy - 4),
-      26,
-      Paint()..color = const Color(0xFFFFF8E7),
-    );
-
-    // Ears
-    void ear(double dx) {
-      canvas.drawOval(
-        Rect.fromCenter(center: Offset(cx + dx, cy - 30), width: 16, height: 26),
-        Paint()..color = const Color(0xFFFFF8E7),
-      );
-      canvas.drawOval(
-        Rect.fromCenter(center: Offset(cx + dx, cy - 30), width: 8, height: 16),
-        Paint()..color = const Color(0xFFF8BBD0),
-      );
-    }
-
-    ear(-16);
-    ear(16);
-
-    // Cheeks
-    canvas.drawCircle(
-      Offset(cx - 16, cy + 4),
-      6,
-      Paint()..color = const Color(0xFFF8BBD0).withValues(alpha: 0.7),
-    );
-    canvas.drawCircle(
-      Offset(cx + 16, cy + 4),
-      6,
-      Paint()..color = const Color(0xFFF8BBD0).withValues(alpha: 0.7),
-    );
-
-    _drawEye(canvas, cx - 9, cy - 6, blink);
-    _drawEye(canvas, cx + 9, cy - 6, blink);
-
-    canvas.drawCircle(Offset(cx, cy + 2), 3.2, Paint()..color = const Color(0xFFF48FB1));
-    canvas.drawArc(
-      Rect.fromCenter(center: Offset(cx, cy + 8), width: 14, height: 9),
-      0.15,
-      math.pi - 0.3,
-      false,
-      Paint()
-        ..color = const Color(0xFF5D4037)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2
-        ..strokeCap = StrokeCap.round,
-    );
-
-    // Paw / wave
-    final wave = waving ? math.sin(bunny.animPhase * 4) * 0.35 : 0.0;
-    canvas.save();
-    canvas.translate(cx + 24, cy + 10);
-    canvas.rotate(-0.4 + wave);
-    canvas.drawOval(
-      Rect.fromCenter(center: Offset.zero, width: 16, height: 14),
-      Paint()..color = const Color(0xFFFFF8E7),
-    );
-    canvas.restore();
-
-    if (wet) {
-      for (var i = 0; i < 4; i++) {
-        canvas.drawCircle(
-          Offset(cx - 16 + i * 10, cy + 26),
-          2.2,
-          Paint()..color = const Color(0xFF4FC3F7).withValues(alpha: 0.75),
-        );
-      }
-    }
-
-    canvas.restore();
   }
-
-  void _drawEye(Canvas canvas, double x, double y, bool blink) {
-    if (blink) {
-      canvas.drawLine(
-        Offset(x - 5, y),
-        Offset(x + 5, y),
-        Paint()
-          ..color = const Color(0xFF3E2723)
-          ..strokeWidth = 2.4
-          ..strokeCap = StrokeCap.round,
-      );
-    } else {
-      canvas.drawCircle(Offset(x, y), 6.2, Paint()..color = Colors.white);
-      canvas.drawCircle(Offset(x, y + 0.5), 4.2, Paint()..color = const Color(0xFF3E2723));
-      canvas.drawCircle(Offset(x - 1.4, y - 1.4), 1.5, Paint()..color = Colors.white);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _BunnyPainter old) =>
-      old.bunny != bunny || old.blink != blink;
 }
 
 class CarrotWidget extends StatelessWidget {
