@@ -1,6 +1,5 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 /// Light sky with a smiling sun, clouds and pale hills with little sprouts.
 class SettingsBackground extends StatelessWidget {
@@ -31,64 +30,12 @@ class _SettingsScenePainter extends CustomPainter {
     );
 
     // Sun with a face
-    final c = Offset(w * 0.845, h * 0.115);
-    canvas.drawCircle(
-      c,
-      78,
-      Paint()
-        ..shader = const RadialGradient(
-          colors: [Color(0x99FFF59D), Color(0x00FFF59D)],
-        ).createShader(Rect.fromCircle(center: c, radius: 78)),
-    );
-    for (var i = 0; i < 14; i++) {
-      final a = i * math.pi * 2 / 14;
-      canvas.drawLine(
-        c + Offset(math.cos(a) * 42, math.sin(a) * 42),
-        c + Offset(math.cos(a) * 58, math.sin(a) * 58),
-        Paint()
-          ..color = const Color(0xFFFFD84A).withValues(alpha: 0.9)
-          ..strokeWidth = 5
-          ..strokeCap = StrokeCap.round,
-      );
-    }
-    canvas.drawCircle(c, 40, Paint()..color = const Color(0xFFFFEE58));
-    canvas.drawCircle(c + const Offset(-10, -10), 17, Paint()..color = Colors.white.withValues(alpha: 0.35));
-    final face = Paint()..color = const Color(0xFF6D4C41);
-    canvas.drawCircle(c + const Offset(-12, -4), 3.2, face);
-    canvas.drawCircle(c + const Offset(12, -4), 3.2, face);
-    canvas.drawArc(
-      Rect.fromCenter(center: c + const Offset(0, 6), width: 24, height: 15),
-      0.2,
-      math.pi - 0.4,
-      false,
-      Paint()
-        ..color = const Color(0xFFE4553A)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.8
-        ..strokeCap = StrokeCap.round,
-    );
-    final cheek = Paint()..color = const Color(0xFFFF8A80).withValues(alpha: 0.65);
-    canvas.drawCircle(c + const Offset(-24, 6), 6, cheek);
-    canvas.drawCircle(c + const Offset(24, 6), 6, cheek);
+    paintSmilingSun(canvas, Offset(w * 0.845, h * 0.115), 40, rayCount: 14, rayColor: SharedArtColors.sparkle);
 
-    void cloud(Offset o, double s, double a) {
-      final p = Paint()..color = Colors.white.withValues(alpha: a);
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: o + Offset(0, 12 * s), width: 96 * s, height: 26 * s),
-          Radius.circular(13 * s),
-        ),
-        p,
-      );
-      canvas.drawCircle(o + Offset(-22 * s, 3 * s), 19 * s, p);
-      canvas.drawCircle(o + Offset(4 * s, -8 * s), 25 * s, p);
-      canvas.drawCircle(o + Offset(30 * s, 5 * s), 17 * s, p);
-    }
-
-    cloud(Offset(w * 0.04, h * 0.155), 1.25, 0.95);
-    cloud(Offset(w * 0.27, h * 0.135), 1.0, 0.75);
-    cloud(Offset(w * 0.5, h * 0.06), 0.9, 0.6);
-    cloud(Offset(w * 0.9, h * 0.18), 1.0, 0.95);
+    paintPuffyCloud(canvas, Offset(w * 0.04, h * 0.155), 1.25, shaded: false, bodyAlpha: 0.95);
+    paintPuffyCloud(canvas, Offset(w * 0.27, h * 0.135), 1.0, shaded: false, bodyAlpha: 0.75);
+    paintPuffyCloud(canvas, Offset(w * 0.5, h * 0.06), 0.9, shaded: false, bodyAlpha: 0.6);
+    paintPuffyCloud(canvas, Offset(w * 0.9, h * 0.18), 1.0, shaded: false, bodyAlpha: 0.95);
 
     // Hills at the bottom
     final hill = Path()
