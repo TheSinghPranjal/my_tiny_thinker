@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:my_tiny_thinker/core/art/sky_elements.dart';
 
 class OceanFishingBackground extends StatefulWidget {
   const OceanFishingBackground({
@@ -154,47 +155,16 @@ class _OceanFishingPainter extends CustomPainter {
   }
 
   void _drawSun(Canvas canvas, Size size) {
-    final sun = Offset(size.width * 0.85, size.height * 0.055);
-    canvas.drawCircle(
-      sun,
-      60,
-      Paint()
-        ..shader = const RadialGradient(
-          colors: [Color(0xAAFFF59D), Color(0x00FFF59D)],
-        ).createShader(Rect.fromCircle(center: sun, radius: 60)),
-    );
-    if (!reducedMotion) {
-      for (var i = 0; i < 12; i++) {
-        final a = t * math.pi * 2 + i * (math.pi / 6);
-        canvas.drawLine(
-          sun + Offset(math.cos(a) * 36, math.sin(a) * 36),
-          sun + Offset(math.cos(a) * 50, math.sin(a) * 50),
-          Paint()
-            ..color = const Color(0xFFFFF59D).withValues(alpha: 0.7)
-            ..strokeWidth = 4
-            ..strokeCap = StrokeCap.round,
-        );
-      }
-    }
-    canvas.drawCircle(sun, 32, Paint()..color = const Color(0xFFFFF176));
-    canvas.drawCircle(
-      sun + const Offset(-8, -8),
-      14,
-      Paint()..color = Colors.white.withValues(alpha: 0.3),
-    );
-    final face = Paint()..color = const Color(0xFFFF9800);
-    canvas.drawCircle(sun + const Offset(-9, -3), 2.6, face);
-    canvas.drawCircle(sun + const Offset(9, -3), 2.6, face);
-    canvas.drawArc(
-      Rect.fromCenter(center: sun + const Offset(0, 5), width: 18, height: 12),
-      0.2,
-      math.pi - 0.4,
-      false,
-      Paint()
-        ..color = const Color(0xFFFF9800)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.2
-        ..strokeCap = StrokeCap.round,
+    paintSmilingSun(
+      canvas,
+      Offset(size.width * 0.85, size.height * 0.055),
+      32,
+      rayPhase: t * math.pi * 2,
+      rays: !reducedMotion,
+      cheeks: false,
+      faceColor: const Color(0xFFFF9800),
+      rayColor: const Color(0xFFFFF59D),
+      coreColor: const Color(0xFFFFF176),
     );
   }
 
